@@ -633,8 +633,146 @@
     .post-meta-time { font-size: 12px; color: var(--ink-muted); }
     .post-item-actions { display: flex; gap: 6px; }
 
-    /* 空狀態提示 */
-    .placeholder-text { color: #a0b1bc; font-style: italic; }
+    /* 行動端分頁切換列（桌機預設隱藏） */
+    .mobile-nav-bar {
+      display: none;
+    }
+
+    /* 響應式佈局：手機與窄螢幕適配（<= 900px） */
+    @media (max-width: 900px) {
+      body {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      /* 頂部導覽簡化，避免按鈕折行 */
+      header {
+        padding: 8px 12px;
+      }
+      .brand-title h1 {
+        font-size: 15px;
+      }
+      .brand-title .badge {
+        display: none;
+      }
+      .top-actions {
+        gap: 4px;
+      }
+      .top-actions button {
+        padding: 5px 8px;
+        font-size: 11.5px;
+        border-radius: 6px;
+      }
+
+      /* 行動端切換頁籤列 */
+      .mobile-nav-bar {
+        display: flex;
+        background: #e2e8ec;
+        padding: 6px 8px;
+        gap: 6px;
+        border-bottom: 1px solid var(--line);
+        flex-shrink: 0;
+        z-index: 20;
+      }
+      .mobile-nav-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 6px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--ink-muted);
+        border: 1px solid var(--line);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .mobile-nav-btn.active {
+        background: var(--main);
+        color: #ffffff;
+        border-color: var(--main);
+        box-shadow: 0 2px 6px rgba(44,62,80,0.25);
+      }
+
+      /* 主工作區改為滿版單欄 */
+      .app-main {
+        display: flex;
+        flex-direction: column;
+        padding: 6px;
+        gap: 0;
+        overflow: hidden;
+      }
+
+      /* 欄位卡片：非當前頁籤隱藏，當前頁籤 100% 滿版展示 */
+      .col-card {
+        display: none;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+      }
+      .col-card.mobile-active {
+        display: flex;
+      }
+
+      /* 手機模擬器適配：在真實手機螢幕上移除黑框與寬度限制，滿版沉浸呈現 */
+      #colCardPreview .col-body {
+        padding: 6px;
+        background: #edf2f5;
+      }
+      .phone-simulator {
+        background: transparent;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+        max-height: 100%;
+        max-width: 100%;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+      }
+      .phone-screen {
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        width: 100%;
+        height: 100%;
+      }
+      .phone-status-bar {
+        height: 22px;
+        padding: 0 10px;
+        font-size: 10px;
+      }
+      .phone-notch {
+        width: 50px;
+        height: 10px;
+      }
+      .phone-feed {
+        padding: 10px;
+      }
+
+      /* 輪播圖在手機端更開闊且箭頭易於點選 */
+      .feed-fb .carousel-container {
+        height: 200px !important;
+      }
+      .carousel-container {
+        touch-action: pan-y;
+      }
+      .carousel-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        background: rgba(0, 0, 0, 0.55);
+        opacity: 0.88;
+      }
+
+      /* 彈窗在手機端的滿寬適配 */
+      .modal-box {
+        width: 95%;
+        max-height: 90vh;
+      }
+    }
   </style>
 </head>
 <body>
@@ -652,11 +790,18 @@
     </div>
   </header>
 
+  <!-- 行動端切換頁籤列（僅在螢幕 <= 900px 顯示） -->
+  <nav class="mobile-nav-bar" id="mobileNavBar">
+    <button class="mobile-nav-btn active" data-tab="preview">📱 預覽輪播</button>
+    <button class="mobile-nav-btn" data-tab="form">📝 素材卡</button>
+    <button class="mobile-nav-btn" data-tab="editor">✍️ 貼文編輯</button>
+  </nav>
+
   <!-- 主工作區（三欄） -->
   <main class="app-main">
 
     <!-- 左欄：素材卡表單 -->
-    <section class="col-card">
+    <section class="col-card" id="colCardForm">
       <div class="col-header">
         <h2>📝 素材卡表單</h2>
         <span style="font-size:12px; color:var(--ink-muted);">填寫好康與故事</span>
@@ -699,7 +844,7 @@
     </section>
 
     <!-- 中欄：貼文內容編輯 -->
-    <section class="col-card">
+    <section class="col-card" id="colCardEditor">
       <div class="tab-bar" id="platformTabBar">
         <!-- JS 動態產生各平台分頁按鈕 -->
       </div>
@@ -723,7 +868,7 @@
     </section>
 
     <!-- 右欄：擬真手機模擬器 -->
-    <section class="col-card">
+    <section class="col-card" id="colCardPreview">
       <div class="col-header">
         <h2>📱 手機即時預覽</h2>
         <div style="display:flex; gap:5px; align-items:center;">
@@ -1058,7 +1203,10 @@
     /* ==========================================================
        3. 初始化與 DOM 生成
        ========================================================== */
+    let currentMobileTab = "preview";
+
     document.addEventListener("DOMContentLoaded", () => {
+      initMobileNav();
       initScenarios();
       initFields();
       initTabs();
@@ -1067,6 +1215,33 @@
       bindEvents();
       renderPreview();
     });
+
+    function initMobileNav() {
+      const nav = document.getElementById("mobileNavBar");
+      if (!nav) return;
+      nav.addEventListener("click", (e) => {
+        const btn = e.target.closest(".mobile-nav-btn");
+        if (!btn) return;
+        switchMobileTab(btn.dataset.tab);
+      });
+      // 手機端預設展示預覽與輪播，方便第一時間查看貼文成果
+      switchMobileTab("preview");
+    }
+
+    function switchMobileTab(tab) {
+      currentMobileTab = tab;
+      document.querySelectorAll(".mobile-nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tab);
+      });
+
+      const colForm = document.getElementById("colCardForm");
+      const colEditor = document.getElementById("colCardEditor");
+      const colPreview = document.getElementById("colCardPreview");
+
+      if (colForm) colForm.classList.toggle("mobile-active", tab === "form");
+      if (colEditor) colEditor.classList.toggle("mobile-active", tab === "editor");
+      if (colPreview) colPreview.classList.toggle("mobile-active", tab === "preview");
+    }
 
     function initScenarios() {
       const list = document.getElementById("scenarioList");
@@ -1216,6 +1391,11 @@
       updateCharCount();
       saveDraft();
       renderPreview();
+
+      // 手機端生成後自動平滑切換至「預覽輪播」頁籤
+      if (window.innerWidth <= 900) {
+        switchMobileTab("preview");
+      }
 
       const hint = document.getElementById("autoSavedHint");
       hint.textContent = `⚡ 已套用【${sc.name}】模板！`;
@@ -1377,6 +1557,39 @@
           goToImage(parseInt(dot.dataset.goto, 10));
         };
       });
+
+      // 支援手機手勢觸控滑動（左右滑動換圖）
+      const container = document.querySelector(".carousel-container");
+      if (container) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        container.addEventListener("touchstart", (e) => {
+          if (e.changedTouches && e.changedTouches[0]) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+          }
+        }, { passive: true });
+
+        container.addEventListener("touchend", (e) => {
+          if (e.changedTouches && e.changedTouches[0]) {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            // 橫向滑動距離超過 35px，且橫向位移大於縱向位移（不干擾垂直滑動滾頁）
+            if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+              if (diffX < 0) {
+                nextImage();
+              } else {
+                prevImage();
+              }
+            }
+          }
+        }, { passive: true });
+      }
     }
 
     function nextImage() {

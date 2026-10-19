@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 6 任務單｜把它變成一個畫面</title>
+<style>
+  :root { --main: #3b6e8a; --soft: #eef4f7; --line: #cfdde5; --ink: #1f2a30; --ok: #1f8a70; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Microsoft JhengHei", "PingFang TC", sans-serif; color: var(--ink); background: var(--soft); line-height: 1.7; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px; }
+  header { background: var(--main); color: #fff; border-radius: 16px; padding: 22px 26px; margin-bottom: 16px; }
+  header h1 { margin: 0; font-size: 26px; }
+  header p { margin: 6px 0 0; opacity: .92; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; margin-bottom: 16px; }
+  h2 { margin: 0 0 4px; font-size: 20px; color: var(--main); }
+  h3 { margin: 16px 0 4px; font-size: 16px; }
+  .time { font-size: 13px; color: #888; margin-bottom: 10px; }
+  ol, ul { padding-left: 22px; margin: 8px 0; }
+  code { background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+  .prompt { position: relative; background: #1f2a30; color: #eef4f7; border-radius: 10px; padding: 12px 72px 12px 14px; margin: 10px 0; white-space: pre-wrap; font-size: 14px; }
+  .prompt button { position: absolute; top: 8px; right: 8px; }
+  button { font: inherit; font-size: 13px; border: 0; border-radius: 8px; padding: 6px 12px; cursor: pointer; background: var(--main); color: #fff; }
+  button.light { background: var(--soft); color: var(--main); }
+  .rec { background: #f7fbfd; border: 2px dashed #a9c4d3; border-radius: 12px; padding: 12px 16px; margin-top: 12px; }
+  .rec b { color: var(--main); }
+  textarea, input[type=text] { font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; margin-top: 4px; width: 100%; }
+  textarea { min-height: 70px; resize: vertical; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+  th, td { border: 1px solid var(--line); padding: 6px; vertical-align: top; }
+  th { background: var(--soft); }
+  td input[type=text], td textarea { border: 0; margin: 0; padding: 4px; }
+  td.c { text-align: center; vertical-align: middle; width: 70px; }
+  .tip { font-size: 13px; color: #4d5f69; background: var(--soft); border-radius: 8px; padding: 8px 12px; margin-top: 8px; }
+  .warn { font-size: 14px; background: #fff1f0; border-left: 4px solid #d9534f; padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
+  .check label { display: block; margin: 2px 0; }
+  .ext { border-left: 4px solid var(--main); padding: 6px 12px; margin: 10px 0; background: #fbfdfe; }
+  .star { color: #d99a00; }
+  .map td:first-child { width: 50%; }
+  #saved { font-size: 13px; color: var(--ok); }
+  .bar { position: sticky; bottom: 0; background: #fff; border-top: 1px solid var(--line); padding: 10px 16px; display: flex; gap: 10px; align-items: center; justify-content: center; }
+  @media print { .bar, .prompt button { display: none; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Day 6｜把它變成一個畫面</h1>
+  <p>上次你用 Codex，<b>手動</b>把一則訊息變成三篇貼文：活動卡、品牌規格、守則、檢查清單……做完好累。<br>
+  今天，把這一整套做成<b>你自己品牌的工作台</b>。填空格、按按鈕、看手機預覽、存起來。<br>
+  今天<b>先不接 AI</b>（下次才接）。今天的工作台，不接 AI 也能用。</p>
+</header>
+
+<div class="card">
+  <b>這張任務單怎麼用</b>
+  <ul>
+    <li>黑色框框是要貼給 Codex 的話，按「複製」就好。<code>【 】</code>裡的字要換成你自己的。</li>
+    <li>虛線框框是你的紀錄，打字會自動存在這台電腦的瀏覽器裡。</li>
+    <li>Codex 每做完一步，<b>先用瀏覽器打開 <code>index.html</code> 看看</b>，確定可以用，再做下一步。</li>
+    <li>最後一節按最下面的「複製全部紀錄」，交到作業繳交區。</li>
+  </ul>
+</div>
+
+<!-- 第 1 節 -->
+<div class="card">
+  <h2>第 1 節｜我的品牌規格</h2>
+  <div class="time">09:10–10:00</div>
+
+  <p><b>上次大家寫的「煩 → 平台功能」：</b>很多人左邊寫了「煩」，右邊空白。今天就是把右邊做出來。</p>
+  <table class="map">
+    <tr><th>上次最煩的事</th><th>今天的工作台變成</th></tr>
+    <tr><td>每次都要整理活動卡、AI 一直問「是哪一年？」</td><td><b>素材卡表單</b>：填空格，日期自動加星期幾</td></tr>
+    <tr><td>每次都要叫它讀品牌規格、貼守則</td><td><b>⚙ 設定</b>：存一次就好</td></tr>
+    <tr><td>一直複製貼上、一直說 OK</td><td><b>🧩 組好指令</b>：一顆按鈕，整段組好</td></tr>
+    <tr><td>看不出發出去長怎樣</td><td><b>手機預覽</b></td></tr>
+    <tr><td>三個平台一直切換</td><td><b>平台分頁</b>，點一下換</td></tr>
+    <tr><td>好的版本改一改就不見了</td><td><b>💾 存檔</b>、📁 我的貼文</td></tr>
+  </table>
+
+  <h3>開工：開一個新資料夾</h3>
+  <ol>
+    <li>在桌面開一個新資料夾，名字叫 <code>my-studio</code>。</li>
+    <li>把老師給的「1_起點包_一開始就發」裡的兩個檔案，放進 <code>my-studio</code>。</li>
+    <li>打開 <a href="https://docs.google.com/document/d/1J2HkFN70N3AQvkZ-zznmFJnv0GXVwosD20EQ3S3Y2r8/edit" target="_blank">Day 5 作業繳交區</a>，找到你的格子，把「【我的品牌卡】」那一段複製下來。</li>
+    <li>在 <code>my-studio</code> 裡新增一個檔案 <code>品牌卡.md</code>，貼進去，存檔。（上次沒交品牌卡的，現在用下面第 3 步的問題寫一份。）</li>
+  </ol>
+  <div class="tip">跟別人選了同一個品牌？很好。同一個品牌，下次你們會做出兩個不一樣的工作台。</div>
+
+  <h3>補範例：找 2～3 篇真的貼文</h3>
+  <p>上次很多人的「很像我們的貼文」只有一行。<b>AI 學口氣，最需要的是範例。</b></p>
+  <ul>
+    <li>品牌有粉專或 IG 的：去複製 2～3 篇你覺得「最像我們」的貼文。</li>
+    <li>沒有的：自己寫兩篇，一篇講商品／作品，一篇講日常。</li>
+  </ul>
+  <p>全部貼到 <code>品牌卡.md</code> 最下面，標題寫「範例貼文」。</p>
+
+  <h3>用三招，寫我的品牌規格</h3>
+  <p>先打開 <code>範例_小島咖啡品牌規格.md</code> 看一眼：<b>不是要抄內容，是看它長什麼樣子。</b></p>
+  <div class="prompt">請看 品牌卡.md，幫我寫一份 品牌規格.md。參考 範例_小島咖啡品牌規格.md 的「長相」，但內容全部用我的品牌。用三招：
+1. 寫具體：口氣寫成看得到、數得出來的規則（例如：用「你」還是「您」、一篇最多幾個 emoji、一句多長、哪些話不說）。
+2. 給範例：把品牌卡裡的範例貼文放進去，標明「照這篇的感覺寫」。
+3. 給骨架：只寫我要用的平台（品牌卡上寫的那幾個），每個平台寫：誰在看、多長、第一行寫什麼、中間寫什麼、最後一行固定寫什麼。
+
+最上面加一段「基本資料」：品牌名稱、帳號名稱、主色色碼、我要用的平台。
+品牌卡上沒有的事（地址、價格、營業時間、得獎、數字），不要自己編，寫「❓待補」。
+寫完告訴我：哪些地方是你猜的？<button class="light copy">複製</button></div>
+  <div class="warn">打開 <code>品牌規格.md</code>，<b>自己從頭讀一遍。</b>它說「猜的」地方，改成對的，或刪掉。</div>
+
+  <div class="rec check">
+    <b>✏️ 我的品牌規格，有這些嗎？</b>
+    <label><input type="checkbox" data-k="p1_1" checked> 最上面有品牌名稱、帳號、主色、平台</label>
+    <label><input type="checkbox" data-k="p1_2" checked> 口氣至少有 3 條「數得出來」的規則</label>
+    <label><input type="checkbox" data-k="p1_3" checked> 至少 2 篇範例貼文</label>
+    <label><input type="checkbox" data-k="p1_4" checked> 每個平台都有骨架</label>
+    <label><input type="checkbox" data-k="p1_5" checked> 不能用的字至少 3 個</label>
+    <label><input type="checkbox" data-k="p1_6" checked> AI 猜的、亂加的，我都刪掉或改好了</label>
+    <p style="margin-top:8px"><b>隔壁同學看完，問我「這條是你品牌說的，還是課本說的？」他挑了哪一條？</b></p>
+    <textarea data-k="p1_peer">同學挑了「標點符號一篇最多 1 個驚嘆號，嚴禁連續驚嘆號」問我。我解釋這是島哥的人設，40 歲工程師轉行開安靜巷弄咖啡店，說話真誠溫和、像鄰里聊天，討厭吵鬧浮誇，這不是課本隨便寫的，是老闆的堅持！</textarea>
+  </div>
+</div>
+
+<!-- 第 2 節 -->
+<div class="card">
+  <h2>第 2 節｜畫草圖＋我的素材卡欄位</h2>
+  <div class="time">10:10–11:00</div>
+  <p>上次的活動卡，就像<b>點餐單</b>。今天它要變成工作台左邊的<b>表單</b>。</p>
+  <p>但不是每個品牌都在辦活動。紙藝作品要講故事、民宿要講季節、工廠要講規格。<b>所以欄位你自己決定。</b></p>
+
+  <table>
+    <tr><th>活動型（咖啡店、服飾特價）</th><th>商品／作品型（手作、工廠、選物）</th><th>日常型（民宿、遊戲、社團）</th></tr>
+    <tr><td>日期、活動名稱、價格、條件、怎麼參加、只在 LINE 說的、先不要講的</td>
+        <td>名稱、材質／規格、一個小故事、適合誰、怎麼買／怎麼詢價</td>
+        <td>今天的主題、一個畫面、一句心情、想問粉絲的問題</td></tr>
+  </table>
+  <div class="tip">建議一定要有這三格：<b>日期</b>（AI 就不會再問「是哪一年」）、<b>先不要講的</b>、<b>❓ 還不確定的</b>。</div>
+
+  <div class="rec">
+    <b>✏️ 我的素材卡欄位（5～8 個）</b>
+    <table id="fieldTable"></table>
+  </div>
+  <div class="tip">這張表填好就好，不用另外抄。第 3 節按「複製」時，這些欄位會<b>自動帶進</b>給 Codex 的指令裡。</div>
+
+  <h3>畫草圖（拿一張 A4，用筆畫）</h3>
+  <ul>
+    <li>左邊：你的素材卡（寫上你的欄位名稱）。</li>
+    <li>中間：平台分頁（你的平台）＋一個大貼文框。</li>
+    <li>右邊：一支手機。</li>
+    <li>按鈕要放哪？從下面挑你最想要的，畫上去。</li>
+  </ul>
+  <div class="rec check">
+    <b>✏️ 我最想要的功能（挑 3 個）</b>
+    <label><input type="checkbox" data-k="w_form" checked> 素材卡表單</label>
+    <label><input type="checkbox" data-k="w_set" checked> ⚙ 設定（品牌規格存一次）</label>
+    <label><input type="checkbox" data-k="w_prompt" checked> 🧩 組好指令</label>
+    <label><input type="checkbox" data-k="w_phone" checked> 手機預覽</label>
+    <label><input type="checkbox" data-k="w_tabs" checked> 平台分頁</label>
+    <label><input type="checkbox" data-k="w_copy" checked> 📋 一鍵複製</label>
+    <label><input type="checkbox" data-k="w_save" checked> 💾 存檔</label>
+    <label><input type="checkbox" data-k="w_board"> 進度看板（草稿／待確認／完成）</label>
+    <input type="text" data-k="w_other" value="貼回 AI 自動分流" placeholder="其他（自己想的）">
+  </div>
+
+  <h3>互看：3 人一組，每人講 2 分鐘</h3>
+  <p>拿著草圖講：「我的品牌是＿＿，我的欄位是＿＿，我最想要＿＿。」<br>聽的人說一句：<b>「哪一格我看不懂？」</b></p>
+  <div class="rec">
+    <b>✏️ 同學說哪一格看不懂？我怎麼改？</b>
+    <textarea data-k="d_peer">同學問我「先不要講的」是什麼意思？我解釋說這是專門給 AI 的防雷隔離欄位，活動還在籌劃或只限定會員的，可以明確命令 AI 絕對不要洩漏。同學聽完覺得這招很神，解決了 AI 常常亂爆雷的問題。</textarea>
+  </div>
+  <div class="tip">畫完用手機拍一張草圖，第 3 節要看。</div>
+</div>
+
+<!-- 第 3 節 -->
+<div class="card">
+  <h2>第 3 節｜Codex 做出第一版</h2>
+  <div class="time">11:10–12:00</div>
+  <p>跟 Codex 講畫面，就像跟裝潢師傅講：<b>什麼東西、放哪裡、這次先不要做什麼。</b></p>
+  <p>打開 Codex，選 <code>my-studio</code> 當工作資料夾。下面這段按「複製」，你第 2 節填的欄位會自動帶進去。</p>
+  <div class="prompt" data-fields="1">請幫我在這個資料夾建立 index.html，做我的「社群貼文工作台」。先讀 品牌規格.md，拿品牌名稱、帳號名稱、主色和我要用的平台。
+
+規則：
+- 只用一個 index.html，HTML、CSS、JavaScript 都寫在裡面，不用任何框架或套件。
+- 畫面上的字都用繁體中文。
+- 顏色集中寫在 CSS 最上面的變數。
+- 我的品牌名稱、平台、素材卡欄位，寫在 JavaScript 最上面，方便我之後自己改。
+
+版面（左、中、右三塊）：
+- 最上面一條標題列：「品牌名稱｜社群工作台」，用主色。
+- 左邊：「素材卡」表單，欄位如下：
+【把你第 2 節的欄位貼在這裡】
+- 中間：平台分頁按鈕（我的平台：【例：FB、IG、LINE】），下面一個大的「貼文內容」文字框。
+- 右邊：一個手機形狀的預覽框。
+
+這一步先不用連動，也先不用存檔。<button class="light copy">複製</button></div>
+  <p class="tip">按右上角「複製」→ 整段貼給 Codex 就好，欄位已經在裡面了。只有「我的平台」那格要自己改成你的平台。第 2 節沒填的話，會提醒你先回去填。</p>
+  <p><b>做完：</b>用瀏覽器（Chrome）打開 <code>index.html</code>，拿出草圖對一對。</p>
+
+  <h3>不一樣的地方，用這句話叫它改</h3>
+  <div class="prompt">我在【哪一區】看到【現在怎樣】，我希望它【應該怎樣】。請幫我改好，其他地方不要動。<button class="light copy">複製</button></div>
+  <div class="tip">例：我在左邊素材卡看到「日期」是一般的文字框，我希望它可以點出日曆來選。請幫我改好，其他地方不要動。</div>
+
+  <div class="rec">
+    <b>✏️ 第一版跟我的草圖，差在哪？我叫它改了什麼？</b>
+    <textarea data-k="v1_diff">第一版剛做出來時，右邊的手機預覽只是一般的白色框框，三個平台切換時長相都差不多。我叫它：把 FB 做成動態消息卡片（有讚留言分享）、IG 做成正方形圖片區與呼吸感留白點、LINE 改成招牌灰藍色對話背景與聊天泡泡，改完後超擬真！</textarea>
+  </div>
+  <div class="warn">做到 11:45 還打不開、或亂掉了？舉手跟老師拿「第4節起點」。不丟臉，下午才是重點。</div>
+  <details>
+    <summary>拿到老師給的「起點檔」（任何一節）的人，貼這段把它換成自己的品牌（欄位一樣自動帶入）</summary>
+    <div class="prompt" data-fields="1">請讀 品牌規格.md，把 index.html 換成我的品牌：
+- JavaScript 最上面的 BRAND：品牌名稱和帳號名稱。
+- PLATFORMS：只留我要用的平台（可以用 FB、IG、LINE、Threads）。
+- FIELDS：換成我的素材卡欄位：
+【把你第 2 節的欄位貼在這裡】
+- CSS 最上面的 --main 換成我的主色，--bg 用主色很淡的版本。
+其他地方不要動。<button class="light copy">複製</button></div>
+  </details>
+</div>
+
+<!-- 第 4 節 -->
+<div class="card">
+  <h2>第 4 節｜讓它動起來</h2>
+  <div class="time">13:10–14:00</div>
+  <p>「連動」就是：左邊打字，右邊手機馬上跟著變。還有：點 FB，手機就變成 FB 的樣子；點 LINE，就變成 LINE 的對話框。</p>
+  <div class="prompt">請讓工作台動起來：
+1. 點平台分頁，中間換成那個平台的貼文框（每個平台的貼文分開存），右邊手機框也換成那個平台的樣子。
+2. 在貼文框打字，右邊手機框馬上跟著變。
+3. 每個平台的手機框，長得像那個平台（只做我有用的平台）：
+   - FB：白底，上面頭像＋品牌名稱＋「剛剛」，貼文文字，下面一張長方形圖片區，最下面「讚、留言、分享」。
+   - IG：上面頭像＋帳號，中間正方形圖片區（把素材卡第一格的字大大地放在圖上），下面 ♡ 💬 ➤，再來是貼文。
+   - LINE：淡藍色聊天背景，左邊一個圓頭像，貼文放在白色對話泡泡裡。
+   - Threads：白底黑字，頭像＋帳號，文字在旁邊，很簡單。
+4. 還沒填的地方，顯示灰色提示字。
+其他地方不要動。<button class="light copy">複製</button></div>
+
+  <h3>測試：把你的範例貼文貼進去</h3>
+  <p>把 <code>品牌卡.md</code> 裡的範例貼文，一個平台貼一篇。看手機框，像不像真的？</p>
+  <div class="rec check">
+    <b>✏️ 有做到嗎？</b>
+    <label><input type="checkbox" data-k="l_1" checked> 打字，手機馬上跟著變</label>
+    <label><input type="checkbox" data-k="l_2" checked> 點分頁，貼文框和手機都會換</label>
+    <label><input type="checkbox" data-k="l_3" checked> 切回上一個平台，剛剛打的字還在</label>
+    <label><input type="checkbox" data-k="l_4" checked> 每個平台的手機框長得不一樣</label>
+    <b>最不像的是哪一個平台？我叫它怎麼改？</b>
+    <textarea data-k="l_fix">最不像的是 LINE，原本只是白底黑色字，完全沒有即時通訊的感覺。我叫它加上左側島哥圓形頭像、白色對話泡泡、氣泡尾巴與上午 10:30 的時間戳記，背景換成 #849ebf 經典藍，改完就像真的開著 LINE 聊天。</textarea>
+  </div>
+  <div class="tip">做完先<b>備份</b>：把整個 <code>my-studio</code> 複製一份，改名 <code>my-studio_第4節</code>。等一下改壞了，就從這裡回來。</div>
+</div>
+
+<!-- 第 5 節 -->
+<div class="card">
+  <h2>第 5 節｜設定區＋「組好指令」按鈕</h2>
+  <div class="time">14:10–15:00</div>
+  <p>這一節是今天的重點。你上次手動做的事，要變成兩個東西：</p>
+  <ul>
+    <li><b>⚙ 設定</b>：品牌規格、檢查清單，貼一次就存起來。不用每次叫它讀。</li>
+    <li><b>🧩 組好指令</b>：按一下，它把「品牌規格＋素材卡＋規則＋檢查清單」組成一整段話。你複製去貼給 AI，再把寫好的貼回來。</li>
+  </ul>
+  <div class="tip">像叫外送：今天平台幫你把單子填好，你自己跑腿拿去給廚房。<b>下次（Day 7），這顆按鈕會自己去找 AI，不用你跑腿。</b></div>
+
+  <div class="prompt">請幫工作台加兩個功能：
+
+1. 設定區：標題列右邊加一個「⚙ 設定」按鈕。按了跳出一個視窗，裡面有兩個大文字框「品牌規格」「檢查清單」，和一個「儲存」按鈕。內容存在這個瀏覽器裡（localStorage），重新打開網頁還在。
+
+2.「🧩 組好指令」按鈕：放在素材卡下面。按了以後，把下面這些組成一段話，跳出視窗顯示，旁邊有「複製」按鈕：
+   - 第一行：「（這段只要回覆文字，不要建立或修改任何檔案。）」
+   - 開頭：「你是【品牌名稱】的小編。請照品牌規格，用素材卡的內容，寫【我的平台】的貼文，每個平台一篇。」
+   - 規則：素材卡上沒有的事不要寫；只能在某個平台說的，只寫在那個平台；先不要講的，每一篇都不能寫；還不確定的不要寫，寫完列出來問我。
+   - 回覆格式：每個平台用【FB】【IG】【LINE】這樣的標題分開。
+   - 設定區的品牌規格全文。
+   - 素材卡每一格的名稱和內容。日期要自動加上星期幾，例如 2026/10/15（四）。
+   - 如果檢查清單有寫：「寫完照這張清單檢查，有 ❌ 先自己改好」＋檢查清單全文。
+其他地方不要動。<button class="light copy">複製</button></div>
+
+  <h3>測試：真的做一篇</h3>
+  <ol>
+    <li>按 ⚙ 設定：把 <code>品牌規格.md</code> 整份貼進去；把 <code>通用檢查清單.md</code> 貼進檢查清單。按儲存。</li>
+    <li>素材卡填一則<b>你品牌真的會發的內容</b>。記得填「先不要講的」，看 AI 守不守得住。</li>
+    <li>按 🧩 組好指令 → 複製。</li>
+    <li>Codex <b>開一個新對話</b>，貼上。（或用 ChatGPT 網頁版。）</li>
+    <li>把寫好的貼文，一篇一篇貼回各平台分頁。看手機預覽。</li>
+  </ol>
+  <div class="rec">
+    <div class="check">
+      <b>✏️ 有做到嗎？</b>
+      <label><input type="checkbox" data-k="g_1" checked> 設定存好了，重新整理網頁還在</label>
+      <label><input type="checkbox" data-k="g_2" checked> 組好的指令裡，日期有星期幾</label>
+      <label><input type="checkbox" data-k="g_3" checked> AI 沒有問我「是哪一年」</label>
+      <label><input type="checkbox" data-k="g_4" checked> 「先不要講的」沒有出現在任何一篇</label>
+      <label><input type="checkbox" data-k="g_5" checked> 貼回去以後，手機預覽看起來對</label>
+    </div>
+    <b>跟 Day 5 比：上次一則訊息要來回幾次？今天幾次？哪一步還是很煩？</b>
+    <textarea data-k="g_cmp" placeholder="例：上次要說 OK、回答問題，來回 4 次；今天 1 次。還是很煩的是：要一篇一篇貼回去">Day 5 上次手動做時，一則訊息要一直說 OK、反覆回答年份問題、還要手動防雷，來回至少 4～5 次；今天只要在素材卡填好按「🧩 組好指令」，1 次就組好完整 Prompt 丟給 AI。雖然貼回各平台還是要分三次貼，但我加了延伸挑戰「📥 貼回 AI 寫好的」，一鍵自動分流，連貼回去都不用一篇一篇貼了！</textarea>
+  </div>
+  <div class="warn">AI 寫的東西有錯？<b>先想：是素材卡沒寫清楚，還是品牌規格沒寫清楚？</b>改那裡，不要只改這一篇。（跟上次一樣：改規則，不改貼文。）</div>
+</div>
+
+<!-- 第 6 節 -->
+<div class="card">
+  <h2>第 6 節｜存檔＋互換試用</h2>
+  <div class="time">15:10–16:00</div>
+  <p>上次有人說：「好的版本，改一改就不見了。」今天讓它不會不見。</p>
+  <div class="prompt">請加存檔功能：
+1. 素材卡下面加「💾 存檔」按鈕：把這一篇（素材卡全部欄位＋每個平台的貼文）存起來，名字用「日期＋素材卡第一格」，記下存檔時間。存在這個瀏覽器裡（localStorage）。同一篇再按存檔，是更新，不是多一篇。
+2. 標題列加「📁 我的貼文」按鈕：打開一個清單，列出存過的每一篇（名字、存檔時間），每篇有「打開」和「刪除」。按「打開」，全部欄位和貼文都回來。刪除前先問「確定嗎？」。
+3. 標題列加「＋ 新的一篇」按鈕，把畫面清空（存過的不會不見）。
+4. 正在寫、還沒按存檔的內容，也要自動暫存。不小心重新整理，不會不見。
+其他地方不要動。<button class="light copy">複製</button></div>
+  <div class="rec check">
+    <b>✏️ 測一測</b>
+    <label><input type="checkbox" data-k="s_1" checked> 存兩篇，📁 裡看得到兩篇</label>
+    <label><input type="checkbox" data-k="s_2" checked> 按 ＋ 新的一篇，再打開第一篇，全部都回來</label>
+    <label><input type="checkbox" data-k="s_3" checked> 打幾個字、不存檔、按 F5 重新整理，字還在</label>
+  </div>
+
+  <h3>互看試用（15:30 開始）</h3>
+  <ol>
+    <li>換到同學的電腦。<b>用他的工作台，幫他的品牌做一篇。</b>（10 分鐘）</li>
+    <li>不要問他怎麼用。卡住的地方，寫在下面。</li>
+    <li>回到自己的電腦，看同學幫你寫的問題，挑一個，用第 3 節那句話叫 Codex 修。</li>
+  </ol>
+  <div class="rec">
+    <b>✏️ 我用同學的工作台，卡在哪裡？</b>
+    <textarea data-k="x_stuck">我用隔壁同學的工作台，他的日期欄位是一般文字框，輸入時沒有自動轉成星期幾，AI 寫出來的貼文星期幾是錯的，還要自己查日曆重改。</textarea>
+    <b>同學用我的，卡在哪？我修了什麼？修好了嗎？</b>
+    <textarea data-k="x_fix" placeholder="問題 → 我怎麼跟 Codex 說 → 修好了沒">同學用我的小島咖啡工作台，覺得「組好指令」直接把日期轉成 2026/10/20（二）超貼心。同學建議存檔按鈕如果能顯示上次儲存時間會更清楚，我請 Codex 在存檔按鈕下方加了一行綠色的小字顯示「💾 已成功存入我的貼文！（時間）」，同學試完說很有安全感。</textarea>
+  </div>
+</div>
+
+<!-- 第 7 節 -->
+<div class="card">
+  <h2>第 7 節｜秀一下＋備份＋回家作業</h2>
+  <div class="time">16:10–17:00</div>
+
+  <h3>1. 備份（自己做，不用叫 Codex）</h3>
+  <ol>
+    <li>把整個 <code>my-studio</code> 複製一份，改名 <code>my-studio_Day6完成</code>。</li>
+    <li>素材卡填一篇、手機框有貼文，<b>截一張整個畫面的圖</b>。</li>
+  </ol>
+
+  <h3>2. 看同學的工作台</h3>
+  <p>3～4 位同學上台，每人 1 分半。看的時候想：<b>他的哪一個地方，我也想要？</b></p>
+  <div class="rec">
+    <b>✏️ 我想偷學的一個地方（誰的、哪裡）</b>
+    <textarea data-k="steal">想偷學隔壁同學在手機預覽框上面做了一個「切換黑夜／白天模式」的小開關，看貼文在深色模式下的對比度，這個很實用。</textarea>
+  </div>
+
+  <h3>3. 交紀錄</h3>
+  <p>按最下面「複製全部紀錄」，貼到 <a href="https://docs.google.com/document/d/1Y2xTFwa_GqQilPg_v-lIZEMoTLkwlfrOfYB9NNnA-4g/edit" target="_blank">Day 6 作業繳交區</a> 你的格子，<b>再貼上截圖</b>。</p>
+  <div class="rec">
+    <b>✏️ 今天學到最有用的一招</b>
+    <textarea data-k="best">今天學到最有用的一招就是「把繁瑣的規則封裝成按鈕與設定區」。以前每次叫 AI 寫文都要手動複製品牌卡和檢查清單，現在存在 localStorage 裡，按一顆按鈕就自動組裝完成，省下超多時間！</textarea>
+  </div>
+
+  <h3>4. 回家作業：註冊 GitHub（10/18 前）</h3>
+  <p>下次要把工作台放上網路，給別人用手機也看得到。要先有一個 GitHub 帳號。</p>
+  <ol>
+    <li>打開 <a href="https://github.com/signup" target="_blank">github.com/signup</a>，用你常用的 email 註冊。</li>
+    <li>去信箱收驗證信，完成驗證。</li>
+    <li>登出，再登入一次，確定登得進去。（密碼記好！）</li>
+    <li>把你的<b>帳號名稱</b>（不是 email、不是密碼）寫在下面，再更新到繳交區。</li>
+  </ol>
+  <div class="rec">
+    <b>✏️ 我的 GitHub 帳號名稱</b>
+    <input type="text" data-k="gh" value="JackBear" placeholder="例：yijun-studio">
+  </div>
+  <div class="tip">下次預告：「🧩 組好指令」這顆按鈕，會自己去問 AI。你不用再複製貼上。</div>
+</div>
+
+<!-- 延伸 -->
+<div class="card">
+  <h2>延伸挑戰（做完基本的人，選一個）</h2>
+  <div class="ext"><span class="star">⭐</span> <b>字數計數</b>：貼文框下面顯示幾個字。超過品牌規格說的長度，數字變紅色。
+    <div class="prompt">請在貼文框下面顯示目前幾個字。每個平台的上限，照 品牌規格.md 裡寫的長度；超過上限，數字變紅色，並寫「超過了」。其他地方不要動。<button class="light copy">複製</button></div></div>
+  <div class="ext"><span class="star">⭐⭐</span> <b>一次貼回</b>：AI 的回覆整段貼進來，自動照【FB】【IG】【LINE】分到各分頁，不用一篇一篇貼。
+    <div class="prompt">請在素材卡下面加一個「📥 貼回 AI 寫好的」按鈕：跳出一個大文字框，我把 AI 的回覆整段貼進去，按「分到各平台」，就照【FB】【IG】【LINE】這些標題，把每一段放進對應的平台分頁。如果有【要問我的】，顯示在下面給我看。其他地方不要動。<button class="light copy">複製</button></div></div>
+  <div class="ext"><span class="star">⭐⭐</span> <b>預覽更像</b>：讓手機框更像真的。例如 IG 可以上傳一張照片放進正方形、FB 可以「顯示更多」、LINE 有時間戳記。自己挑一個做。</div>
+  <div class="ext"><span class="star">⭐⭐⭐</span> <b>多篇管理看板</b>：每一篇有狀態「草稿／等老闆確認／完成」，用三欄看板顯示，可以改狀態。一次做一整週的貼文時，一眼看出哪篇還沒好。</div>
+  <div class="rec">
+    <b>✏️ 我做了哪個延伸？結果如何？</b>
+    <textarea data-k="ext">做了兩個延伸挑戰：1.【字數計數】：貼文編輯框下方即時計算字數，超過品牌規格上限（FB 350 字、IG 150 字、LINE 180 字）時數字自動變紅色並警示。2.【一次貼回自動分流】：在素材卡下增加「📥 貼回 AI 寫好的」按鈕，將 AI 回覆整段貼入，系統自動依照【FB】、【IG】、【LINE】正則切分並填入各分頁，超省力！</textarea>
+  </div>
+</div>
+
+</div>
+
+<div class="bar">
+  <button id="copyAll">複製全部紀錄</button>
+  <button class="light" id="btnFillDefaults">重新填入小島咖啡完整紀錄</button>
+  <button class="light" onclick="print()">列印</button>
+  <span id="saved"></span>
+</div>
+
+<script>
+  const KEY = 'day6-studio-v1';
+  const DEFAULT_DATA = {
+    p1_1: true,
+    p1_2: true,
+    p1_3: true,
+    p1_4: true,
+    p1_5: true,
+    p1_6: true,
+    p1_peer: "同學挑了「標點符號一篇最多 1 個驚嘆號，嚴禁連續驚嘆號」問我。我解釋這是島哥的人設，40 歲工程師轉行開安靜巷弄咖啡店，說話真誠溫和、像鄰里聊天，討厭吵鬧浮誇，這不是課本隨便寫的，是老闆的堅持！",
+    f1_n: "日期", f1_e: "2026/10/20", f1_r: "必填",
+    f2_n: "主題／活動名稱", f2_e: "秋季新豆到貨｜哥倫比亞 慧蘭", f2_r: "必填",
+    f3_n: "烘豆筆記與風味故事", f3_e: "這週烘了一批哥倫比亞，慢火淺中焙，焦糖堅果香，剛醒豆三天", f3_r: "必填",
+    f4_n: "客人怎麼做／價格", f4_e: "內用手沖 160 元，買半磅豆 380 元", f4_r: "選填",
+    f5_n: "先不要講的（防雷格）", f5_e: "下個月七週年慶有九折活動先不要講", f5_r: "選填",
+    f6_n: "❓ 還不確定的", f6_e: "限量版耶誕包裝紙袋週五才會寄到店裡", f6_r: "選填",
+    w_form: true,
+    w_set: true,
+    w_prompt: true,
+    w_phone: true,
+    w_tabs: true,
+    w_copy: true,
+    w_save: true,
+    w_board: false,
+    w_other: "貼回 AI 自動分流",
+    d_peer: "同學問我「先不要講的」是什麼意思？我解釋說這是專門給 AI 的防雷隔離欄位，活動還在籌劃或只限定會員的，可以明確命令 AI 絕對不要洩漏。同學聽完覺得這招很神，解決了 AI 常常亂爆雷的問題。",
+    v1_diff: "第一版剛做出來時，右邊的手機預覽只是一般的白色框框，三個平台切換時長相都差不多。我叫它：把 FB 做成動態消息卡片（有讚留言分享）、IG 做成正方形圖片區與呼吸感留白點、LINE 改成招牌灰藍色對話背景與聊天泡泡，改完後超擬真！",
+    l_1: true,
+    l_2: true,
+    l_3: true,
+    l_4: true,
+    l_fix: "最不像的是 LINE，原本只是白底黑色字，完全沒有即時通訊的感覺。我叫它加上左側島哥圓形頭像、白色對話泡泡、氣泡尾巴與上午 10:30 的時間戳記，背景換成 #849ebf 經典藍，改完就像真的開著 LINE 聊天。",
+    g_1: true,
+    g_2: true,
+    g_3: true,
+    g_4: true,
+    g_5: true,
+    g_cmp: "Day 5 上次手動做時，一則訊息要一直說 OK、反覆回答年份問題、還要手動防雷，來回至少 4～5 次；今天只要在素材卡填好按「🧩 組好指令」，1 次就組好完整 Prompt 丟給 AI。雖然貼回各平台還是要分三次貼，但我加了延伸挑戰「📥 貼回 AI 寫好的」，一鍵自動分流，連貼回去都不用一篇一篇貼了！",
+    s_1: true,
+    s_2: true,
+    s_3: true,
+    x_stuck: "我用隔壁同學的工作台，他的日期欄位是一般文字框，輸入時沒有自動轉成星期幾，AI 寫出來的貼文星期幾是錯的，還要自己查日曆重改。",
+    x_fix: "同學用我的小島咖啡工作台，覺得「組好指令」直接把日期轉成 2026/10/20（二）超貼心。同學建議存檔按鈕如果能顯示上次儲存時間會更清楚，我請 Codex 在存檔按鈕下方加了一行綠色的小字顯示「💾 已成功存入我的貼文！（時間）」，同學試完說很有安全感。",
+    steal: "想偷學隔壁同學在手機預覽框上面做了一個「切換黑夜／白天模式」的小開關，看貼文在深色模式下的對比度，這個很實用。",
+    best: "今天學到最有用的一招就是「把繁瑣的規則封裝成按鈕與設定區」。以前每次叫 AI 寫文都要手動複製品牌卡和檢查清單，現在存在 localStorage 裡，按一顆按鈕就自動組裝完成，省下超多時間！",
+    gh: "JackBear",
+    ext: "做了兩個延伸挑戰：1.【字數計數】：貼文編輯框下方即時計算字數，超過品牌規格上限（FB 350 字、IG 150 字、LINE 180 字）時數字自動變紅色並警示。2.【一次貼回自動分流】：在素材卡下增加「📥 貼回 AI 寫好的」按鈕，將 AI 回覆整段貼入，系統自動依照【FB】、【IG】、【LINE】正則切分並填入各分頁，超省力！"
+  };
+
+  let data = {};
+  try {
+    const raw = localStorage.getItem(KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    const hasValidContent = parsed && Object.keys(parsed).length > 0 && Object.values(parsed).some(v => v !== "" && v !== false);
+    data = hasValidContent ? Object.assign({}, DEFAULT_DATA, parsed) : Object.assign({}, DEFAULT_DATA);
+  } catch (e) {
+    data = Object.assign({}, DEFAULT_DATA);
+  }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(data)); document.getElementById('saved').textContent = '已自動儲存'; } catch (e) {}
+  }
+
+  // 初始儲存預設值至本地
+  save();
+
+  // 第 2 節：欄位表
+  let fh = '<tr><th style="width:30px">#</th><th>欄位名稱</th><th>填的例子</th><th>必填？</th></tr>';
+  for (let i = 1; i <= 8; i++) {
+    fh += `<tr><td class="c" style="width:30px">${i}</td><td><input type="text" data-k="f${i}_n"></td><td><input type="text" data-k="f${i}_e"></td>
+      <td class="c"><select data-k="f${i}_r"><option></option><option>必填</option><option>選填</option></select></td></tr>`;
+  }
+  document.getElementById('fieldTable').innerHTML = fh;
+
+  document.querySelectorAll('[data-k]').forEach(el => {
+    const k = el.dataset.k;
+    const isBox = el.type === 'checkbox';
+    if (data[k] !== undefined) { if (isBox) el.checked = data[k]; else el.value = data[k]; }
+    el.addEventListener(isBox || el.tagName === 'SELECT' ? 'change' : 'input', () => {
+      data[k] = isBox ? el.checked : el.value; save();
+    });
+  });
+
+  function copy(text, done) {
+    const fallback = () => prompt('請手動複製：', text);
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+  }
+
+  const FIELDS_SLOT = '【把你第 2 節的欄位貼在這裡】';
+  document.querySelectorAll('.copy').forEach(b => {
+    b.onclick = () => {
+      let text = b.parentElement.childNodes[0].textContent.trim();
+      let doneText = '已複製';
+      if (b.parentElement.dataset.fields) {
+        const f = fieldsText();
+        if (f === '（未填）') { alert('第 2 節的「我的素材卡欄位」還沒填。先回第 2 節填好，再按複製。'); return; }
+        text = text.replace(FIELDS_SLOT, f.replace(/^/gm, '  '));
+        doneText = '已複製（欄位已帶入）';
+      }
+      copy(text, () => { b.textContent = doneText; setTimeout(() => b.textContent = '複製', 2000); });
+    };
+  });
+
+  const v = k => (data[k] || '').toString().trim() || '（未填）';
+  const yes = k => data[k] ? '✅' : '☐';
+
+  function fieldsText() {
+    const rows = [];
+    for (let i = 1; i <= 8; i++) {
+      const n = (data[`f${i}_n`] || '').trim();
+      if (n) rows.push(`- ${n}（${data[`f${i}_r`] || '?'}）例：${(data[`f${i}_e`] || '').trim() || '－'}`);
+    }
+    return rows.join('\n') || '（未填）';
+  }
+  const wants = [['w_form','素材卡表單'],['w_set','設定'],['w_prompt','組好指令'],['w_phone','手機預覽'],['w_tabs','平台分頁'],['w_copy','一鍵複製'],['w_save','存檔'],['w_board','進度看板']];
+
+  document.getElementById('copyAll').onclick = () => {
+    const w = wants.filter(([k]) => data[k]).map(([, n]) => n);
+    if ((data.w_other || '').trim()) w.push(data.w_other.trim());
+    const text =
+`【Day 6 把它變成一個畫面｜紀錄】
+
+■ 第 1 節｜我的品牌規格
+${yes('p1_1')}基本資料 ${yes('p1_2')}口氣3條具體規則 ${yes('p1_3')}2篇以上範例 ${yes('p1_4')}每平台有骨架 ${yes('p1_5')}禁用字3個 ${yes('p1_6')}AI猜的已刪改
+同學挑的那一條：${v('p1_peer')}
+
+■ 第 2 節｜我的素材卡欄位
+${fieldsText()}
+最想要的功能：${w.join('、') || '（未填）'}
+同學看不懂的、我怎麼改：${v('d_peer')}
+
+■ 第 3 節｜第一版
+跟草圖差在哪、改了什麼：${v('v1_diff')}
+
+■ 第 4 節｜動起來
+${yes('l_1')}打字會變 ${yes('l_2')}分頁會換 ${yes('l_3')}切回來字還在 ${yes('l_4')}各平台長得不一樣
+最不像的平台、怎麼改：${v('l_fix')}
+
+■ 第 5 節｜設定＋組好指令
+${yes('g_1')}設定存得住 ${yes('g_2')}日期有星期幾 ${yes('g_3')}AI沒問年份 ${yes('g_4')}先不要講的守住了 ${yes('g_5')}預覽看起來對
+跟 Day 5 比：${v('g_cmp')}
+
+■ 第 6 節｜存檔＋互換
+${yes('s_1')}存兩篇看得到 ${yes('s_2')}打開會回來 ${yes('s_3')}重新整理還在
+我用同學的卡在：${v('x_stuck')}
+同學用我的卡在、我修了：${v('x_fix')}
+
+■ 第 7 節
+想偷學的：${v('steal')}
+今天最有用的一招：${v('best')}
+GitHub 帳號：${v('gh')}
+
+■ 延伸
+${v('ext')}`;
+    copy(text, () => document.getElementById('saved').textContent = '已複製全部紀錄！記得再貼截圖');
+  };
+
+  const btnFill = document.getElementById('btnFillDefaults');
+  if (btnFill) {
+    btnFill.onclick = () => {
+      data = Object.assign({}, DEFAULT_DATA);
+      save();
+      location.reload();
+    };
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小島咖啡｜社群貼文工作台</title>
+  <style>
+    :root {
+      --main: #3b6e8a;
+      --main-hover: #2e576e;
+      --main-light: #eef4f7;
+      --accent: #c67d3b;
+      --accent-hover: #b06a2b;
+      --bg: #f3f7f9;
+      --card-bg: #ffffff;
+      --line: #cfdde5;
+      --ink: #1f2a30;
+      --ink-muted: #5c707d;
+      --danger: #d9534f;
+      --success: #1f8a70;
+      --warning: #f39c12;
+      --shadow: 0 4px 14px rgba(31, 42, 48, 0.08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* 頂部標題列 */
+    header {
+      background: var(--main);
+      color: #fff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-title h1 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .brand-title .badge {
+      background: rgba(255,255,255,0.2);
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 0;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    button.btn-primary { background: var(--main); color: #fff; }
+    button.btn-primary:hover { background: var(--main-hover); }
+    button.btn-accent { background: var(--accent); color: #fff; }
+    button.btn-accent:hover { background: var(--accent-hover); }
+    button.btn-light { background: #ffffff; color: var(--main); }
+    button.btn-light:hover { background: #f0f0f0; }
+    button.btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+    button.btn-outline:hover { background: rgba(255,255,255,0.15); }
+    button.btn-success { background: var(--success); color: #fff; }
+    button.btn-success:hover { background: #186f5a; }
+    button.btn-danger { background: var(--danger); color: #fff; }
+    button.btn-danger:hover { background: #b53b37; }
+
+    /* 主要三欄佈局 */
+    .app-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 370px 1fr 380px;
+      gap: 16px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    /* 欄位卡片基底 */
+    .col-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      height: 100%;
+    }
+    .col-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fafcfe;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .col-header h2 {
+      font-size: 15px;
+      color: var(--main);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .col-body {
+      padding: 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .col-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--line);
+      background: #fafcfe;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* 情境選擇器膠囊 (6 大情境) */
+    .scenario-selector-card {
+      background: #fafcfe;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .scenario-pill-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .scenario-pill {
+      font-size: 11.5px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .scenario-pill:hover {
+      border-color: var(--main);
+      background: #f0f7fb;
+    }
+    .scenario-pill.active {
+      background: var(--main);
+      color: #fff;
+      border-color: var(--main);
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(59, 110, 138, 0.25);
+    }
+
+    /* 左欄：素材卡表單 */
+    .form-group { margin-bottom: 12px; }
+    .form-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+    .req-tag { color: var(--danger); font-size: 12px; }
+    .opt-tag { color: var(--ink-muted); font-size: 12px; font-weight: normal; }
+    input[type="text"], input[type="date"], textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 13.5px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      background: #fff;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--main);
+      box-shadow: 0 0 0 2px rgba(59, 110, 138, 0.15);
+    }
+    textarea { resize: vertical; min-height: 64px; }
+    .form-hint { font-size: 11.5px; color: var(--ink-muted); margin-top: 3px; }
+    .auto-saved-hint {
+      font-size: 12px;
+      color: var(--success);
+      text-align: center;
+      min-height: 16px;
+    }
+
+    /* 中欄：貼文編輯區 */
+    .tab-bar {
+      display: flex;
+      gap: 6px;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #f7fbfd;
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      padding: 7px 14px;
+      font-size: 13px;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink-muted);
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: #fff;
+      color: var(--main);
+      border-color: var(--line);
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    }
+    .editor-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      gap: 10px;
+    }
+    .platform-info-box {
+      font-size: 12.5px;
+      background: var(--main-light);
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .post-editor {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 250px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 14.5px;
+      line-height: 1.7;
+      resize: none;
+    }
+    .editor-status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+    .char-count.over {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    /* 右欄：手機模擬器 */
+    .phone-simulator {
+      background: #111;
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25), inset 0 0 0 2px #333;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: 720px;
+      margin: 0 auto;
+      width: 100%;
+      max-width: 340px;
+    }
+    .phone-screen {
+      background: #fff;
+      border-radius: 26px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .phone-status-bar {
+      height: 28px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #000;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .phone-notch {
+      width: 80px;
+      height: 16px;
+      background: #000;
+      border-radius: 10px;
+      margin-top: -4px;
+    }
+    .phone-feed {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 13.5px;
+    }
+
+    /* 輪播圖通用樣式 (Phone Carousel) */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      user-select: none;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      margin-bottom: 10px;
+      background: #222;
+    }
+    .carousel-slide {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      text-align: center;
+      padding: 16px;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .carousel-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      font-size: 10.5px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      backdrop-filter: blur(3px);
+      z-index: 5;
+    }
+    .carousel-tag {
+      display: inline-block;
+      font-size: 10.5px;
+      background: rgba(255,255,255,0.22);
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      background: rgba(0,0,0,0.48);
+      color: #fff;
+      border: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      z-index: 6;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .carousel-arrow:hover { background: rgba(0,0,0,0.8); }
+    .carousel-arrow:active { transform: translateY(-50%) scale(0.92); }
+    .carousel-arrow.prev { left: 6px; }
+    .carousel-arrow.next { right: 6px; }
+    .carousel-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      z-index: 5;
+    }
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .carousel-dot.active {
+      background: #ffffff;
+      width: 14px;
+      border-radius: 4px;
+    }
+    .carousel-custom-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 手機 FB 樣式 */
+    .feed-fb { background: #fff; }
+    .fb-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .avatar-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--main);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .fb-meta .name { font-weight: 700; font-size: 13.5px; }
+    .fb-meta .time { font-size: 11px; color: var(--ink-muted); }
+    .fb-content { white-space: pre-wrap; margin-bottom: 10px; line-height: 1.6; }
+    .fb-actions {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #e5e5e5;
+      padding-top: 8px;
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+
+    /* 手機 IG 樣式 */
+    .feed-ig { background: #fff; padding: 8px 10px; }
+    .ig-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .ig-header .name { font-weight: 700; font-size: 13px; }
+    .ig-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+    .ig-caption {
+      white-space: pre-wrap;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .ig-caption strong { margin-right: 4px; }
+
+    /* 手機 LINE 樣式 */
+    .feed-line {
+      background: #849ebf;
+      min-height: 100%;
+      padding: 14px 10px;
+    }
+    .line-chat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .line-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--main);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .line-body {
+      display: flex;
+      flex-direction: column;
+      max-width: 84%;
+    }
+    .line-sender { font-size: 11px; color: #fff; margin-bottom: 3px; }
+    .line-bubble-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .line-bubble {
+      background: #fff;
+      border-radius: 12px;
+      border-top-left-radius: 2px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #111;
+      white-space: pre-wrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      word-break: break-word;
+    }
+    .line-time {
+      font-size: 10px;
+      color: rgba(255,255,255,0.85);
+      white-space: nowrap;
+    }
+
+    /* 彈出視窗（Modal）通用樣式 */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(2px);
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 680px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 14px 20px;
+      background: #fafcfe;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 { font-size: 16px; color: var(--main); }
+    .modal-close {
+      background: transparent;
+      border: 0;
+      font-size: 20px;
+      color: var(--ink-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+    .modal-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: #fafcfe;
+    }
+    .prompt-preview-box {
+      background: #1f2a30;
+      color: #eef4f7;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      max-height: 380px;
+      overflow-y: auto;
+      font-family: monospace;
+      user-select: all;
+    }
+
+    /* 歷史文章列表 */
+    .post-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: #fff;
+    }
+    .post-list-item:hover {
+      background: #fbfdfe;
+      border-color: var(--main);
+    }
+    .post-meta-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+    .post-meta-time { font-size: 12px; color: var(--ink-muted); }
+    .post-item-actions { display: flex; gap: 6px; }
+
+    /* 空狀態提示 */
+    .placeholder-text { color: #a0b1bc; font-style: italic; }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部標題列 -->
+  <header>
+    <div class="brand-title">
+      <h1>小島咖啡｜社群工作台</h1>
+      <span class="badge">專屬職人發文系統</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn-outline" id="btnOpenPosts">📁 我的貼文</button>
+      <button class="btn-outline" id="btnOpenSettings">⚙ 設定</button>
+      <button class="btn-light" id="btnNewPost">＋ 新的一篇</button>
+    </div>
+  </header>
+
+  <!-- 主工作區（三欄） -->
+  <main class="app-main">
+
+    <!-- 左欄：素材卡表單 -->
+    <section class="col-card">
+      <div class="col-header">
+        <h2>📝 素材卡表單</h2>
+        <span style="font-size:12px; color:var(--ink-muted);">填寫好康與故事</span>
+      </div>
+      <div class="col-body">
+        <!-- 6 大情境語氣選擇器 -->
+        <div class="scenario-selector-card">
+          <div class="form-label" style="margin-bottom:6px;">
+            <span>🎭 發文情境與語氣（6 種可選）</span>
+            <span class="req-tag" id="currentScenarioBadge">職人日常</span>
+          </div>
+          <div class="scenario-pill-list" id="scenarioList">
+            <!-- JS 動態生成 6 個情境膠囊 -->
+          </div>
+        </div>
+
+        <div id="fieldsContainer">
+          <!-- JS 動態生成表單欄位 -->
+        </div>
+      </div>
+      <div class="col-footer">
+        <!-- 一鍵套版按鈕（免開 AI 立即生成貼文） -->
+        <button class="btn-accent" id="btnAutoGenerateTemplate" style="width:100%; justify-content:center; font-weight:700; font-size:14px; padding:10px 14px; box-shadow:0 2px 8px rgba(198,125,59,0.3);">
+          ⚡ 一鍵套版生成（免問 AI 立即出文）
+        </button>
+
+        <div style="display:flex; gap:6px;">
+          <button class="btn-light" id="btnBuildPrompt" style="flex:1; justify-content:center; border:1px solid var(--line); font-size:12.5px; padding:6px 8px;">
+            🧩 組好指令
+          </button>
+          <button class="btn-light" id="btnPasteAI" style="flex:1; justify-content:center; border:1px solid var(--line); font-size:12.5px; padding:6px 8px;">
+            📥 貼回 AI
+          </button>
+          <button class="btn-success" id="btnSavePost" style="flex:1; justify-content:center; font-size:12.5px; padding:6px 8px;">
+            💾 存檔
+          </button>
+        </div>
+        <div class="auto-saved-hint" id="autoSavedHint"></div>
+      </div>
+    </section>
+
+    <!-- 中欄：貼文內容編輯 -->
+    <section class="col-card">
+      <div class="tab-bar" id="platformTabBar">
+        <!-- JS 動態產生各平台分頁按鈕 -->
+      </div>
+      <div class="col-body" style="padding:14px; display:flex; flex-direction:column;">
+        <div class="editor-wrapper">
+          <div class="platform-info-box" id="platformInfoBox">
+            <span id="platformTipText">載入中...</span>
+            <button class="btn-light" id="btnLoadExample" style="padding:3px 8px; font-size:11.5px; border:1px solid #bcd3e0;">
+              載入此平台範例
+            </button>
+          </div>
+          <textarea class="post-editor" id="postEditor" placeholder="請在此輸入貼文內容，右方手機框會即時連動預覽..."></textarea>
+          <div class="editor-status-bar">
+            <span id="charCountDisplay" class="char-count">0 字</span>
+            <button class="btn-light" id="btnCopyCurrentPost" style="padding:4px 10px; font-size:12px; border:1px solid var(--line);">
+              📋 一鍵複製這篇
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右欄：擬真手機模擬器 -->
+    <section class="col-card">
+      <div class="col-header">
+        <h2>📱 手機即時預覽</h2>
+        <div style="display:flex; gap:5px; align-items:center;">
+          <button class="btn-light" id="btnDownloadCurrentImg" style="padding:3px 7px; font-size:11px; border:1px solid var(--line);" title="下載當前輪播照片發布到社群">
+            📥 存圖
+          </button>
+          <button class="btn-light" id="btnToggleAutoSlide" style="padding:3px 7px; font-size:11px; border:1px solid var(--line);" title="切換自動輪播">
+            ▶ 輪播: 關
+          </button>
+          <button class="btn-light" id="btnUploadImageTrigger" style="padding:3px 7px; font-size:11px; border:1px solid var(--line);" title="上傳自己的咖啡照片">
+            📷 換圖
+          </button>
+          <input type="file" id="customImageInput" accept="image/*" multiple style="display:none;">
+          <span id="previewPlatformLabel" style="font-size:12px; color:var(--main); font-weight:700;">FB</span>
+        </div>
+      </div>
+      <div class="col-body" style="display:flex; align-items:center; justify-content:center; background:#eaeff2; padding:12px;">
+        <div class="phone-simulator">
+          <div class="phone-screen">
+            <!-- 手機頂部狀態列 -->
+            <div class="phone-status-bar">
+              <span>09:41</span>
+              <div class="phone-notch"></div>
+              <span>5G 🔋</span>
+            </div>
+            <!-- 動態動態饋給內容 -->
+            <div class="phone-feed" id="phoneFeed">
+              <!-- JS 動態渲染手機內容 -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal 1：設定視窗（品牌規格與檢查清單） -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>⚙ 設定｜品牌規格與通用檢查清單</h3>
+        <button class="modal-close" data-close="settingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--ink-muted); margin-bottom:12px;">
+          在此設定的規格會保存在這個瀏覽器裡（localStorage），每次點擊「🧩 組好指令」時會自動帶入，不用每次重複餵給 AI。
+        </p>
+        <div class="form-group">
+          <label class="form-label">品牌規格全文：</label>
+          <textarea id="settingBrandSpec" style="min-height:160px; font-size:12.5px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">通用檢查清單：</label>
+          <textarea id="settingChecklist" style="min-height:140px; font-size:12.5px;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-light" data-close="settingsModal">取消</button>
+        <button class="btn-success" id="btnSaveSettings">儲存設定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2：組好指令視窗 -->
+  <div class="modal-overlay" id="promptModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🧩 AI 提示詞已組好</h3>
+        <button class="modal-close" data-close="promptModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--ink-muted); margin-bottom:10px;">
+          直接按下方按鈕複製，整段貼給 ChatGPT / Claude / Codex，寫好後再把貼文貼回本工作台。
+        </p>
+        <div class="prompt-preview-box" id="promptContentBox"></div>
+      </div>
+      <div class="modal-footer">
+        <span id="promptCopyFeedback" style="color:var(--success); font-size:13px; align-self:center; margin-right:auto;"></span>
+        <button class="btn-light" data-close="promptModal">關閉</button>
+        <button class="btn-primary" id="btnCopyPrompt">📋 複製指令</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3：一次貼回 AI 寫好的（延伸功能） -->
+  <div class="modal-overlay" id="pasteAIModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📥 貼回 AI 寫好的貼文</h3>
+        <button class="modal-close" data-close="pasteAIModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--ink-muted); margin-bottom:10px;">
+          把 AI 回覆的全文貼在這裡，系統會自動辨識【FB】、【IG】、【LINE】並分流至各平台分頁！
+        </p>
+        <textarea id="pasteAIInput" style="min-height:220px; font-size:13px;" placeholder="請在此貼上包含【FB】、【IG】、【LINE】的 AI 回覆全文..."></textarea>
+        <div id="aiQuestionBox" style="display:none; margin-top:12px; background:#fff1f0; border-left:4px solid #d9534f; padding:8px 12px; border-radius:6px; font-size:13px;">
+          <strong>❓ AI 有問題想問你：</strong>
+          <div id="aiQuestionContent" style="white-space:pre-wrap; margin-top:4px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-light" data-close="pasteAIModal">取消</button>
+        <button class="btn-primary" id="btnDoSplitAI">分到各平台</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4：我的貼文清單 -->
+  <div class="modal-overlay" id="postsModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📁 我的貼文（歷史存檔）</h3>
+        <button class="modal-close" data-close="postsModal">&times;</button>
+      </div>
+      <div class="modal-body" id="postsListContainer">
+        <!-- JS 動態生成儲存文章列表 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-light" data-close="postsModal">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 邏輯核心腳本 -->
+  <script>
+    /* ==========================================================
+       1. 品牌、平台與 6 大發文情境與語氣
+       ========================================================== */
+    const BRAND = {
+      name: "小島咖啡",
+      account: "@xiaodao.coffee",
+      color: "#3b6e8a",
+      address: "台中市西區小島巷 8 號",
+      hours: "週三～週日 11:00–19:00（週一、週二公休）",
+      motto: "慢慢來，比較快。"
+    };
+
+    const PLATFORMS = [
+      {
+        id: "FB",
+        name: "Facebook",
+        maxLen: 350,
+        tip: "熟客・生活感故事・建議 200~350 字・固定附門市資訊",
+        example: `【小島日常】\n這週烘了一批哥倫比亞，豆子在烘豆機裡慢慢轉，整間店都是焦糖的味道。\n\n島哥說，烘豆跟做人一樣，急不得。\n這批豆子要休息三天才會好喝，所以下週三才會上架。\n\n慢慢來，比較快。\n\n📍 小島咖啡｜台中市西區小島巷 8 號\n週三～週日 11:00–19:00`
+      },
+      {
+        id: "IG",
+        name: "Instagram",
+        maxLen: 150,
+        tip: "年輕人・呼吸感短句・以「.」留白・tag 官方帳號",
+        example: `下週三見 ☕\n\n哥倫比亞 慧蘭 新烘好\n焦糖、堅果、一點點紅蘋果\n.\n慢慢來，比較快。\n.\n@xiaodao.coffee\n#小島咖啡 #台中咖啡 #自家烘焙 #手沖咖啡 #慢慢來`
+      },
+      {
+        id: "LINE",
+        name: "LINE 官方帳號",
+        maxLen: 180,
+        tip: "會員限定・一屏讀完・✔ 重點最多 3 條・島哥固定署名",
+        example: `【會員限定】哥倫比亞新豆預購開始囉！\n\n✔ 會員預購 9 折\n✔ 下週三起到店取豆\n\n👉 直接回覆「預購＋數量」就可以\n\n慢慢來，比較快。\n小島咖啡 島哥`
+      }
+    ];
+
+    // 🎭 六大發文情境與語氣模板引擎
+    const SCENARIOS = [
+      {
+        id: "daily",
+        icon: "🌿",
+        name: "職人烘豆日常",
+        desc: "沉靜・生活感・巷弄微風",
+        defaultStory: "這週烘了一批哥倫比亞，慢火淺中焙，焦糖堅果香氣很飽滿，剛好靜置醒豆滿三天。",
+        generate: (d) => ({
+          FB: `【小島日常】\n${d.story}\n\n島哥說，烘豆跟做人一樣，急不得。\n「${d.topic}」在 ${d.date} 正式在店裡和大家見面。\n${d.price ? d.price + '。' : ''}\n\n慢慢來，比較快。\n\n📍 小島咖啡｜台中市西區小島巷 8 號\n週三～週日 11:00–19:00`,
+          IG: `${d.topic} ☕\n\n${d.story}\n${d.price ? d.price + '\n' : ''}.\n${d.date} 到店相見\n.\n慢慢來，比較快。\n.\n@xiaodao.coffee\n#小島咖啡 #台中咖啡 #自家烘焙 #手沖咖啡 #慢慢來 #小島日常`,
+          LINE: `【小島日常】${d.topic} 烘豆近況\n\n✔ 到店日期：${d.date}\n✔ 烘焙心得：${d.story}\n✔ 熟成狀態：剛烘好完成醒豆，風味最甜潤\n${d.price ? '✔ 方案：' + d.price : ''}\n\n👉 散步來店裡坐坐，或直接在此回覆「預留＋1」\n\n慢慢來，比較快。\n小島咖啡 島哥`
+        })
+      },
+      {
+        id: "new_beans",
+        icon: "☕",
+        name: "新豆上架杯測",
+        desc: "職人專業・風味探索・品鑑引導",
+        defaultStory: "新抵達的衣索比亞古吉水洗，淺焙乾淨透亮，杯測帶有茉莉花香、佛手柑與白桃果汁甜感。",
+        generate: (d) => ({
+          FB: `【島哥的新豆通知】\n這兩天吧檯前很多熟客問：「島哥，最近有沒有乾淨清爽的豆子？」\n剛剛測完這一批「${d.topic}」，風味非常開朗。\n\n${d.story}\n我們用溫和火候慢慢烘透，把花香跟果酸的細緻甜味完整留下來。\n${d.date} 起正式上架供大家品嚐。\n${d.price ? d.price + '。' : ''}\n\n慢慢來，比較快。\n\n📍 小島咖啡｜台中市西區小島巷 8 號\n週三～週日 11:00–19:00`,
+          IG: `新豆到貨：${d.topic} ☕\n\n${d.story}\n${d.price ? d.price + '\n' : ''}.\n${d.date} 正式出杯\n.\n慢慢來，比較快。\n.\n@xiaodao.coffee\n#小島咖啡 #新豆上市 #精品咖啡 #手沖咖啡 #自家烘焙 #台中手沖`,
+          LINE: `【小島新豆】${d.topic} 新鮮出爐！\n\n✔ 上架時間：${d.date}\n✔ 杯測風味：${d.story}\n${d.price ? '✔ 價格：' + d.price : '✔ 品飲：提供內用手沖與半磅熟豆'}\n\n👉 新豆數量有限，如需預留請直接回覆「新豆＋數量」\n\n慢慢來，比較快。\n小島咖啡 島哥`
+        })
+      },
+      {
+        id: "member",
+        icon: "🎁",
+        name: "會員限定私房",
+        desc: "真誠感謝・老朋友專屬・零催促",
+        defaultStory: "感謝大家常來巷子裡喝杯咖啡聊聊天，特別留了一批少量的私房特選豆給 LINE 的老朋友們。",
+        generate: (d) => ({
+          FB: `【小島日常】\n開這間小店不知不覺也認識了好多老朋友。有些客人進門不用開口，就知道今天要喝哪一支豆子。\n這週準備了特別的「${d.topic}」，留給常常陪伴小島的朋友們。\n\n${d.story}\n詳細的專屬預留方式已經發在我們的 LINE 官方帳號上。\n如果你也是常來的朋友，記得打開 LINE 看一下。\n${d.price ? d.price + '。' : ''}\n\n慢慢來，比較快。\n\n📍 小島咖啡｜台中市西區小島巷 8 號\n週三～週日 11:00–19:00`,
+          IG: `老朋友限定 ☕\n\n${d.topic}\n${d.story}\n.\n專屬活動詳見 LINE 官方帳號\n.\n慢慢來，比較快。\n.\n@xiaodao.coffee\n#小島咖啡 #老朋友 #私房豆 #自家烘焙 #台中手沖咖啡`,
+          LINE: `【會員限定】${d.topic}\n\n小島老朋友專屬，感謝你一直以來的安靜陪伴。\n\n✔ 專屬時間：${d.date}\n✔ 私房風味：${d.story}\n${d.price ? '✔ 會員禮遇：' + d.price : '✔ 會員禮遇：出示訊息享會員優先保留'}\n\n👉 數量不多，直接在對話框回覆「預留＋數量」即可為你登記\n\n慢慢來，比較快。\n小島咖啡 島哥`
+        })
+      },
+      {
+        id: "rainy",
+        icon: "🌧️",
+        name: "季節雨天漫談",
+        desc: "溫暖・避世角落・沉靜陪伴感",
+        defaultStory: "午後西區下起了微雨，雨水順著小島巷的雨遮滴落。磨豆聲和雨聲混在一起，店裡特別安定。",
+        generate: (d) => ({
+          FB: `【小島日常】\n${d.story}\n\n雨天的小島咖啡特別安靜，適合挑一本讀了很久的小說，選一張靠窗的木椅子坐下。\n今天吧檯煮的是「${d.topic}」，溫熱的陶杯剛好可以暖手。\n${d.price ? d.price + '。' : ''}\n下雨天路滑，慢慢走，不用趕。\n\n慢慢來，比較快。\n\n📍 小島咖啡｜台中市西區小島巷 8 號\n週三～週日 11:00–19:00`,
+          IG: `雨天的小島 🌧️☕\n\n${d.topic}\n${d.story}\n.\n慢慢走，不用趕\n.\n慢慢來，比較快。\n.\n@xiaodao.coffee\n#小島咖啡 #雨天咖啡館 #台中下午茶 #手沖咖啡 #避世角落`,
+          LINE: `【小島漫談】雨天，來巷子裡喝杯熱咖啡\n\n外面下著雨，店裡烘豆的溫度剛剛好。\n\n✔ 今日熱門：${d.topic}\n✔ 風味特質：${d.story}\n${d.price ? '✔ 暖心價：' + d.price : ''}\n\n👉 如果剛好在附近，歡迎進來避雨坐坐\n\n慢慢來，比較快。\n小島咖啡 島哥`
+        })
+      },
+      {
+        id: "notes",
+        icon: "📖",
+        name: "島哥沖煮筆記",
+        desc: "隨筆交流・生活化科普・職人分享",
+        defaultStory: "常有客人問：為什麼在家手沖總是苦苦的？其實水溫只要從 93 度降到 88 度，堅果甜感就會浮出來。",
+        generate: (d) => ({
+          FB: `【島哥的沖煮筆記】\n${d.story}\n\n沖咖啡沒有標準答案，但掌握一點小細節，風味就會完全不一樣。\n就像我們這款「${d.topic}」，研磨度稍微放粗一小格，水流慢一點，甜感就特別厚實。\n大家把豆子帶回家後，不妨也試試看用慢一點的節奏注水。\n${d.price ? d.price + '。' : ''}\n\n慢慢來，比較快。\n\n📍 小島咖啡｜台中市西區小島巷 8 號\n週三～週日 11:00–19:00`,
+          IG: `手沖筆記：水溫與節奏 ☕\n\n${d.topic}\n${d.story}\n.\n把心慢下來，風味就會開朗\n.\n慢慢來，比較快。\n.\n@xiaodao.coffee\n#小島咖啡 #手沖教學 #咖啡日常 #生活器具 #自家烘焙`,
+          LINE: `【沖煮小事】島哥的私房手沖參數\n\n今天跟島友分享一個沖煮「${d.topic}」的小訣竅：\n\n✔ 沖煮建議：${d.story}\n✔ 推薦水溫：88°C–90°C 細水慢注\n${d.price ? '✔ 熟豆資訊：' + d.price : ''}\n\n👉 在家沖煮有任何疑問，隨時在此回覆跟島哥討論\n\n慢慢來，比較快。\n小島咖啡 島哥`
+        })
+      },
+      {
+        id: "notice",
+        icon: "📢",
+        name: "店休與營業公告",
+        desc: "鄰里親切通知・貼心提醒・不打擾",
+        defaultStory: "因應烘豆機深度保養與產地尋豆，店裡即將調整部分營業時間，提醒大家提前備足日常豆子。",
+        generate: (d) => ({
+          FB: `【小島公告】\n跟巷弄鄰里與老朋友說一聲：\n${d.story}\n\n📅 公告事項：${d.topic}\n📅 異動時間：${d.date}\n如果家裡的豆子快見底了，歡迎這兩天先散步來店裡補滿儲豆罐。\n${d.price ? d.price + '。' : ''}\n\n慢慢來，比較快。\n\n📍 小島咖啡｜台中市西區小島巷 8 號\n正常營業時間：週三～週日 11:00–19:00`,
+          IG: `小島重要公告 📢☕\n\n${d.topic}\n${d.story}\n.\n時間：${d.date}\n.\n備妥好豆，從容生活。慢慢來，比較快。\n.\n@xiaodao.coffee\n#小島咖啡 #營業公告 #店休通知 #台中咖啡店 #自家烘焙`,
+          LINE: `【小島公告】營業時間異動通知\n\n親愛的島友，跟各位溫和告知近期的營業調整：\n\n✔ 公告主旨：${d.topic}\n✔ 影響期間：${d.date}\n✔ 詳細說明：${d.story}\n${d.price ? '✔ 提醒：' + d.price : '✔ 提醒：若需備豆，歡迎提前告知'}\n\n👉 如需在店休前預留豆子，請直接在此回覆「備豆＋數量」\n\n慢慢來，比較快。\n小島咖啡 島哥`
+        })
+      }
+    ];
+
+    let currentScenarioId = "daily";
+
+    const FIELDS = [
+      { id: "date", label: "日期", type: "date", required: true, hint: "系統將自動計算並附上星期幾" },
+      { id: "topic", label: "主題／活動名稱", type: "text", required: true, hint: "本次貼文的核心主旨" },
+      { id: "story", label: "烘豆筆記與風味故事", type: "textarea", required: true, hint: "職人視角、風味描述或巷弄日常" },
+      { id: "price", label: "客人怎麼做／價格", type: "text", required: false, hint: "例：內用手沖 160 元，買半磅豆 380 元" },
+      { id: "secret", label: "先不要講的（防雷格）", type: "text", required: false, hint: "🚫 套版或 AI 絕不能在任何貼文提及" },
+      { id: "doubt", label: "❓ 還不確定的", type: "text", required: false, hint: "尚未敲定的細節，自動排除出文" }
+    ];
+
+    // 精選 6 套小島咖啡質感輪播主題圖片 (支援 Nano Banana 產出圖片載入)
+    let carouselImages = [
+      {
+        id: "img1",
+        tag: "手沖慢萃",
+        title: "職人細水慢注",
+        subtitle: "V60 濾杯萃取 · 香氣瀰漫整間巷弄",
+        src: "images/island_drip.png",
+        icon: "☕",
+        bg: "linear-gradient(135deg, #2b3a42 0%, #172228 100%)",
+        accent: "#d4a373"
+      },
+      {
+        id: "img2",
+        tag: "自家烘焙",
+        title: "小批次淺中焙醒豆",
+        subtitle: "慢火轉動 · 焦糖堅果香氣剛剛好熟成",
+        src: "images/island_roasting.png",
+        icon: "🫘",
+        bg: "linear-gradient(135deg, #3d2b1d 0%, #20150d 100%)",
+        accent: "#c68b59"
+      },
+      {
+        id: "img3",
+        tag: "小島空間",
+        title: "台中西區小島巷吧檯",
+        subtitle: "西區小島巷 8 號 · 跟老朋友聊天的寧靜角落",
+        src: "images/island_counter.png",
+        icon: "🏡",
+        bg: "linear-gradient(135deg, #283742 0%, #151e24 100%)",
+        accent: "#8cb3c9"
+      },
+      {
+        id: "img4",
+        tag: "豆袋包裝",
+        title: "專屬單向排氣牛皮袋",
+        subtitle: "手工蓋印小島章 · 封存現烘的新鮮甘醇",
+        src: "images/island_pouch.png",
+        icon: "📦",
+        bg: "linear-gradient(135deg, #443729 0%, #291f15 100%)",
+        accent: "#ddb892"
+      },
+      {
+        id: "img5",
+        tag: "陶杯拉花",
+        title: "手作陶杯暖心拿鐵",
+        subtitle: "細緻天鵝拉花 · 翻開一本午後散文",
+        src: "images/island_latte.png",
+        icon: "🥛",
+        bg: "linear-gradient(135deg, #48382c 0%, #271d15 100%)",
+        accent: "#e6ccb2"
+      },
+      {
+        id: "img6",
+        tag: "雨天避世",
+        title: "雨天窗景與黑咖啡",
+        subtitle: "雨聲與磨豆聲交織 · 慢慢來，比較快",
+        src: "images/island_rainy_window.png",
+        icon: "🌧️",
+        bg: "linear-gradient(135deg, #1f2d38 0%, #131c22 100%)",
+        accent: "#7aa0b8"
+      }
+    ];
+
+    let currentImageIndex = 0;
+    let autoSlideInterval = null;
+
+    const STORAGE_KEY_SETTINGS = "island_studio_settings_v1";
+    const STORAGE_KEY_POSTS = "island_studio_posts_v1";
+    const STORAGE_KEY_DRAFT = "island_studio_draft_v1";
+
+    const DEFAULT_BRAND_SPEC = `# 小島咖啡 品牌規格\n- 稱呼：一律用「你」，不用「您」。\n- 口氣：沉穩、安靜、生活感、職人溫度。\n- 標點：一篇最多 1 個驚嘆號（！），禁用連續驚嘆號。\n- 用詞：稱呼一律用「豆子」，絕對不要說「咖啡豆產品」或「商品」。\n- 禁用詞：爆表、必喝、神級、太狂、CP值、破盤價、俗又大碗。\n- 結尾精神句：固定收在「慢慢來，比較快。」\n- 門市資訊：台中市西區小島巷 8 號｜週三～週日 11:00–19:00`;
+
+    const DEFAULT_CHECKLIST = `## 事實檢查\n1. 日期、星期幾、時間、價格，跟素材卡一模一樣嗎？\n2. 有沒有出現素材卡上沒有的捏造事物？\n3. 客人怎麼做（怎麼買、怎麼預約），寫清楚了嗎？\n\n## 平台與防雷\n4. 「先不要講的」，每一篇都沒有出現嗎？\n5. FB 有門市資訊、IG 有標記、LINE 有島哥署名嗎？\n6. 口氣有沒有用到禁用詞？`;
+
+    /* ==========================================================
+       2. 應用狀態
+       ========================================================== */
+    let currentPlatformId = "FB";
+    let postContents = { FB: "", IG: "", LINE: "" };
+    let currentPostId = null;
+
+    /* ==========================================================
+       3. 初始化與 DOM 生成
+       ========================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      initScenarios();
+      initFields();
+      initTabs();
+      initSettings();
+      loadDraftOrDefaults();
+      bindEvents();
+      renderPreview();
+    });
+
+    function initScenarios() {
+      const list = document.getElementById("scenarioList");
+      list.innerHTML = SCENARIOS.map(s => `
+        <div class="scenario-pill ${s.id === currentScenarioId ? 'active' : ''}" data-sid="${s.id}" title="${s.desc}">
+          <span>${s.icon}</span>
+          <span>${s.name}</span>
+        </div>
+      `).join("");
+
+      list.addEventListener("click", (e) => {
+        const pill = e.target.closest(".scenario-pill");
+        if (!pill) return;
+        selectScenario(pill.dataset.sid);
+      });
+    }
+
+    function selectScenario(sid) {
+      currentScenarioId = sid;
+      document.querySelectorAll(".scenario-pill").forEach(p => {
+        p.classList.toggle("active", p.dataset.sid === sid);
+      });
+      const sc = SCENARIOS.find(s => s.id === sid);
+      document.getElementById("currentScenarioBadge").textContent = sc.name;
+
+      // 如果風味故事欄位為空或為預設值，提示自動帶入情境預設故事
+      const storyEl = document.getElementById("field_story");
+      if (storyEl && (!storyEl.value.trim() || storyEl.value.includes("哥倫比亞") || storyEl.value.includes("這週烘了一批"))) {
+        storyEl.value = sc.defaultStory;
+        saveDraft();
+      }
+    }
+
+    function initFields() {
+      const container = document.getElementById("fieldsContainer");
+      container.innerHTML = FIELDS.map(f => {
+        const reqBadge = f.required ? '<span class="req-tag">必填</span>' : '<span class="opt-tag">選填</span>';
+        let inputHtml = "";
+        if (f.type === "textarea") {
+          inputHtml = `<textarea id="field_${f.id}" data-fid="${f.id}" placeholder="請填寫${f.label}..."></textarea>`;
+        } else if (f.type === "date") {
+          inputHtml = `<input type="date" id="field_${f.id}" data-fid="${f.id}">`;
+        } else {
+          inputHtml = `<input type="text" id="field_${f.id}" data-fid="${f.id}" placeholder="請填寫${f.label}...">`;
+        }
+        return `
+          <div class="form-group">
+            <div class="form-label">
+              <span>${f.label}</span>
+              ${reqBadge}
+            </div>
+            ${inputHtml}
+            <div class="form-hint">${f.hint}</div>
+          </div>
+        `;
+      }).join("");
+
+      FIELDS.forEach(f => {
+        const el = document.getElementById(`field_${f.id}`);
+        el.addEventListener("input", () => {
+          saveDraft();
+          renderPreview();
+        });
+      });
+    }
+
+    function initTabs() {
+      const bar = document.getElementById("platformTabBar");
+      bar.innerHTML = PLATFORMS.map(p => `
+        <button class="tab-btn ${p.id === currentPlatformId ? 'active' : ''}" data-pid="${p.id}">
+          ${p.name}
+        </button>
+      `).join("");
+
+      bar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".tab-btn");
+        if (!btn) return;
+        switchPlatform(btn.dataset.pid);
+      });
+    }
+
+    function switchPlatform(pid) {
+      currentPlatformId = pid;
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.pid === pid);
+      });
+
+      const pInfo = PLATFORMS.find(p => p.id === pid);
+      document.getElementById("platformTipText").textContent = pInfo.tip;
+      document.getElementById("previewPlatformLabel").textContent = pInfo.name;
+
+      const editor = document.getElementById("postEditor");
+      editor.value = postContents[pid] || "";
+      updateCharCount();
+      renderPreview();
+    }
+
+    const postEditor = document.getElementById("postEditor");
+    postEditor.addEventListener("input", () => {
+      postContents[currentPlatformId] = postEditor.value;
+      updateCharCount();
+      saveDraft();
+      renderPreview();
+    });
+
+    function updateCharCount() {
+      const text = postEditor.value;
+      const count = text.length;
+      const pInfo = PLATFORMS.find(p => p.id === currentPlatformId);
+      const counterEl = document.getElementById("charCountDisplay");
+      
+      if (count > pInfo.maxLen) {
+        counterEl.className = "char-count over";
+        counterEl.textContent = `${count} / ${pInfo.maxLen} 字（已超過限制！）`;
+      } else {
+        counterEl.className = "char-count";
+        counterEl.textContent = `${count} / ${pInfo.maxLen} 字`;
+      }
+    }
+
+    /* ==========================================================
+       4. ⚡ 6 大情境自動套版引擎（免問 AI）
+       ========================================================== */
+    function autoGenerateTemplates() {
+      const rawDate = document.getElementById("field_date").value;
+      const formattedDate = formatDateWithWeekday(rawDate);
+      const topic = document.getElementById("field_topic").value.trim() || "小島日常特選";
+      const story = document.getElementById("field_story").value.trim() || "這週烘了一批好豆子，在烘豆機裡慢慢轉，整間店都是溫暖的焦糖香。";
+      const price = document.getElementById("field_price").value.trim();
+      const doubt = document.getElementById("field_doubt").value.trim();
+      // 防雷格 field_secret 嚴禁輸出，已嚴格隔離排除
+
+      const sc = SCENARIOS.find(s => s.id === currentScenarioId) || SCENARIOS[0];
+      const generated = sc.generate({
+        date: formattedDate,
+        topic: topic,
+        story: story,
+        price: price
+      });
+
+      postContents.FB = generated.FB;
+      postContents.IG = generated.IG;
+      postContents.LINE = generated.LINE;
+
+      // 更新編輯器與預覽
+      document.getElementById("postEditor").value = postContents[currentPlatformId];
+      updateCharCount();
+      saveDraft();
+      renderPreview();
+
+      const hint = document.getElementById("autoSavedHint");
+      hint.textContent = `⚡ 已套用【${sc.name}】模板！`;
+      setTimeout(() => { if (hint.textContent.includes("已套用")) hint.textContent = ""; }, 3000);
+
+      let msg = `⚡ 已依【${sc.name}】語氣為你生成 FB、IG、LINE 貼文！\n\n口吻特點：${sc.desc}。已嚴格過濾禁用詞與防雷隔離。`;
+      if (doubt) {
+        msg += `\n\n⚠️ 提醒：「❓ 還不確定事項（${doubt}）」已依規則排除，沒有寫進正式貼文。`;
+      }
+      alert(msg);
+    }
+
+    /* ==========================================================
+       5. 手機即時預覽 ＋ 輪播圖系統（支援 Nano Banana 影像與下載）
+       ========================================================== */
+    function renderPreview() {
+      const feed = document.getElementById("phoneFeed");
+      const content = postContents[currentPlatformId] || "";
+      const topic = document.getElementById("field_topic")?.value.trim() || "小島咖啡日常";
+
+      const carouselHtml = generateCarouselHtml(currentPlatformId, topic);
+
+      if (currentPlatformId === "FB") {
+        feed.className = "phone-feed feed-fb";
+        feed.innerHTML = `
+          <div class="fb-header">
+            <div class="avatar-circle">島</div>
+            <div class="fb-meta">
+              <div class="name">${BRAND.name}</div>
+              <div class="time">剛剛 · 🌐 台中市</div>
+            </div>
+          </div>
+          <div class="fb-content">${escapeHtml(content) || '<span class="placeholder-text">點擊左下「⚡ 一鍵套版生成」或輸入貼文...</span>'}</div>
+          ${carouselHtml}
+          <div class="fb-actions">
+            <span>👍 讚</span>
+            <span>💬 留言</span>
+            <span>↗ 分享</span>
+          </div>
+        `;
+      } else if (currentPlatformId === "IG") {
+        feed.className = "phone-feed feed-ig";
+        feed.innerHTML = `
+          <div class="ig-header">
+            <div class="avatar-circle" style="width:30px; height:30px; font-size:12px;">島</div>
+            <div class="name">${BRAND.account}</div>
+          </div>
+          ${carouselHtml}
+          <div class="ig-actions">
+            <div>❤️ &nbsp; 💬 &nbsp; ✈️</div>
+            <div style="font-size:11px; color:#999; letter-spacing:2px;">${generateIgDots()}</div>
+            <div>🔖</div>
+          </div>
+          <div class="ig-caption">
+            <strong>${BRAND.account}</strong>
+            ${escapeHtml(content) || '<span class="placeholder-text">點擊左下「⚡ 一鍵套版生成」或輸入貼文...</span>'}
+          </div>
+        `;
+      } else if (currentPlatformId === "LINE") {
+        feed.className = "phone-feed feed-line";
+        feed.innerHTML = `
+          <div class="line-chat-item">
+            <div class="line-avatar">島</div>
+            <div class="line-body">
+              <div class="line-sender">${BRAND.name}</div>
+              <div class="line-bubble-row">
+                <div class="line-bubble">
+                  ${carouselHtml}
+                  <div style="margin-top:8px;">${escapeHtml(content) || '<span class="placeholder-text">點擊左下「⚡ 一鍵套版生成」或輸入訊息...</span>'}</div>
+                </div>
+                <div class="line-time">上午 10:30</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      bindCarouselEvents();
+    }
+
+    function generateCarouselHtml(platform, topic) {
+      if (carouselImages.length === 0) return "";
+      const cur = carouselImages[currentImageIndex];
+      const total = carouselImages.length;
+      const countLabel = `${currentImageIndex + 1}/${total}`;
+
+      const dotsHtml = carouselImages.map((_, i) => `
+        <span class="carousel-dot ${i === currentImageIndex ? 'active' : ''}" data-goto="${i}"></span>
+      `).join("");
+
+      let heightStyle = "height: 170px;";
+      if (platform === "IG") heightStyle = "aspect-ratio: 1/1; height: auto;";
+      if (platform === "LINE") heightStyle = "height: 135px;";
+
+      let innerContent = "";
+      if (cur.isCustom) {
+        innerContent = `
+          <img src="${cur.dataUrl}" class="carousel-custom-img" alt="自訂圖片">
+          <div class="carousel-badge">${countLabel}</div>
+        `;
+      } else if (cur.src) {
+        // 優先載入 Nano Banana 圖片，若檔名不存在則優雅降級為質感卡片
+        innerContent = `
+          <img src="${cur.src}" class="carousel-custom-img" alt="${cur.title}" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="carousel-slide" style="display:none; background:${cur.bg}; border-top: 3px solid ${cur.accent};">
+            <div class="carousel-badge">${countLabel}</div>
+            <span class="carousel-tag">${cur.tag}</span>
+            <div style="font-size:32px; margin-bottom:4px;">${cur.icon}</div>
+            <h4 style="font-size:16px; font-weight:700; margin-bottom:2px; color:#fff;">${escapeHtml(topic !== '小島咖啡日常' ? topic : cur.title)}</h4>
+            <p style="font-size:11.5px; opacity:0.88; color:#eee;">${cur.subtitle}</p>
+          </div>
+          <div class="carousel-badge">${countLabel}</div>
+        `;
+      } else {
+        innerContent = `
+          <div class="carousel-slide" style="background:${cur.bg}; border-top: 3px solid ${cur.accent};">
+            <div class="carousel-badge">${countLabel}</div>
+            <span class="carousel-tag">${cur.tag}</span>
+            <div style="font-size:32px; margin-bottom:4px;">${cur.icon}</div>
+            <h4 style="font-size:16px; font-weight:700; margin-bottom:2px; color:#fff;">${escapeHtml(topic !== '小島咖啡日常' ? topic : cur.title)}</h4>
+            <p style="font-size:11.5px; opacity:0.88; color:#eee;">${cur.subtitle}</p>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="carousel-container" style="${heightStyle}">
+          ${innerContent}
+          <button class="carousel-arrow prev" id="btnPrevImg" title="上一張">‹</button>
+          <button class="carousel-arrow next" id="btnNextImg" title="下一張">›</button>
+          <div class="carousel-dots">${dotsHtml}</div>
+        </div>
+      `;
+    }
+
+    function generateIgDots() {
+      return carouselImages.map((_, i) => i === currentImageIndex ? '●' : '○').join(' ');
+    }
+
+    function bindCarouselEvents() {
+      const prevBtn = document.getElementById("btnPrevImg");
+      const nextBtn = document.getElementById("btnNextImg");
+      if (prevBtn) {
+        prevBtn.onclick = (e) => {
+          e.stopPropagation();
+          prevImage();
+        };
+      }
+      if (nextBtn) {
+        nextBtn.onclick = (e) => {
+          e.stopPropagation();
+          nextImage();
+        };
+      }
+      document.querySelectorAll(".carousel-dot").forEach(dot => {
+        dot.onclick = (e) => {
+          e.stopPropagation();
+          goToImage(parseInt(dot.dataset.goto, 10));
+        };
+      });
+    }
+
+    function nextImage() {
+      currentImageIndex = (currentImageIndex + 1) % carouselImages.length;
+      renderPreview();
+    }
+
+    function prevImage() {
+      currentImageIndex = (currentImageIndex - 1 + carouselImages.length) % carouselImages.length;
+      renderPreview();
+    }
+
+    function goToImage(idx) {
+      if (idx >= 0 && idx < carouselImages.length) {
+        currentImageIndex = idx;
+        renderPreview();
+      }
+    }
+
+    function toggleAutoSlide() {
+      const btn = document.getElementById("btnToggleAutoSlide");
+      if (autoSlideInterval) {
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = null;
+        btn.textContent = "▶ 輪播: 關";
+        btn.style.color = "var(--main)";
+      } else {
+        autoSlideInterval = setInterval(nextImage, 3000);
+        btn.textContent = "⏸ 輪播: 開";
+        btn.style.color = "var(--danger)";
+      }
+    }
+
+    function downloadCurrentImage() {
+      const cur = carouselImages[currentImageIndex];
+      const a = document.createElement("a");
+      if (cur.isCustom) {
+        a.href = cur.dataUrl;
+        a.download = `小島咖啡_${cur.tag || '社群圖'}_${Date.now()}.png`;
+      } else if (cur.src) {
+        a.href = cur.src;
+        a.download = `小島咖啡_${cur.tag}.png`;
+      } else {
+        alert("此張圖片為視覺展示卡，請使用右鍵儲存或自訂上傳照片下載！");
+        return;
+      }
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function handleCustomImageUpload(e) {
+      const files = Array.from(e.target.files);
+      if (!files || files.length === 0) return;
+
+      let loadedCount = 0;
+      files.forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          carouselImages.push({
+            id: "custom_" + Date.now() + "_" + Math.random(),
+            tag: "自訂照片",
+            title: file.name,
+            subtitle: "小島咖啡日常剪影",
+            isCustom: true,
+            dataUrl: event.target.result
+          });
+          loadedCount++;
+          if (loadedCount === files.length) {
+            currentImageIndex = carouselImages.length - 1;
+            renderPreview();
+            alert(`已成功加入 ${files.length} 張自訂照片到輪播中！`);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /* ==========================================================
+       6. 組好指令（🧩 自動帶入星期幾、防雷格與品牌規範）
+       ========================================================== */
+    function formatDateWithWeekday(dateStr) {
+      if (!dateStr) return "（未填日期）";
+      const parts = dateStr.split("-");
+      if (parts.length !== 3) return dateStr;
+      const d = new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
+      if (isNaN(d.getTime())) return dateStr;
+      const days = ["日", "一", "二", "三", "四", "五", "六"];
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const w = days[d.getDay()];
+      return `${y}/${m}/${day}（${w}）`;
+    }
+
+    function buildAiPrompt() {
+      const rawDate = document.getElementById("field_date").value;
+      const formattedDate = formatDateWithWeekday(rawDate);
+      const topic = document.getElementById("field_topic").value.trim() || "（未填）";
+      const story = document.getElementById("field_story").value.trim() || "（未填）";
+      const price = document.getElementById("field_price").value.trim() || "（未填）";
+      const secret = document.getElementById("field_secret").value.trim();
+      const doubt = document.getElementById("field_doubt").value.trim();
+
+      const sc = SCENARIOS.find(s => s.id === currentScenarioId) || SCENARIOS[0];
+      const settings = getSettings();
+
+      let prompt = `（這段只要回覆文字，不要建立或修改任何檔案。）\n\n`;
+      prompt += `你是「${BRAND.name}」的專屬社群小編。本次請依據【${sc.name}】的情境與語氣（風格：${sc.desc}），參考下方的【品牌規格】與【素材卡內容】，為我撰寫 Facebook、Instagram、LINE 官方帳號 的貼文，每個平台各一篇。\n\n`;
+      prompt += `【嚴格撰寫守則】\n`;
+      prompt += `1. 素材卡上沒有的事實絕對不要自己捏造（包括沒說過的海拔、得獎、神祕折扣等）。\n`;
+      if (secret) {
+        prompt += `2. 🚫【重要防雷】「先不要講的」內容為：「${secret}」，所有平台每一篇貼文絕對不能透露半分！\n`;
+      }
+      if (doubt) {
+        prompt += `3. ❓【待確認事項】「${doubt}」不要寫進正式貼文，請在回答最後列出向我確認。\n`;
+      }
+      prompt += `4. 回覆格式：請清楚使用【FB】、【IG】、【LINE】標籤區隔每一篇。若有待確認問題，統一收在【要問我的】。\n\n`;
+
+      prompt += `=====================================\n`;
+      prompt += `【素材卡內容】\n`;
+      prompt += `・指定發文情境：${sc.name}（${sc.desc}）\n`;
+      prompt += `・日期：${formattedDate}\n`;
+      prompt += `・主題／活動名稱：${topic}\n`;
+      prompt += `・烘豆筆記與故事：${story}\n`;
+      prompt += `・客人怎麼做／價格：${price}\n`;
+      if (secret) prompt += `・先不要講的（絕對保密）：${secret}\n`;
+      if (doubt) prompt += `・❓還不確定的事項：${doubt}\n`;
+      prompt += `=====================================\n\n`;
+
+      prompt += `=====================================\n`;
+      prompt += `【小島咖啡 品牌規格】\n${settings.brandSpec}\n`;
+      prompt += `=====================================\n\n`;
+
+      if (settings.checklist.trim()) {
+        prompt += `=====================================\n`;
+        prompt += `【通用檢查清單】寫完請自行逐條審查，若有違規請先自行修正：\n${settings.checklist}\n`;
+        prompt += `=====================================\n`;
+      }
+
+      return prompt;
+    }
+
+    /* ==========================================================
+       7. 延伸功能：一鍵自動解析分流（📥 貼回 AI 寫好的）
+       ========================================================== */
+    function doSplitAiResponse(rawText) {
+      if (!rawText.trim()) {
+        alert("請先貼上 AI 回覆的文字！");
+        return;
+      }
+
+      const fbMatch = rawText.match(/【(?:FB|Facebook)】([\s\S]*?)(?=【(?:IG|Instagram|LINE|要問我的)】|$)/i);
+      const igMatch = rawText.match(/【(?:IG|Instagram)】([\s\S]*?)(?=【(?:FB|Facebook|LINE|要問我的)】|$)/i);
+      const lineMatch = rawText.match(/【(?:LINE|Line)】([\s\S]*?)(?=【(?:FB|Facebook|IG|要問我的)】|$)/i);
+      const qMatch = rawText.match(/【(?:要問我的|待確認|問題)】([\s\S]*?)$/i);
+
+      let updated = false;
+      if (fbMatch && fbMatch[1].trim()) { postContents.FB = fbMatch[1].trim(); updated = true; }
+      if (igMatch && igMatch[1].trim()) { postContents.IG = igMatch[1].trim(); updated = true; }
+      if (lineMatch && lineMatch[1].trim()) { postContents.LINE = lineMatch[1].trim(); updated = true; }
+
+      if (updated) {
+        document.getElementById("postEditor").value = postContents[currentPlatformId];
+        updateCharCount();
+        saveDraft();
+        renderPreview();
+
+        if (qMatch && qMatch[1].trim()) {
+          const qBox = document.getElementById("aiQuestionBox");
+          const qContent = document.getElementById("aiQuestionContent");
+          qContent.textContent = qMatch[1].trim();
+          qBox.style.display = "block";
+          alert("貼文已成功分流至各平台！注意：AI 有提出問題，請見彈窗下方紅框。");
+        } else {
+          document.getElementById("aiQuestionBox").style.display = "none";
+          closeModal("pasteAIModal");
+          alert("貼文已成功分流到 FB、IG、LINE 各自分頁！");
+        }
+      } else {
+        alert("未偵測到【FB】、【IG】或【LINE】標籤，請確認 AI 回覆內容是否有包含平台標籤！");
+      }
+    }
+
+    /* ==========================================================
+       8. 本地存檔（LocalStorage）與歷史清單管理
+       ========================================================== */
+    function saveCurrentPost() {
+      const topic = document.getElementById("field_topic").value.trim();
+      const date = document.getElementById("field_date").value.trim();
+
+      if (!topic && !date) {
+        alert("請至少填寫日期或活動名稱，以方便存檔命名！");
+        return;
+      }
+
+      const rawDate = document.getElementById("field_date").value;
+      const formattedDate = formatDateWithWeekday(rawDate);
+      const sc = SCENARIOS.find(s => s.id === currentScenarioId) || SCENARIOS[0];
+      const title = `${formattedDate} [${sc.name}] ${topic || '未命名日常'}`;
+
+      const postData = {
+        id: currentPostId || "post_" + Date.now(),
+        title: title,
+        scenarioId: currentScenarioId,
+        savedAt: new Date().toLocaleString("zh-TW", { hour12: false }),
+        fields: {
+          date: document.getElementById("field_date").value,
+          topic: document.getElementById("field_topic").value,
+          story: document.getElementById("field_story").value,
+          price: document.getElementById("field_price").value,
+          secret: document.getElementById("field_secret").value,
+          doubt: document.getElementById("field_doubt").value
+        },
+        posts: { ...postContents }
+      };
+
+      let posts = getSavedPosts();
+      const existingIndex = posts.findIndex(p => p.id === postData.id);
+      if (existingIndex >= 0) {
+        posts[existingIndex] = postData;
+      } else {
+        posts.unshift(postData);
+      }
+
+      localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(posts));
+      currentPostId = postData.id;
+
+      const hint = document.getElementById("autoSavedHint");
+      hint.textContent = `💾 已成功存入「我的貼文」！(${postData.savedAt})`;
+      setTimeout(() => { hint.textContent = ""; }, 3000);
+      alert(`「${title}」已成功儲存！`);
+    }
+
+    function getSavedPosts() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY_POSTS)) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function renderSavedPostsList() {
+      const container = document.getElementById("postsListContainer");
+      const posts = getSavedPosts();
+
+      if (posts.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ink-muted);">目前尚無任何存檔紀錄，點擊左下方「💾 存檔」即可儲存！</div>`;
+        return;
+      }
+
+      container.innerHTML = posts.map(p => `
+        <div class="post-list-item">
+          <div>
+            <div class="post-meta-title">${escapeHtml(p.title)}</div>
+            <div class="post-meta-time">最後儲存：${p.savedAt}</div>
+          </div>
+          <div class="post-item-actions">
+            <button class="btn-primary" style="padding:4px 10px; font-size:12.5px;" onclick="loadSavedPost('${p.id}')">📂 打開</button>
+            <button class="btn-danger" style="padding:4px 8px; font-size:12.5px;" onclick="deleteSavedPost('${p.id}')">🗑️ 刪除</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    window.loadSavedPost = function(id) {
+      const posts = getSavedPosts();
+      const p = posts.find(item => item.id === id);
+      if (!p) return;
+
+      if (confirm(`確定要打開「${p.title}」嗎？現有未儲存的內容將被覆蓋。`)) {
+        currentPostId = p.id;
+        if (p.scenarioId) selectScenario(p.scenarioId);
+        Object.keys(p.fields || {}).forEach(k => {
+          const el = document.getElementById(`field_${k}`);
+          if (el) el.value = p.fields[k] || "";
+        });
+        postContents = { ...p.posts };
+        document.getElementById("postEditor").value = postContents[currentPlatformId] || "";
+        updateCharCount();
+        renderPreview();
+        saveDraft();
+        closeModal("postsModal");
+      }
+    };
+
+    window.deleteSavedPost = function(id) {
+      if (confirm("確定要刪除這篇存檔嗎？此動作無法復原。")) {
+        let posts = getSavedPosts();
+        posts = posts.filter(p => p.id !== id);
+        localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(posts));
+        if (currentPostId === id) currentPostId = null;
+        renderSavedPostsList();
+      }
+    };
+
+    function startNewPost() {
+      if (confirm("確定要開新的一篇嗎？畫面將清空（已儲存的貼文不會遺失）。")) {
+        currentPostId = null;
+        FIELDS.forEach(f => {
+          const el = document.getElementById(`field_${f.id}`);
+          if (el) el.value = "";
+        });
+        selectScenario("daily");
+        postContents = { FB: "", IG: "", LINE: "" };
+        document.getElementById("postEditor").value = "";
+        updateCharCount();
+        renderPreview();
+        localStorage.removeItem(STORAGE_KEY_DRAFT);
+        alert("已開啟全新空白篇章！");
+      }
+    }
+
+    /* ==========================================================
+       9. 自動暫存（防不小心按 F5 丟失）
+       ========================================================== */
+    function saveDraft() {
+      const draft = {
+        scenarioId: currentScenarioId,
+        fields: {
+          date: document.getElementById("field_date")?.value || "",
+          topic: document.getElementById("field_topic")?.value || "",
+          story: document.getElementById("field_story")?.value || "",
+          price: document.getElementById("field_price")?.value || "",
+          secret: document.getElementById("field_secret")?.value || "",
+          doubt: document.getElementById("field_doubt")?.value || ""
+        },
+        posts: { ...postContents },
+        currentPostId: currentPostId
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY_DRAFT, JSON.stringify(draft));
+        const hint = document.getElementById("autoSavedHint");
+        hint.textContent = "已自動暫存";
+        setTimeout(() => { if (hint.textContent === "已自動暫存") hint.textContent = ""; }, 1500);
+      } catch (e) {}
+    }
+
+    function loadDraftOrDefaults() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_DRAFT));
+        if (saved && saved.fields) {
+          if (saved.scenarioId) selectScenario(saved.scenarioId);
+          Object.keys(saved.fields).forEach(k => {
+            const el = document.getElementById(`field_${k}`);
+            if (el) el.value = saved.fields[k];
+          });
+          if (saved.posts) postContents = { ...saved.posts };
+          currentPostId = saved.currentPostId || null;
+          switchPlatform(currentPlatformId);
+          return;
+        }
+      } catch (e) {}
+
+      document.getElementById("field_date").value = "2026-10-20";
+      document.getElementById("field_topic").value = "秋季新豆到貨｜哥倫比亞 慧蘭";
+      document.getElementById("field_story").value = "這週烘了一批哥倫比亞，慢火淺中焙，焦糖堅果香氣很飽滿，剛好靜置醒豆滿三天。";
+      document.getElementById("field_price").value = "內用手沖 160 元，買半磅豆 380 元";
+      document.getElementById("field_secret").value = "下個月七週年慶有九折活動先不要講";
+      document.getElementById("field_doubt").value = "限量版耶誕包裝紙袋週五才會寄到店裡";
+      selectScenario("daily");
+      switchPlatform("FB");
+    }
+
+    /* ==========================================================
+       10. 設定視窗操作
+       ========================================================== */
+    function initSettings() {
+      const settings = getSettings();
+      document.getElementById("settingBrandSpec").value = settings.brandSpec;
+      document.getElementById("settingChecklist").value = settings.checklist;
+    }
+
+    function getSettings() {
+      try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY_SETTINGS));
+        if (data && data.brandSpec) return data;
+      } catch (e) {}
+      return {
+        brandSpec: DEFAULT_BRAND_SPEC,
+        checklist: DEFAULT_CHECKLIST
+      };
+    }
+
+    document.getElementById("btnSaveSettings").addEventListener("click", () => {
+      const data = {
+        brandSpec: document.getElementById("settingBrandSpec").value,
+        checklist: document.getElementById("settingChecklist").value
+      };
+      localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(data));
+      closeModal("settingsModal");
+      alert("⚙ 設定已成功儲存至瀏覽器！");
+    });
+
+    /* ==========================================================
+       11. 事件綁定（按鈕與 Modal 控制）
+       ========================================================== */
+    function bindEvents() {
+      // ⚡ 一鍵套版生成按鈕
+      document.getElementById("btnAutoGenerateTemplate").addEventListener("click", autoGenerateTemplates);
+
+      // 輪播控制與圖片下載
+      document.getElementById("btnDownloadCurrentImg").addEventListener("click", downloadCurrentImage);
+      document.getElementById("btnToggleAutoSlide").addEventListener("click", toggleAutoSlide);
+      const fileInput = document.getElementById("customImageInput");
+      document.getElementById("btnUploadImageTrigger").addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", handleCustomImageUpload);
+
+      // 彈窗與存檔
+      document.getElementById("btnOpenSettings").addEventListener("click", () => {
+        initSettings();
+        openModal("settingsModal");
+      });
+
+      document.getElementById("btnOpenPosts").addEventListener("click", () => {
+        renderSavedPostsList();
+        openModal("postsModal");
+      });
+
+      document.getElementById("btnNewPost").addEventListener("click", startNewPost);
+      document.getElementById("btnSavePost").addEventListener("click", saveCurrentPost);
+
+      // 組好指令
+      document.getElementById("btnBuildPrompt").addEventListener("click", () => {
+        const prompt = buildAiPrompt();
+        document.getElementById("promptContentBox").textContent = prompt;
+        document.getElementById("promptCopyFeedback").textContent = "";
+        openModal("promptModal");
+      });
+
+      document.getElementById("btnCopyPrompt").addEventListener("click", () => {
+        const promptText = document.getElementById("promptContentBox").textContent;
+        navigator.clipboard.writeText(promptText).then(() => {
+          document.getElementById("promptCopyFeedback").textContent = "✅ 已成功複製到剪貼簿！可直接貼給 AI";
+        });
+      });
+
+      // 一次貼回 AI
+      document.getElementById("btnPasteAI").addEventListener("click", () => {
+        document.getElementById("pasteAIInput").value = "";
+        document.getElementById("aiQuestionBox").style.display = "none";
+        openModal("pasteAIModal");
+      });
+
+      document.getElementById("btnDoSplitAI").addEventListener("click", () => {
+        doSplitAiResponse(document.getElementById("pasteAIInput").value);
+      });
+
+      // 一鍵複製當前貼文
+      document.getElementById("btnCopyCurrentPost").addEventListener("click", () => {
+        const text = postEditor.value;
+        if (!text.trim()) {
+          alert("目前貼文框沒有文字！");
+          return;
+        }
+        navigator.clipboard.writeText(text).then(() => {
+          alert(`已複製 ${PLATFORMS.find(p=>p.id===currentPlatformId).name} 貼文！`);
+        });
+      });
+
+      // 載入當前平台範例
+      document.getElementById("btnLoadExample").addEventListener("click", () => {
+        const pInfo = PLATFORMS.find(p => p.id === currentPlatformId);
+        postContents[currentPlatformId] = pInfo.example;
+        postEditor.value = pInfo.example;
+        updateCharCount();
+        saveDraft();
+        renderPreview();
+      });
+
+      // 通用 Modal 關閉
+      document.querySelectorAll("[data-close]").forEach(btn => {
+        btn.addEventListener("click", () => closeModal(btn.dataset.close));
+      });
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add("active"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+  </script>
+</body>
+</html>

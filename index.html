@@ -866,10 +866,58 @@
           <textarea class="post-editor" id="postEditor" placeholder="請在此輸入貼文內容，右方手機框會即時連動預覽..."></textarea>
           <div class="editor-status-bar">
             <span id="charCountDisplay" class="char-count">0 字</span>
-            <button class="btn-light" id="btnCopyCurrentPost" style="padding:4px 10px; font-size:12px; border:1px solid var(--line);">
-              📋 一鍵複製這篇
+            <div style="display:flex; gap:6px;">
+              <button class="btn-light" id="btnUndoPost" style="padding:4px 10px; font-size:12px; border:1px solid var(--line);" title="復原上一版貼文（再按一次換回來）">
+                ↩ 復原上一版
+              </button>
+              <button class="btn-light" id="btnCopyCurrentPost" style="padding:4px 10px; font-size:12px; border:1px solid var(--line);">
+                📋 一鍵複製這篇
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 💬 AI 小幫手 -->
+        <div class="assistant-panel" id="assistantPanel" style="margin-top:12px; border:1px solid #d5e2ec; border-radius:8px; padding:10px 12px; background:#f8fafc; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div style="font-size:13px; font-weight:700; color:var(--main); display:flex; align-items:center; gap:6px;">
+              <span>💬 AI 小幫手</span>
+              <span style="font-size:11.5px; font-weight:normal; color:var(--ink-muted);">（對話微調當前貼文）</span>
+            </div>
+            <button id="btnClearAssistantChat" class="btn-light" style="padding:2px 6px; font-size:11px; border:1px solid var(--line); display:none;" title="清除此平台對話紀錄">
+              🗑 清除對話
             </button>
           </div>
+
+          <!-- 對話紀錄區域（我說的、它回的） -->
+          <div class="assistant-chat-box" id="assistantChatBox" style="max-height:160px; overflow-y:auto; display:none; flex-direction:column; gap:6px; padding:8px 10px; background:#ffffff; border:1px solid #d9e2ec; border-radius:6px; font-size:12px;">
+            <!-- JS 動態生成對話紀錄 -->
+          </div>
+
+          <!-- 4 個快捷按鈕 -->
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn-light assistant-quick-btn" data-prompt="短一點" style="padding:4px 9px; font-size:12px; border:1px solid #c8d8e4; background:#fff; border-radius:14px; cursor:pointer;">
+              短一點
+            </button>
+            <button class="btn-light assistant-quick-btn" data-prompt="換開頭" style="padding:4px 9px; font-size:12px; border:1px solid #c8d8e4; background:#fff; border-radius:14px; cursor:pointer;">
+              換開頭
+            </button>
+            <button class="btn-light assistant-quick-btn" data-prompt="少一點 emoji" style="padding:4px 9px; font-size:12px; border:1px solid #c8d8e4; background:#fff; border-radius:14px; cursor:pointer;">
+              少一點 emoji
+            </button>
+            <button class="btn-light assistant-quick-btn" data-prompt="更像範例" style="padding:4px 9px; font-size:12px; border:1px solid #c8d8e4; background:#fff; border-radius:14px; cursor:pointer;">
+              更像範例
+            </button>
+          </div>
+
+          <!-- 輸入框與送出按鈕 -->
+          <div style="display:flex; gap:6px;">
+            <input type="text" id="assistantInput" placeholder="告訴小幫手怎麼改（例如：結尾加一句提醒）..." style="flex:1; font-size:12.5px; padding:6px 10px; border:1px solid var(--line); border-radius:6px;">
+            <button class="btn-primary" id="btnAssistantSend" style="padding:6px 14px; font-size:12.5px; white-space:nowrap; font-weight:600;">
+              送出
+            </button>
+          </div>
+          <div id="assistantStatus" style="display:none; font-size:12px; text-align:center; padding:2px 0;"></div>
         </div>
       </div>
     </section>
@@ -1429,6 +1477,7 @@
       editor.value = postContents[pid] || "";
       updateCharCount();
       renderPreview();
+      renderAssistantChat();
     }
 
     const postEditor = document.getElementById("postEditor");
@@ -1925,13 +1974,15 @@
     }
 
     // 呼叫第一組：OpenRouter
-    async function callOpenRouter(apiKey, model, effort, promptText) {
+    async function callOpenRouter(apiKey, model, effort, promptOrMessages) {
       const url = "https://openrouter.ai/api/v1/chat/completions";
+      const messages = Array.isArray(promptOrMessages)
+        ? promptOrMessages
+        : [{ role: "user", content: promptOrMessages }];
+
       const body = {
         model: model || OPENROUTER_MODEL,
-        messages: [
-          { role: "user", content: promptText }
-        ],
+        messages: messages,
         max_tokens: 4000,
         reasoning: {
           effort: effort || "low",
@@ -2014,13 +2065,15 @@
     }
 
     // 呼叫第二組：Gemini（OpenAI 相容格式）
-    async function callGemini(geminiApiKey, model, promptText) {
+    async function callGemini(geminiApiKey, model, promptOrMessages) {
       const url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
+      const messages = Array.isArray(promptOrMessages)
+        ? promptOrMessages
+        : [{ role: "user", content: promptOrMessages }];
+
       const body = {
         model: model || GEMINI_MODEL,
-        messages: [
-          { role: "user", content: promptText }
-        ]
+        messages: messages
       };
 
       const response = await fetchWithTimeout(url, {
@@ -2087,7 +2140,7 @@
     }
 
     // 共用的「問 AI」函式（依順序問第一組，失敗且有填 Gemini 就自動問 Gemini）
-    async function askAi(promptText) {
+    async function askAi(promptOrMessages) {
       const settings = getSettings();
       const priority = settings.priority || "auto_openrouter_gemini";
       const openRouterKey = (settings.apiKey || "").trim();
@@ -2107,7 +2160,7 @@
       // 如果設定「只用 Gemini」
       if (priority === "gemini_only") {
         try {
-          const res = await callGemini(geminiKey, settings.geminiModel || GEMINI_MODEL, promptText);
+          const res = await callGemini(geminiKey, settings.geminiModel || GEMINI_MODEL, promptOrMessages);
           return { ...res, fallbackNotice: null };
         } catch (err) {
           throw new Error(`Gemini：${err.message}`);
@@ -2118,7 +2171,7 @@
       if (priority === "openrouter_only") {
         const orModel = settings.openRouterCustomModel?.trim() || settings.openRouterModel || OPENROUTER_MODEL;
         try {
-          const res = await callOpenRouter(openRouterKey, orModel, settings.reasoningEffort || "low", promptText);
+          const res = await callOpenRouter(openRouterKey, orModel, settings.reasoningEffort || "low", promptOrMessages);
           return { ...res, fallbackNotice: null };
         } catch (err) {
           const noBackup = !geminiKey ? "（沒有備胎）" : "";
@@ -2130,7 +2183,7 @@
       // 若只填了 Gemini 沒填 OpenRouter，直接使用 Gemini
       if (!openRouterKey && geminiKey) {
         try {
-          const res = await callGemini(geminiKey, settings.geminiModel || GEMINI_MODEL, promptText);
+          const res = await callGemini(geminiKey, settings.geminiModel || GEMINI_MODEL, promptOrMessages);
           return {
             ...res,
             fallbackNotice: "⚠️ OpenRouter：尚未填寫金鑰。這次改用 Gemini。"
@@ -2144,7 +2197,7 @@
       const orModel = settings.openRouterCustomModel?.trim() || settings.openRouterModel || OPENROUTER_MODEL;
       let openRouterErr = null;
       try {
-        const res = await callOpenRouter(openRouterKey, orModel, settings.reasoningEffort || "low", promptText);
+        const res = await callOpenRouter(openRouterKey, orModel, settings.reasoningEffort || "low", promptOrMessages);
         return { ...res, fallbackNotice: null };
       } catch (err) {
         openRouterErr = err;
@@ -2157,7 +2210,7 @@
 
       // 自動改問第二組 Gemini
       try {
-        const res = await callGemini(geminiKey, settings.geminiModel || GEMINI_MODEL, promptText);
+        const res = await callGemini(geminiKey, settings.geminiModel || GEMINI_MODEL, promptOrMessages);
         return {
           ...res,
           fallbackNotice: `⚠️ OpenRouter：${openRouterErr.message}。這次改用 Gemini。`
@@ -2220,6 +2273,9 @@
         }
 
         if (updated) {
+          // 換掉之前先存「上一版」
+          savePreviousVersion();
+
           document.getElementById("postEditor").value = postContents[currentPlatformId] || "";
           updateCharCount();
           saveDraft();
@@ -2244,6 +2300,8 @@
           }
         } else {
           // 回來的文字找不到【平台】標題：顯示原文，提醒可以用 📥 貼回 手動分
+          savePreviousVersion();
+
           postContents[currentPlatformId] = content;
           document.getElementById("postEditor").value = content;
           updateCharCount();
@@ -2275,6 +2333,205 @@
         btn.style.filter = "";
         btn.style.cursor = "";
         btn.textContent = "✨ 讓 AI 寫";
+      }
+    }
+
+    /* ==========================================================
+       6-3. 💬 AI 小幫手（對話微調當前貼文）與 ↩ 復原上一版
+       ========================================================== */
+    let lastPostSnapshot = null;
+    let assistantChatHistory = { FB: [], IG: [], LINE: [] };
+
+    // 儲存目前三個平台貼文為「上一版」
+    function savePreviousVersion() {
+      lastPostSnapshot = {
+        FB: postContents.FB || "",
+        IG: postContents.IG || "",
+        LINE: postContents.LINE || ""
+      };
+    }
+
+    // ↩ 復原上一版（按了換回去，再按一次換回來）
+    function toggleUndoPost() {
+      if (!lastPostSnapshot) {
+        alert("目前還沒有上一版可以復原！");
+        return;
+      }
+      const current = {
+        FB: postContents.FB || "",
+        IG: postContents.IG || "",
+        LINE: postContents.LINE || ""
+      };
+      postContents.FB = lastPostSnapshot.FB;
+      postContents.IG = lastPostSnapshot.IG;
+      postContents.LINE = lastPostSnapshot.LINE;
+      lastPostSnapshot = current;
+
+      document.getElementById("postEditor").value = postContents[currentPlatformId] || "";
+      updateCharCount();
+      saveDraft();
+      renderPreview();
+
+      const autoSavedHint = document.getElementById("autoSavedHint");
+      if (autoSavedHint) {
+        autoSavedHint.textContent = "已復原貼文版本";
+        setTimeout(() => { if (autoSavedHint.textContent === "已復原貼文版本") autoSavedHint.textContent = ""; }, 1500);
+      }
+    }
+
+    // 渲染小幫手對話紀錄
+    function renderAssistantChat() {
+      const box = document.getElementById("assistantChatBox");
+      const clearBtn = document.getElementById("btnClearAssistantChat");
+      if (!box) return;
+
+      const history = assistantChatHistory[currentPlatformId] || [];
+      if (history.length === 0) {
+        box.style.display = "none";
+        box.innerHTML = "";
+        if (clearBtn) clearBtn.style.display = "none";
+        return;
+      }
+
+      box.style.display = "flex";
+      if (clearBtn) clearBtn.style.display = "inline-block";
+
+      box.innerHTML = history.map(item => {
+        if (item.role === "user") {
+          return `
+            <div style="align-self:flex-end; max-width:85%; background:#eaf2f8; color:#1e4359; padding:5px 9px; border-radius:8px 8px 2px 8px; border:1px solid #c7dbe8; word-break:break-word;">
+              <span style="font-weight:700; font-size:11px; color:#3b6e8a;">我：</span>${escapeHtml(item.content)}
+            </div>
+          `;
+        } else {
+          return `
+            <div style="align-self:flex-start; max-width:92%; background:#f8fafc; color:#2c3e50; padding:6px 9px; border-radius:8px 8px 8px 2px; border:1px solid #dce4ec; word-break:break-word;">
+              <div style="font-weight:700; font-size:11px; color:#4a6984; margin-bottom:3px;">💬 小幫手已改好：</div>
+              <div style="font-size:11.5px; color:#444; white-space:pre-wrap; max-height:85px; overflow-y:auto; background:#fff; padding:5px 7px; border-radius:4px; border:1px solid #e2e8f0; line-height:1.4;">${escapeHtml(item.content)}</div>
+            </div>
+          `;
+        }
+      }).join("");
+
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // 送出小幫手修改要求
+    async function sendAssistantMessage(userInstruction) {
+      userInstruction = (userInstruction || "").trim();
+      if (!userInstruction) return;
+
+      const currentPostText = (postContents[currentPlatformId] || document.getElementById("postEditor").value || "").trim();
+      // 4. 這個平台還沒有貼文就不要送，提醒「先讓 AI 寫一篇」
+      if (!currentPostText) {
+        alert("先讓 AI 寫一篇");
+        return;
+      }
+
+      const btn = document.getElementById("btnAssistantSend");
+      const input = document.getElementById("assistantInput");
+      const statusEl = document.getElementById("assistantStatus");
+
+      btn.disabled = true;
+      btn.style.opacity = "0.6";
+      btn.textContent = "修改中…";
+      input.disabled = true;
+
+      statusEl.style.display = "block";
+      statusEl.style.color = "var(--main)";
+      statusEl.textContent = "💬 AI 小幫手修改中…";
+
+      try {
+        const brandName = BRAND.name;
+        const currentPlatformObj = PLATFORMS.find(p => p.id === currentPlatformId) || PLATFORMS[0];
+        const platformName = currentPlatformObj.name;
+        const settings = getSettings();
+        const rawDate = document.getElementById("field_date").value;
+        const formattedDate = formatDateWithWeekday(rawDate);
+        const topic = document.getElementById("field_topic").value.trim() || "（未填）";
+        const story = document.getElementById("field_story").value.trim() || "（未填）";
+        const price = document.getElementById("field_price").value.trim() || "（未填）";
+        const secret = document.getElementById("field_secret").value.trim();
+        const doubt = document.getElementById("field_doubt").value.trim();
+        const sc = SCENARIOS.find(s => s.id === currentScenarioId) || SCENARIOS[0];
+
+        let systemPrompt = `你是${brandName}的小編助理。使用者會叫你修改一篇${platformName}貼文。只改使用者要求的地方，其他保持原樣；不能加素材卡上沒有的事實；遵守品牌規格；一律用台灣的繁體中文和台灣用語。不要出現簡體字，也不要用大陸用語（例如：視頻→影片、質量→品質、優化→改善、信息→訊息、網絡→網路、用戶→客人或使用者）。只回覆改好以後的整篇貼文，不要解釋、不要加標題。\n\n`;
+        systemPrompt += `=====================================\n【品牌規格】\n${settings.brandSpec}\n=====================================\n\n`;
+        systemPrompt += `=====================================\n【素材卡內容】\n・指定發文情境：${sc.name}（${sc.desc}）\n・日期：${formattedDate}\n・主題／活動名稱：${topic}\n・烘豆筆記與故事：${story}\n・客人怎麼做／價格：${price}\n`;
+        if (secret) systemPrompt += `・先不要講的（絕對保密）：${secret}\n`;
+        if (doubt) systemPrompt += `・❓還不確定的事項：${doubt}\n`;
+        systemPrompt += `=====================================\n`;
+
+        const platformHistory = assistantChatHistory[currentPlatformId] || [];
+        const recentHistory = platformHistory.slice(-8).map(m => ({
+          role: m.role,
+          content: m.content
+        }));
+
+        const lastUserMessage = {
+          role: "user",
+          content: `目前的【${platformName}】貼文：\n${currentPostText}\n\n請這樣改：\n${userInstruction}`
+        };
+
+        const messages = [
+          { role: "system", content: systemPrompt },
+          ...recentHistory,
+          lastUserMessage
+        ];
+
+        // 7. 小幫手一樣用第 4 節那個「問 AI」函式，OpenRouter 失敗會自動換 Gemini
+        const result = await askAi(messages);
+        let newText = result.text.trim();
+        newText = newText.replace(/^```[a-zA-Z]*\n?/, '').replace(/\n?```$/, '').trim();
+
+        if (!newText) {
+          throw new Error("AI 未回傳任何修改內容");
+        }
+
+        // 6. 換掉之前先存「上一版」
+        savePreviousVersion();
+
+        // 3. 回來的文字，直接換掉「目前這個平台」的貼文框，預覽跟著變
+        postContents[currentPlatformId] = newText;
+        document.getElementById("postEditor").value = newText;
+        updateCharCount();
+        saveDraft();
+        renderPreview();
+
+        // 記錄今日用量
+        recordDailyUsage(result.provider, result.tokens, result.cost);
+
+        // 5. 對話紀錄跟著這一篇自動暫存
+        if (!assistantChatHistory[currentPlatformId]) {
+          assistantChatHistory[currentPlatformId] = [];
+        }
+        assistantChatHistory[currentPlatformId].push({
+          role: "user",
+          content: userInstruction
+        });
+        assistantChatHistory[currentPlatformId].push({
+          role: "assistant",
+          content: newText
+        });
+        saveDraft();
+        renderAssistantChat();
+
+        input.value = "";
+        statusEl.style.display = "block";
+        statusEl.style.color = "var(--success)";
+        statusEl.textContent = `✅ 已修改完成！（使用 ${result.provider}）`;
+        setTimeout(() => { if (statusEl.textContent.includes("修改完成")) statusEl.style.display = "none"; }, 3000);
+      } catch (err) {
+        console.error("小幫手修改失敗：", err);
+        statusEl.style.display = "block";
+        statusEl.style.color = "#d9534f";
+        statusEl.textContent = `❌ ${err.message}`;
+      } finally {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.textContent = "送出";
+        input.disabled = false;
+        input.focus();
       }
     }
 
@@ -2349,7 +2606,9 @@
           secret: document.getElementById("field_secret").value,
           doubt: document.getElementById("field_doubt").value
         },
-        posts: { ...postContents }
+        posts: { ...postContents },
+        assistantChatHistory: { ...assistantChatHistory },
+        lastPostSnapshot: lastPostSnapshot
       };
 
       let posts = getSavedPosts();
@@ -2413,9 +2672,12 @@
           if (el) el.value = p.fields[k] || "";
         });
         postContents = { ...p.posts };
+        assistantChatHistory = p.assistantChatHistory ? { ...p.assistantChatHistory } : { FB: [], IG: [], LINE: [] };
+        lastPostSnapshot = p.lastPostSnapshot || null;
         document.getElementById("postEditor").value = postContents[currentPlatformId] || "";
         updateCharCount();
         renderPreview();
+        renderAssistantChat();
         saveDraft();
         closeModal("postsModal");
       }
@@ -2440,9 +2702,12 @@
         });
         selectScenario("daily");
         postContents = { FB: "", IG: "", LINE: "" };
+        assistantChatHistory = { FB: [], IG: [], LINE: [] };
+        lastPostSnapshot = null;
         document.getElementById("postEditor").value = "";
         updateCharCount();
         renderPreview();
+        renderAssistantChat();
         localStorage.removeItem(STORAGE_KEY_DRAFT);
         alert("已開啟全新空白篇章！");
       }
@@ -2463,7 +2728,9 @@
           doubt: document.getElementById("field_doubt")?.value || ""
         },
         posts: { ...postContents },
-        currentPostId: currentPostId
+        currentPostId: currentPostId,
+        assistantChatHistory: { ...assistantChatHistory },
+        lastPostSnapshot: lastPostSnapshot
       };
       try {
         localStorage.setItem(STORAGE_KEY_DRAFT, JSON.stringify(draft));
@@ -2484,7 +2751,14 @@
           });
           if (saved.posts) postContents = { ...saved.posts };
           currentPostId = saved.currentPostId || null;
+          if (saved.assistantChatHistory) {
+            assistantChatHistory = saved.assistantChatHistory;
+          }
+          if (saved.lastPostSnapshot) {
+            lastPostSnapshot = saved.lastPostSnapshot;
+          }
           switchPlatform(currentPlatformId);
+          renderAssistantChat();
           return;
         }
       } catch (e) {}
@@ -2497,6 +2771,7 @@
       document.getElementById("field_doubt").value = "限量版耶誕包裝紙袋週五才會寄到店裡";
       selectScenario("daily");
       switchPlatform("FB");
+      renderAssistantChat();
     }
 
     /* ==========================================================
@@ -2658,6 +2933,51 @@
         saveDraft();
         renderPreview();
       });
+
+      // ↩ 復原上一版
+      const btnUndo = document.getElementById("btnUndoPost");
+      if (btnUndo) btnUndo.addEventListener("click", toggleUndoPost);
+
+      // 💬 AI 小幫手快捷按鈕
+      document.querySelectorAll(".assistant-quick-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const prompt = btn.dataset.prompt;
+          document.getElementById("assistantInput").value = prompt;
+          sendAssistantMessage(prompt);
+        });
+      });
+
+      // 💬 AI 小幫手送出按鈕與 Enter 鍵
+      const btnAsstSend = document.getElementById("btnAssistantSend");
+      const asstInput = document.getElementById("assistantInput");
+      if (btnAsstSend) {
+        btnAsstSend.addEventListener("click", () => {
+          const text = asstInput.value.trim();
+          if (text) sendAssistantMessage(text);
+        });
+      }
+      if (asstInput) {
+        asstInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            const text = asstInput.value.trim();
+            if (text) sendAssistantMessage(text);
+          }
+        });
+      }
+
+      // 💬 清除小幫手對話紀錄
+      const btnClearChat = document.getElementById("btnClearAssistantChat");
+      if (btnClearChat) {
+        btnClearChat.addEventListener("click", () => {
+          const pName = (PLATFORMS.find(p => p.id === currentPlatformId) || {}).name || "此平台";
+          if (confirm(`確定要清除【${pName}】的對話紀錄嗎？`)) {
+            assistantChatHistory[currentPlatformId] = [];
+            saveDraft();
+            renderAssistantChat();
+          }
+        });
+      }
 
       // 通用 Modal 關閉
       document.querySelectorAll("[data-close]").forEach(btn => {

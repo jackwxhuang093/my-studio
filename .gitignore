@@ -1,0 +1,30 @@
+# 環境變數與機密金鑰（嚴禁上傳至公開 GitHub 倉庫）
+.env
+.env.local
+.env.*.local
+.env.*
+*.env
+*.key
+*.pem
+secrets/
+secrets.json
+
+# 允許保留範例檔（範例檔不包含真實密鑰）
+!.env.example
+
+# 作業系統暫存檔
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 編輯器與開發工具快取
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 依賴套件與除錯日誌
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

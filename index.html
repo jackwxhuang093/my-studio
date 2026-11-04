@@ -453,6 +453,240 @@
       border-color: #8c5e3c;
       font-weight: 600;
     }
+
+    /* ==========================================================
+       🌸 2.0 AI 視覺美化工作坊專屬樣式（快速模式 ＆ 自由客製工坊）
+       ========================================================== */
+    .beautify-submode-switch {
+      display: flex;
+      background: #f0e6da;
+      padding: 3px;
+      border-radius: 8px;
+      gap: 4px;
+      margin-bottom: 8px;
+      border: 1px solid #ebd9c8;
+    }
+    .beautify-submode-btn {
+      flex: 1;
+      text-align: center;
+      padding: 6px 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      border-radius: 6px;
+      background: transparent;
+      color: #7c5a43;
+      border: 0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .beautify-submode-btn:hover {
+      color: var(--main);
+      background: rgba(255,255,255,0.5);
+    }
+    .beautify-submode-btn.active {
+      background: #ffffff;
+      color: var(--main);
+      box-shadow: 0 1px 4px rgba(124, 86, 61, 0.16);
+    }
+
+    /* ⚡ 快速推薦風格精選卡片 */
+    .quick-style-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .quick-style-card {
+      background: #ffffff;
+      border: 1.5px solid #ebd9c8;
+      border-radius: 8px;
+      padding: 9px 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.18s ease;
+      position: relative;
+    }
+    .quick-style-card:hover {
+      border-color: #8c5e3c;
+      background: #fffbf7;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(140,94,60,0.1);
+    }
+    .quick-style-card.active {
+      border-color: #8c5e3c;
+      background: #fdf7ef;
+      box-shadow: 0 0 0 2px rgba(140, 94, 60, 0.2);
+    }
+    .quick-style-card .qs-icon {
+      font-size: 20px;
+      margin-bottom: 3px;
+    }
+    .quick-style-card .qs-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--main);
+      margin-bottom: 2px;
+    }
+    .quick-style-card .qs-tag {
+      font-size: 10px;
+      color: var(--ink-muted);
+      line-height: 1.35;
+    }
+
+    /* 🎨 自由客製工坊：提示詞積木 (Chips) */
+    .prompt-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      background: #ffffff;
+      color: #5a3e28;
+      border: 1px solid #dccbb8;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .prompt-chip:hover {
+      border-color: #8c5e3c;
+      background: #fdfaf6;
+    }
+    .prompt-chip.active {
+      background: #8c5e3c;
+      color: #ffffff;
+      border-color: #8c5e3c;
+    }
+    .prompt-chip .chip-del {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      font-size: 11px;
+      line-height: 1;
+      cursor: pointer;
+      color: #a88164;
+      margin-left: 2px;
+      transition: all 0.15s ease;
+    }
+    .prompt-chip.active .chip-del {
+      color: #fff;
+      background: rgba(0,0,0,0.18);
+    }
+    .prompt-chip.active .chip-del:hover {
+      background: rgba(0,0,0,0.38);
+    }
+
+    /* 多張輪播切換分張微調頁籤 */
+    .per-image-tabs-bar {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding-bottom: 3px;
+      margin-bottom: 6px;
+    }
+    .per-image-tab-btn {
+      padding: 3px 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid #dccbb8;
+      background: #ffffff;
+      color: #7c5a43;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .per-image-tab-btn:hover {
+      border-color: #8c5e3c;
+      background: #fdf7ef;
+    }
+    .per-image-tab-btn.active {
+      background: #8c5e3c;
+      color: #ffffff;
+      border-color: #8c5e3c;
+    }
+
+    /* 即時雙向提示詞編輯器 */
+    .live-prompt-editor-box {
+      background: #fcf9f5;
+      border: 1px solid #ebd9c8;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+    .live-prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+      gap: 4px;
+    }
+    .live-prompt-textarea {
+      width: 100%;
+      min-height: 76px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      padding: 7px 9px;
+      background: #ffffff;
+      border: 1px solid #dccbb8;
+      border-radius: 6px;
+      color: #4a3220;
+      font-family: inherit;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+    .live-prompt-textarea:focus {
+      outline: none;
+      border-color: #8c5e3c;
+      box-shadow: 0 0 0 2px rgba(140, 94, 60, 0.16);
+    }
+
+    /* 摺疊式手風琴 Accordion */
+    details.accordion-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+    details.accordion-card summary {
+      cursor: pointer;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--main);
+      background: #faf5ee;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    details.accordion-card summary::-webkit-details-marker {
+      display: none;
+    }
+    details.accordion-card summary::after {
+      content: '▾';
+      font-size: 12px;
+      color: #8c5e3c;
+      transition: transform 0.2s ease;
+    }
+    details.accordion-card[open] summary::after {
+      transform: rotate(180deg);
+    }
+    details.accordion-card .accordion-content {
+      padding: 10px;
+      border-top: 1px solid #ebd9c8;
+    }
     /* 🧶 毛線配色與織物模擬工坊專屬樣式 */
     .yarn-sim-grid {
       display: grid;
@@ -1549,62 +1783,115 @@
                   </span>
                 </div>
 
-                <!-- 1. 10 大佈景風格多選牆 -->
-                <div style="background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px; margin-bottom:8px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:4px;">
-                    <div style="font-size:11.5px; font-weight:700; color:var(--main); display:flex; align-items:center; gap:4px;">
-                      <span>🎨 選擇佈景風格</span>
-                      <span id="beautifyStyleCountHint" style="font-size:10.5px; font-weight:normal; color:var(--ink-muted);">（可複選 1~5 種依序出圖）</span>
-                    </div>
-                    <div style="display:flex; gap:4px;">
-                      <button type="button" class="btn-light" id="btnRandomBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="依出圖張數隨機挑選不同的風格組合">🎲 智慧挑選</button>
-                      <button type="button" class="btn-light" id="btnResetBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="重設為預設第 1 種風格">↺ 重設</button>
-                    </div>
-                  </div>
-                  <div class="beautify-preset-pills" id="beautifyStylePills" style="display:flex; flex-wrap:wrap; gap:5px;">
-                    <!-- JS 動態渲染 10 大風格膠囊（支援 ① ② ③ ④ ⑤ 序號標記） -->
-                  </div>
+                <!-- 🌟 雙模式切換頭：⚡ 快速推薦 ｜ 🎨 自由客製工坊 -->
+                <div class="beautify-submode-switch" id="beautifySubmodeSwitch">
+                  <button type="button" class="beautify-submode-btn active" data-submode="quick">⚡ 快速推薦風格</button>
+                  <button type="button" class="beautify-submode-btn" data-submode="custom">🎨 自由客製工坊</button>
                 </div>
 
-                <!-- 2. 光線角度 ＆ 拍攝鏡頭視角（雙欄控制） -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
-                  <div style="background:#fdfbf7; border:1px solid #ebd9c8; border-radius:6px; padding:6px;">
-                    <div style="font-size:11px; font-weight:700; color:#5a3e28; margin-bottom:3px;">☀️ 光線角度與氛圍</div>
-                    <select id="beautifyLightSelect" style="width:100%; font-size:11.5px; padding:4px 6px; border-color:#d8c4ae; background:#fff; color:var(--ink); font-weight:500;">
-                      <option value="auto" selected>✨ 依風格智慧配置（推薦）</option>
-                      <option value="side_45">🌤️ 45° 側向自然窗光（立體針目）</option>
-                      <option value="golden_hour">🌅 午後金黃斜陽（暖長影）</option>
-                      <option value="studio_soft">💡 商業柔光無影（真實色彩）</option>
-                      <option value="cozy_warm">🕯️ 溫馨室內暖黃（靜謐慢生活）</option>
-                    </select>
+                <!-- 面板 1：⚡ 快速推薦模式（極簡降噪，4 大熱門精選） -->
+                <div id="paneBeautifyQuick" style="display:block;">
+                  <div class="quick-style-grid" id="quickStyleCards">
+                    <!-- JS 動態生成 4 大熱門精選卡片 -->
                   </div>
-                  <div style="background:#fdfbf7; border:1px solid #ebd9c8; border-radius:6px; padding:6px;">
-                    <div style="font-size:11px; font-weight:700; color:#5a3e28; margin-bottom:3px;">🎥 鏡頭拍攝視角</div>
-                    <select id="beautifyAngleSelect" style="width:100%; font-size:11.5px; padding:4px 6px; border-color:#d8c4ae; background:#fff; color:var(--ink); font-weight:500;">
-                      <option value="multi_auto" selected>🔄 5 種視角自動輪播（正面+俯拍+微距）</option>
-                      <option value="front_hero">🎯 正面平視主角特寫</option>
-                      <option value="angle_45">📐 45° 立體斜角俯拍</option>
-                      <option value="flat_lay">🔍 90° 垂直平鋪俯拍（Flat-lay）</option>
-                      <option value="macro_detail">🧶 近距離微距工藝特寫</option>
+                  <!-- 快速模式可選擇更多風格的輕量下拉選單 -->
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px; background:#fff; border:1px solid var(--line); border-radius:6px; padding:5px 8px;">
+                    <span style="color:var(--main); font-weight:600;">更多精選風格場景：</span>
+                    <select id="quickExtraStyleSelect" style="width:170px; font-size:11px; padding:3px 6px; border-color:#d8c4ae; background:#fdfbf7; border-radius:4px; color:var(--ink);">
+                      <!-- JS 動態填入其餘風格選項 -->
                     </select>
                   </div>
                 </div>
 
-                <!-- 3. 佈景道具點綴 ＆ 自由微調補充 -->
-                <div style="background:#fcf8f3; border:1px dashed #ebd9c8; border-radius:6px; padding:6px 8px; margin-bottom:8px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span style="font-size:11px; font-weight:700; color:var(--main);">🌿 桌面點綴道具（可複選）：</span>
+                <!-- 面板 2：🎨 自由客製工坊（動態積木 Chips ＋ 即時雙向 Prompt 編輯） -->
+                <div id="paneBeautifyCustom" style="display:none;">
+                  <!-- 1. 10 大佈景風格多選牆 -->
+                  <div style="background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px; margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:4px;">
+                      <div style="font-size:11.5px; font-weight:700; color:var(--main); display:flex; align-items:center; gap:4px;">
+                        <span>🎨 選擇佈景風格</span>
+                        <span id="beautifyStyleCountHint" style="font-size:10.5px; font-weight:normal; color:var(--ink-muted);">（可複選 1~5 種依序出圖）</span>
+                      </div>
+                      <div style="display:flex; gap:4px;">
+                        <button type="button" class="btn-light" id="btnRandomBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="依出圖張數隨機挑選不同的風格組合">🎲 智慧挑選</button>
+                        <button type="button" class="btn-light" id="btnResetBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="重設為預設第 1 種風格">↺ 重設</button>
+                      </div>
+                    </div>
+                    <div class="beautify-preset-pills" id="beautifyStylePills" style="display:flex; flex-wrap:wrap; gap:5px;">
+                      <!-- JS 動態渲染 10 大風格膠囊（支援 ① ② ③ ④ ⑤ 序號標記） -->
+                    </div>
                   </div>
-                  <div id="beautifyPropsList" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
-                    <button type="button" class="preset-pill active" data-prop="crochet_yarn">🪡 木鉤針與線球</button>
-                    <button type="button" class="preset-pill active" data-prop="dry_flowers">🌿 尤加利乾燥花</button>
-                    <button type="button" class="preset-pill" data-prop="tea_cup">☕ 花草熱茶杯</button>
-                    <button type="button" class="preset-pill" data-prop="open_book">📖 敞開手寫筆記本</button>
-                    <button type="button" class="preset-pill" data-prop="bamboo_tray">🧺 竹編置物托盤</button>
-                    <button type="button" class="preset-pill" data-prop="none">🚫 純淨無道具</button>
+
+                  <!-- 2. 光線角度 ＆ 拍攝鏡頭視角（雙欄控制） -->
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
+                    <div style="background:#fdfbf7; border:1px solid #ebd9c8; border-radius:6px; padding:6px;">
+                      <div style="font-size:11px; font-weight:700; color:#5a3e28; margin-bottom:3px;">☀️ 光線角度與氛圍</div>
+                      <select id="beautifyLightSelect" style="width:100%; font-size:11.5px; padding:4px 6px; border-color:#d8c4ae; background:#fff; color:var(--ink); font-weight:500;">
+                        <option value="auto" selected>✨ 依風格智慧配置（推薦）</option>
+                        <option value="side_45">🌤️ 45° 側向自然窗光（立體針目）</option>
+                        <option value="golden_hour">🌅 午後金黃斜陽（暖長影）</option>
+                        <option value="studio_soft">💡 商業柔光無影（真實色彩）</option>
+                        <option value="cozy_warm">🕯️ 溫馨室內暖黃（靜謐慢生活）</option>
+                      </select>
+                    </div>
+                    <div style="background:#fdfbf7; border:1px solid #ebd9c8; border-radius:6px; padding:6px;">
+                      <div style="font-size:11px; font-weight:700; color:#5a3e28; margin-bottom:3px;">🎥 鏡頭拍攝視角</div>
+                      <select id="beautifyAngleSelect" style="width:100%; font-size:11.5px; padding:4px 6px; border-color:#d8c4ae; background:#fff; color:var(--ink); font-weight:500;">
+                        <option value="multi_auto" selected>🔄 5 種視角自動輪播（正面+俯拍+微距）</option>
+                        <option value="front_hero">🎯 正面平視主角特寫</option>
+                        <option value="angle_45">📐 45° 立體斜角俯拍</option>
+                        <option value="flat_lay">🔍 90° 垂直平鋪俯拍（Flat-lay）</option>
+                        <option value="macro_detail">🧶 近距離微距工藝特寫</option>
+                      </select>
+                    </div>
                   </div>
-                  <div>
-                    <input type="text" id="beautifyCustomNote" placeholder="選填補充細節（例：木桌偏淺白橡木色、右上方多留白）..." style="width:100%; font-size:11.5px; padding:5px 8px; border:1px solid var(--line); border-radius:5px; background:#fff;">
+
+                  <!-- 3. 點綴道具積木 Chips ＋ 自訂標籤 -->
+                  <div style="background:#fcf8f3; border:1px solid #ebd9c8; border-radius:6px; padding:7px 8px; margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                      <span style="font-size:11px; font-weight:700; color:var(--main);">🌿 桌面道具點綴（點選加入／刪除）：</span>
+                    </div>
+                    <div id="beautifyPropsList" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                      <!-- JS 動態生成道具 Chips，支援 × 刪除 -->
+                    </div>
+                    <!-- 自由自訂標籤輸入列 -->
+                    <div style="display:flex; gap:4px; margin-bottom:6px;">
+                      <input type="text" id="beautifyCustomPropInput" placeholder="＋ 輸入自訂道具或場景標籤（按 Enter 新增）..." style="flex:1; font-size:11.5px; padding:4px 7px; border:1px solid #d8c4ae; border-radius:4px; background:#fff;">
+                      <button type="button" class="btn-light" id="btnAddCustomProp" style="padding:4px 8px; font-size:11px; font-weight:600; white-space:nowrap; border:1px solid #d8c4ae; border-radius:4px;">＋ 加入標籤</button>
+                    </div>
+                    <div>
+                      <input type="text" id="beautifyCustomNote" placeholder="選填補充指示（例：木桌偏淺白橡木色、右上方多留白）..." style="width:100%; font-size:11.5px; padding:4px 7px; border:1px solid var(--line); border-radius:4px; background:#fff;">
+                    </div>
+                  </div>
+
+                  <!-- 4. 多張輪播分張微調頁籤 (Per-Image Tab) -->
+                  <div id="beautifyPerImageSection" style="margin-bottom:8px; display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <span style="font-size:11px; font-weight:700; color:#7c5a43;">📋 各張出圖排程微調：</span>
+                      <button type="button" class="btn-light" id="btnSyncPromptToAll" style="font-size:10px; padding:1px 6px; border:1px solid #d8c4ae; border-radius:3px;" title="將目前張數的提示詞同步至所有張數">⚡ 同步至全部張數</button>
+                    </div>
+                    <div class="per-image-tabs-bar" id="perImageTabsBar">
+                      <!-- JS 動態生成 [第 1 張] [第 2 張]... -->
+                    </div>
+                  </div>
+
+                  <!-- 5. 即時雙向提示詞編輯器 (Prompt Studio) -->
+                  <div class="live-prompt-editor-box">
+                    <div class="live-prompt-header">
+                      <div style="display:flex; align-items:center; gap:5px;">
+                        <span style="font-size:11.5px; font-weight:700; color:var(--main);">💡 AI 提示詞工作區</span>
+                        <span id="promptEditStatusBadge" style="font-size:9.5px; padding:1px 5px; border-radius:3px; background:#f4ede4; color:#7c5a43; font-weight:600;">🔄 標籤連動中</span>
+                      </div>
+                      <div style="display:flex; gap:3px;">
+                        <button type="button" class="btn-light" id="btnRebuildPromptFromTags" style="font-size:10px; padding:2px 5px; border:1px solid #d8c4ae; border-radius:3px;" title="依上方標籤重新組裝提示詞">↺ 重整標籤詞</button>
+                        <button type="button" class="btn-light" id="btnSaveCustomStylePreset" style="font-size:10px; padding:2px 5px; border:1px solid #d8c4ae; border-radius:3px;" title="儲存為個人常用風格">⭐ 存為我的風格</button>
+                      </div>
+                    </div>
+                    <textarea id="imagePromptInput" class="live-prompt-textarea" placeholder="點選標籤自動生成提示詞，您亦可在此隨意增減、修改任何字句..."></textarea>
+                    <div style="font-size:10px; color:var(--ink-muted); margin-top:3px; display:flex; justify-content:space-between;">
+                      <span>已自動嵌入針織保護與安全區規範</span>
+                      <span id="promptCharCount">0 字</span>
+                    </div>
                   </div>
                 </div>
 
@@ -1782,76 +2069,78 @@
               </div>
             </div>
 
-            <!-- ✏️ 加字 ＋ ⬇ 下載 ＋ 即時大圖檢視 -->
-            <div class="sub-section-box">
-              <div class="sub-section-title">
+            <!-- ✏️ 加字 ＋ ⬇ 下載 ＋ 即時大圖檢視（折疊式手風琴） -->
+            <details class="accordion-card" id="overlayAccordion">
+              <summary>
                 <span>✏️ 圖上加字（Canvas 即時疊字）</span>
-                <span style="font-size:11px; font-weight:normal; color:var(--ink-muted);">右方手機預覽同步顯示</span>
-              </div>
-              <div>
-                <input type="text" id="overlayTextInput" placeholder="圖上的字（例：冬日手作泡芙包，12字內最佳）" style="font-size:12.5px; padding:6px 8px;">
-              </div>
-              <div class="select-row-3">
+                <span style="font-size:10.5px; font-weight:normal; color:var(--ink-muted); margin-right:6px;">右方手機同步預覽</span>
+              </summary>
+              <div class="accordion-content">
                 <div>
-                  <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">位置</div>
-                  <select id="overlayPosSelect">
-                    <option value="top">上</option>
-                    <option value="middle">中</option>
-                    <option value="bottom" selected>下</option>
-                  </select>
+                  <input type="text" id="overlayTextInput" placeholder="圖上的字（例：冬日手作泡芙包，12字內最佳）" style="font-size:12.5px; padding:6px 8px;">
                 </div>
-                <div>
-                  <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">大小</div>
-                  <select id="overlaySizeSelect">
-                    <option value="small">小</option>
-                    <option value="medium">中</option>
-                    <option value="large" selected>大</option>
-                  </select>
+                <div class="select-row-3" style="margin-top:6px;">
+                  <div>
+                    <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">位置</div>
+                    <select id="overlayPosSelect">
+                      <option value="top">上</option>
+                      <option value="middle">中</option>
+                      <option value="bottom" selected>下</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">大小</div>
+                    <select id="overlaySizeSelect">
+                      <option value="small">小</option>
+                      <option value="medium">中</option>
+                      <option value="large" selected>大</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">樣式</div>
+                    <select id="overlayStyleSelect">
+                      <option value="white_box" selected>白底主色字</option>
+                      <option value="black_box">黑底白字</option>
+                      <option value="shadow">白字陰影</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">樣式</div>
-                  <select id="overlayStyleSelect">
-                    <option value="white_box" selected>白底主色字</option>
-                    <option value="black_box">黑底白字</option>
-                    <option value="shadow">白字陰影</option>
+                <div class="download-row" style="display:flex; gap:6px; align-items:center; margin-top:6px;">
+                  <select id="downloadSizeSelect" style="flex:1;">
+                    <!-- JS 依 SIZES 常數動態生成 -->
                   </select>
+                  <button type="button" class="btn-success" id="btnDownloadOverlayImg" style="padding:6px 10px; font-size:12px; font-weight:700; white-space:nowrap;">
+                    ⬇ 下載這張圖
+                  </button>
                 </div>
-              </div>
-              <div class="download-row" style="display:flex; gap:6px; align-items:center; margin-top:2px;">
-                <select id="downloadSizeSelect" style="flex:1;">
-                  <!-- JS 依 SIZES 常數動態生成 -->
-                </select>
-                <button type="button" class="btn-success" id="btnDownloadOverlayImg" style="padding:6px 10px; font-size:12px; font-weight:700; white-space:nowrap;">
-                  ⬇ 下載這張圖
-                </button>
-              </div>
 
-              <!-- 精簡版主圖與壓字預覽列 -->
-              <div class="form-live-preview-box" id="formLivePreviewSection" style="margin-top:4px; background:#fdfaf5; border:1px dashed var(--line); border-radius:8px; padding:8px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                  <span id="formPreviewTextStatus" style="font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:190px; color:var(--ink-muted);">
-                    ✏️ 尚未加字
-                  </span>
-                  <div style="display:flex; gap:5px; align-items:center;">
-                    <span id="formPreviewBadge" style="font-size:10.5px; padding:1px 6px; border-radius:4px; background:#f3ece2; color:var(--main); font-weight:600;">
-                      FB (1:1)
+                <!-- 精簡版主圖與壓字預覽列 -->
+                <div class="form-live-preview-box" id="formLivePreviewSection" style="margin-top:6px; background:#fdfaf5; border:1px dashed var(--line); border-radius:8px; padding:8px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span id="formPreviewTextStatus" style="font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:190px; color:var(--ink-muted);">
+                      ✏️ 尚未加字
                     </span>
-                    <button type="button" id="btnZoomFormPreview" class="btn-light" style="padding:2px 6px; font-size:11px; border:1px solid var(--line); border-radius:4px;" title="放大查看大圖">
-                      🔍 放大
-                    </button>
-                    <button type="button" id="btnDownloadFromFormPreview" class="btn-light" style="padding:2px 6px; font-size:11px; border:1px solid var(--line); border-radius:4px; font-weight:600; display:none;">
-                      ⬇
-                    </button>
+                    <div style="display:flex; gap:5px; align-items:center;">
+                      <span id="formPreviewBadge" style="font-size:10.5px; padding:1px 6px; border-radius:4px; background:#f3ece2; color:var(--main); font-weight:600;">
+                        FB (1:1)
+                      </span>
+                      <button type="button" id="btnZoomFormPreview" class="btn-light" style="padding:2px 6px; font-size:11px; border:1px solid var(--line); border-radius:4px;" title="放大查看大圖">
+                        🔍 放大
+                      </button>
+                      <button type="button" id="btnDownloadFromFormPreview" class="btn-light" style="padding:2px 6px; font-size:11px; border:1px solid var(--line); border-radius:4px; font-weight:600; display:none;">
+                        ⬇
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div id="formPreviewContainer" style="position:relative; width:100%; border-radius:6px; overflow:hidden; background:#f7f2ea; display:flex; align-items:center; justify-content:center; min-height:90px; border:1px solid var(--line); cursor:pointer;" title="點擊放大查看">
-                  <img id="formPreviewImg" src="" alt="預覽圖" style="display:none; width:100%; height:auto; max-height:180px; object-fit:contain;">
-                  <div id="formPreviewEmpty" style="padding:12px 10px; text-align:center; color:var(--ink-muted); font-size:11.5px; line-height:1.4;">
-                    🖼️ 選擇照片或輸入壓字後，可點此放大檢視（右方手機預覽亦同步顯示）
+                  <div id="formPreviewContainer" style="position:relative; width:100%; border-radius:6px; overflow:hidden; background:#f7f2ea; display:flex; align-items:center; justify-content:center; min-height:80px; border:1px solid var(--line); cursor:pointer;" title="點擊放大查看">
+                    <img id="formPreviewImg" src="" alt="預覽圖" style="display:none; width:100%; height:auto; max-height:160px; object-fit:contain;">
+                    <div id="formPreviewEmpty" style="padding:10px; text-align:center; color:var(--ink-muted); font-size:11px; line-height:1.4;">
+                      🖼️ 選擇照片或輸入壓字後，可點此放大檢視（右方手機預覽亦同步顯示）
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </details>
           </div>
           <!-- 底部引導返回填素材寫貼文按鈕 -->
           <button type="button" class="btn-light" id="btnBackToMaterialTab" style="width:100%; justify-content:center; padding:9px 12px; font-size:12.5px; border:1.5px dashed var(--line-stitch); background:#fdfaf5; color:var(--main); margin-top:8px;">
@@ -3304,8 +3593,7 @@
       initSettings();
       await loadDraftOrDefaults();
       bindEvents();
-      renderBeautifyStylePills();
-      updateBeautifyScheduleBar();
+      switchBeautifySubMode("quick");
       renderYarnColorSlot();
       renderYarnPatternSlot();
       renderCraftPhotoSlot();
@@ -4624,10 +4912,126 @@
       none: "周圍極簡純淨，不擺放任何雜物與多餘道具"
     };
 
+    let beautifySubMode = "quick"; // "quick" | "custom"
+    let currentEditingImageIndex = 0; // 0 to count - 1
+    let customPromptsByCard = {}; // { 0: "...", 1: "..." }
+    let isPromptManuallyEdited = false;
     let selectedBeautifyStyles = ["warm_window"];
     let selectedBeautifyProps = ["crochet_yarn", "dry_flowers"];
     const CIRCLE_NUMS = ["①", "②", "③", "④", "⑤"];
 
+    // 取得與儲存使用者自訂標籤與風格
+    function getCustomProps() {
+      try {
+        return JSON.parse(localStorage.getItem("momo_custom_props") || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+    function saveCustomProps(propsArr) {
+      try {
+        localStorage.setItem("momo_custom_props", JSON.stringify(propsArr));
+      } catch (e) {}
+    }
+    function getAllBeautifyProps() {
+      const customs = getCustomProps();
+      const merged = { ...BEAUTIFY_PROPS };
+      customs.forEach(cp => {
+        merged[cp.id] = cp.desc;
+      });
+      return merged;
+    }
+
+    function getCustomStyles() {
+      try {
+        return JSON.parse(localStorage.getItem("momo_custom_styles") || "{}");
+      } catch (e) {
+        return {};
+      }
+    }
+    function saveCustomStyle(styleObj) {
+      try {
+        const styles = getCustomStyles();
+        styles[styleObj.id] = styleObj;
+        localStorage.setItem("momo_custom_styles", JSON.stringify(styles));
+      } catch (e) {}
+    }
+    function getAllBeautifyStyles() {
+      const customs = getCustomStyles();
+      return { ...BEAUTIFY_STYLES, ...customs };
+    }
+
+    // 雙模式切換（⚡ 快速推薦 ⇄ 🎨 自由客製工坊）
+    function switchBeautifySubMode(submode) {
+      beautifySubMode = submode === "custom" ? "custom" : "quick";
+      const paneQuick = document.getElementById("paneBeautifyQuick");
+      const paneCustom = document.getElementById("paneBeautifyCustom");
+      if (paneQuick) paneQuick.style.display = (beautifySubMode === "quick") ? "block" : "none";
+      if (paneCustom) paneCustom.style.display = (beautifySubMode === "custom") ? "block" : "none";
+
+      document.querySelectorAll("#beautifySubmodeSwitch .beautify-submode-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.submode === beautifySubMode);
+      });
+
+      renderQuickStyles();
+      renderBeautifyStylePills();
+      renderBeautifyPropsChips();
+      renderPerImageTabs();
+      updateLivePromptEditor();
+      updateBeautifyScheduleBar();
+    }
+
+    // ⚡ 快速推薦模式：渲染 4 大精選高頻質感卡片
+    const QUICK_STYLE_ITEMS = [
+      { id: "warm_window", name: "日系午後自然窗光", icon: "🌿", tag: "自然陽光・細膩窗影・溫暖生活感" },
+      { id: "minimal_clean", name: "簡約純淨棉麻底", icon: "🌸", tag: "天然純棉麻布・商業寫真・無影柔光" },
+      { id: "craft_table", name: "溫潤職人工作桌", icon: "☕", tag: "原木托盤・手寫筆記本・慢工日常" },
+      { id: "nordic_sofa", name: "北歐針織家居沙發", icon: "🛋️", tag: "亞麻沙發・厚羊毛毯・居家幸福溫度" }
+    ];
+
+    function renderQuickStyles() {
+      const container = document.getElementById("quickStyleCards");
+      const selectEl = document.getElementById("quickExtraStyleSelect");
+      if (!container) return;
+
+      const activeStyle = selectedBeautifyStyles[0] || "warm_window";
+
+      container.innerHTML = QUICK_STYLE_ITEMS.map(item => {
+        const isActive = (activeStyle === item.id);
+        return `
+          <div class="quick-style-card ${isActive ? 'active' : ''}" data-style="${item.id}">
+            <div class="qs-icon">${item.icon}</div>
+            <div class="qs-title">${item.name}</div>
+            <div class="qs-tag">${item.tag}</div>
+          </div>
+        `;
+      }).join("");
+
+      container.querySelectorAll(".quick-style-card").forEach(card => {
+        card.addEventListener("click", () => {
+          const styleId = card.dataset.style;
+          selectedBeautifyStyles = [styleId];
+          isPromptManuallyEdited = false;
+          customPromptsByCard = {};
+          renderQuickStyles();
+          renderBeautifyStylePills();
+          updateLivePromptEditor();
+          updateBeautifyScheduleBar();
+        });
+      });
+
+      if (selectEl) {
+        const allStyles = getAllBeautifyStyles();
+        const extraKeys = Object.keys(allStyles).filter(k => !QUICK_STYLE_ITEMS.some(q => q.id === k));
+        selectEl.innerHTML = `<option value="">選擇更多風格場景…</option>` + extraKeys.map(k => {
+          const st = allStyles[k];
+          const isSel = (activeStyle === k) ? "selected" : "";
+          return `<option value="${k}" ${isSel}>${st.icon} ${st.name}</option>`;
+        }).join("");
+      }
+    }
+
+    // 🎨 自由客製工坊：風格膠囊牆（10 大風格 ＋ 自訂風格）
     function renderBeautifyStylePills() {
       const container = document.getElementById("beautifyStylePills");
       const countHint = document.getElementById("beautifyStyleCountHint");
@@ -4640,15 +5044,16 @@
         countHint.textContent = `（已選 ${selectedBeautifyStyles.length} 種風格，目前出圖 ${currentCount} 張）`;
       }
 
-      const styleKeys = Object.keys(BEAUTIFY_STYLES);
+      const allStyles = getAllBeautifyStyles();
+      const styleKeys = Object.keys(allStyles);
       container.innerHTML = styleKeys.map(key => {
-        const item = BEAUTIFY_STYLES[key];
+        const item = allStyles[key];
         const selIdx = selectedBeautifyStyles.indexOf(key);
         const isSelected = selIdx !== -1;
         const badge = isSelected ? `<span style="font-weight:bold; margin-right:2px; font-size:11.5px;">${CIRCLE_NUMS[selIdx] || (selIdx + 1)}</span> ` : "";
         return `
-          <button type="button" class="preset-pill beautify-style-pill ${isSelected ? 'active' : ''}" data-style="${key}" title="${item.desc}">
-            ${badge}${item.icon} ${item.name}
+          <button type="button" class="preset-pill beautify-style-pill ${isSelected ? 'active' : ''}" data-style="${key}" title="${item.desc || item.name}">
+            ${badge}${item.icon || '🎨'} ${item.name}
           </button>
         `;
       }).join("");
@@ -4660,7 +5065,9 @@
         });
       });
 
+      renderQuickStyles();
       updateBeautifyScheduleBar();
+      updateLivePromptEditor();
     }
 
     function toggleBeautifyStyle(styleKey) {
@@ -4682,21 +5089,224 @@
           }
         }
       }
+      isPromptManuallyEdited = false;
       renderBeautifyStylePills();
     }
 
     function randomizeBeautifyStyles() {
       const countSel = document.getElementById("beautifyCountSelect");
       const count = Math.min(5, Math.max(1, parseInt(countSel?.value || "5", 10) || 1));
-      const allKeys = Object.keys(BEAUTIFY_STYLES);
+      const allKeys = Object.keys(getAllBeautifyStyles());
       const shuffled = [...allKeys].sort(() => 0.5 - Math.random());
       selectedBeautifyStyles = shuffled.slice(0, count);
+      isPromptManuallyEdited = false;
+      customPromptsByCard = {};
       renderBeautifyStylePills();
     }
 
     function resetBeautifyStyles() {
       selectedBeautifyStyles = ["warm_window"];
+      isPromptManuallyEdited = false;
+      customPromptsByCard = {};
       renderBeautifyStylePills();
+    }
+
+    // 🎨 自由客製工坊：桌面道具點綴積木 Chips
+    function renderBeautifyPropsChips() {
+      const container = document.getElementById("beautifyPropsList");
+      if (!container) return;
+
+      const customProps = getCustomProps();
+      const defaultKeys = ["crochet_yarn", "dry_flowers", "tea_cup", "open_book", "bamboo_tray", "none"];
+      const propTitles = {
+        crochet_yarn: "🪡 木鉤針與線球",
+        dry_flowers: "🌿 尤加利乾燥花",
+        tea_cup: "☕ 花草熱茶杯",
+        open_book: "📖 敞開手寫筆記本",
+        bamboo_tray: "🧺 竹編置物托盤",
+        none: "🚫 純淨無道具"
+      };
+
+      let html = defaultKeys.map(key => {
+        const isActive = selectedBeautifyProps.includes(key);
+        return `
+          <button type="button" class="prompt-chip ${isActive ? 'active' : ''}" data-prop="${key}">
+            <span>${propTitles[key]}</span>
+          </button>
+        `;
+      }).join("");
+
+      customProps.forEach(cp => {
+        const isActive = selectedBeautifyProps.includes(cp.id);
+        html += `
+          <div class="prompt-chip ${isActive ? 'active' : ''}" data-prop="${cp.id}">
+            <span>✨ ${cp.name}</span>
+            <span class="chip-del" data-del-custom="${cp.id}" title="刪除這個自訂標籤">×</span>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      container.querySelectorAll(".prompt-chip").forEach(chip => {
+        chip.addEventListener("click", (e) => {
+          if (e.target.classList.contains("chip-del")) {
+            e.stopPropagation();
+            const delId = e.target.dataset.delCustom;
+            const updated = getCustomProps().filter(x => x.id !== delId);
+            saveCustomProps(updated);
+            selectedBeautifyProps = selectedBeautifyProps.filter(p => p !== delId);
+            renderBeautifyPropsChips();
+            updateLivePromptEditor();
+            updateBeautifyScheduleBar();
+            return;
+          }
+
+          const prop = chip.dataset.prop;
+          if (prop === "none") {
+            selectedBeautifyProps = ["none"];
+          } else {
+            selectedBeautifyProps = selectedBeautifyProps.filter(p => p !== "none");
+            const pIdx = selectedBeautifyProps.indexOf(prop);
+            if (pIdx !== -1) {
+              if (selectedBeautifyProps.length > 1) {
+                selectedBeautifyProps.splice(pIdx, 1);
+              }
+            } else {
+              selectedBeautifyProps.push(prop);
+            }
+          }
+          isPromptManuallyEdited = false;
+          renderBeautifyPropsChips();
+          updateLivePromptEditor();
+          updateBeautifyScheduleBar();
+        });
+      });
+    }
+
+    // 構建單張完整提示詞（可依張數微調視角與風格）
+    function buildSinglePrompt(imageIndex = 0) {
+      const allStyles = getAllBeautifyStyles();
+      const styleKey = selectedBeautifyStyles[imageIndex % selectedBeautifyStyles.length] || "warm_window";
+      const style = allStyles[styleKey] || BEAUTIFY_STYLES.warm_window;
+
+      const lightKey = document.getElementById("beautifyLightSelect")?.value || "auto";
+      const lightDesc = (lightKey !== "auto" && BEAUTIFY_LIGHTS[lightKey]) ? BEAUTIFY_LIGHTS[lightKey] : "";
+
+      const angleKey = document.getElementById("beautifyAngleSelect")?.value || "multi_auto";
+      let angleDesc = "";
+      if (angleKey === "multi_auto") {
+        const seq = Array.isArray(BEAUTIFY_ANGLES.multi_auto) ? BEAUTIFY_ANGLES.multi_auto : [
+          "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白",
+          "【45度立體俯拍】45度斜角俯拍，突顯手作織物的厚度、手提把/邊緣細節與編織層次感",
+          "【微距毛線特寫】極近距離焦距對準精緻針目紋理，側光照耀突顯純棉毛線親膚柔軟絨毛",
+          "【生活空間中景】以稍廣景深展現作品靜置於生活空間，充滿手作溫度的生活氛圍",
+          "【光影斜射特寫】午後自然光斜射拉長陰影，作品呈現安靜、沈穩的日系職人溫度"
+        ];
+        angleDesc = seq[imageIndex % seq.length];
+      } else {
+        angleDesc = BEAUTIFY_ANGLES[angleKey] || "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白";
+      }
+
+      const allProps = getAllBeautifyProps();
+      const propItems = (selectedBeautifyProps || [])
+        .filter(p => p !== "none" && allProps[p])
+        .map(p => allProps[p]);
+      const propsDesc = (selectedBeautifyProps.includes("none") || propItems.length === 0)
+        ? "桌面極簡乾淨，無多餘道具雜物"
+        : "周圍自然優雅點綴道具：" + propItems.join("、");
+
+      const customNote = (document.getElementById("beautifyCustomNote")?.value || "").trim();
+
+      const mainItem = postImages.find(x => x.id === mainImageId) || postImages[0];
+      const productLead = mainItem ? "以參考圖中的純手工編織毛線作品為核心主角。嚴格保持參考圖中產品本體的外觀造型、顏色、針法與立體毛線紋理。" : "以精緻手工鉤針編織作品為核心主角。具備細膩立體毛線針目與溫潤手感。";
+
+      return productLead +
+        "場景風格：" + (style.desc || style.name) + "。" +
+        (lightDesc ? ("光線氛圍：" + lightDesc + "。") : "") +
+        "鏡頭角度：" + angleDesc + "。" +
+        "道具擺設：" + propsDesc + "。" +
+        (customNote ? ("特別指定要求：" + customNote + "。") : "") +
+        "安全區與構圖規範：核心毛線作品主體必須完整置於畫面中央 75% 正方形安全區內，四周預留 20%~25% 桌面與留白緩衝空間（確保 4:5 直式與 1:1 正方形跨平台切換裁切時，作品本體與提把絕不切邊）。純單一鏡頭特寫滿版商業攝影照片，背景柔焦景深，絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割。";
+    }
+
+    // 更新即時雙向提示詞編輯器
+    function updateLivePromptEditor() {
+      const textarea = document.getElementById("imagePromptInput");
+      const badge = document.getElementById("promptEditStatusBadge");
+      const charCount = document.getElementById("promptCharCount");
+      if (!textarea) return;
+
+      const cardIdx = currentEditingImageIndex;
+      const countSel = document.getElementById("beautifyCountSelect");
+      const totalCount = parseInt(countSel?.value || "5", 10) || 1;
+
+      if (customPromptsByCard[cardIdx] && customPromptsByCard[cardIdx].trim()) {
+        textarea.value = customPromptsByCard[cardIdx];
+        if (badge) {
+          badge.textContent = `✏️ 已手動客製 (第 ${cardIdx + 1} 張)`;
+          badge.style.background = "#fff3cd";
+          badge.style.color = "#856404";
+        }
+      } else {
+        const autoPrompt = buildSinglePrompt(cardIdx);
+        textarea.value = autoPrompt;
+        if (badge) {
+          badge.textContent = (totalCount > 1) ? `🔄 標籤連動中 (第 ${cardIdx + 1} 張)` : "🔄 標籤連動中";
+          badge.style.background = "#f4ede4";
+          badge.style.color = "#7c5a43";
+        }
+      }
+
+      if (charCount) {
+        charCount.textContent = `${textarea.value.length} 字`;
+      }
+    }
+
+    // 渲染多張輪播分張微調頁籤
+    function renderPerImageTabs() {
+      const section = document.getElementById("beautifyPerImageSection");
+      const bar = document.getElementById("perImageTabsBar");
+      const countSel = document.getElementById("beautifyCountSelect");
+      const totalCount = parseInt(countSel?.value || "5", 10) || 1;
+
+      if (!section || !bar) return;
+
+      if (totalCount <= 1 || beautifySubMode !== "custom") {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      const angleKey = document.getElementById("beautifyAngleSelect")?.value || "multi_auto";
+      const angleShortNames = {
+        multi_auto: ["正面主角", "45°立體", "微距特寫", "生活空間", "光影特寫"],
+        front_hero: "正面平視",
+        angle_45: "45°立體",
+        flat_lay: "90°俯拍",
+        macro_detail: "微距特寫"
+      };
+
+      let html = "";
+      for (let i = 0; i < totalCount; i++) {
+        const isActive = (i === currentEditingImageIndex);
+        const hasCustom = !!(customPromptsByCard[i] && customPromptsByCard[i].trim());
+        const angleLabel = (angleKey === "multi_auto") ? angleShortNames.multi_auto[i % 5] : (typeof angleShortNames[angleKey] === 'string' ? angleShortNames[angleKey] : "視角");
+        html += `
+          <button type="button" class="per-image-tab-btn ${isActive ? 'active' : ''}" data-idx="${i}">
+            ${hasCustom ? '✏️ ' : ''}第 ${i + 1} 張 (${angleLabel})
+          </button>
+        `;
+      }
+      bar.innerHTML = html;
+
+      bar.querySelectorAll(".per-image-tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          currentEditingImageIndex = parseInt(btn.dataset.idx, 10) || 0;
+          renderPerImageTabs();
+          updateLivePromptEditor();
+        });
+      });
     }
 
     function updateBeautifyScheduleBar() {
@@ -4724,42 +5334,87 @@
         cozy_warm: "暖黃微光"
       };
 
+      const allStyles = getAllBeautifyStyles();
       const items = [];
       for (let i = 0; i < count; i++) {
         const styleKey = selectedBeautifyStyles[i % selectedBeautifyStyles.length] || "warm_window";
-        const style = BEAUTIFY_STYLES[styleKey] || BEAUTIFY_STYLES.warm_window;
+        const style = allStyles[styleKey] || BEAUTIFY_STYLES.warm_window;
         const angle = (angleKey === "multi_auto")
           ? angleShortNames.multi_auto[i % 5]
           : angleShortNames[angleKey];
         const light = (lightKey !== "auto") ? `・${lightShortNames[lightKey]}` : "";
+        const isCustom = !!(customPromptsByCard[i] && customPromptsByCard[i].trim());
 
-        items.push(`<span style="display:inline-block; margin:2px 4px 2px 0; background:#fff; border:1px solid #ebd9c8; border-radius:4px; padding:2px 6px;"><b>第 ${i + 1} 張：</b>${style.icon} ${style.name}（${angle}${light}）</span>`);
+        items.push(`<span style="display:inline-block; margin:2px 3px 2px 0; background:#fff; border:1px solid #ebd9c8; border-radius:4px; padding:2px 6px;">${isCustom ? '✏️ ' : ''}<b>第 ${i + 1} 張：</b>${style.icon || '🎨'} ${style.name}（${angle}${light}）</span>`);
       }
 
-      scheduleEl.innerHTML = `<div style="font-weight:700; color:#7c5a43; margin-bottom:3px;">📋 出圖排程預覽（共 ${count} 張，將各自依序繪製不同風格）：</div>` + items.join(" ");
+      scheduleEl.innerHTML = `<div style="font-weight:700; color:#7c5a43; margin-bottom:3px;">📋 出圖排程（共 ${count} 張，將各自依序繪製）：</div>` + items.join(" ");
     }
 
     function initBeautifyEvents() {
+      // 雙模式切換監聽
+      document.querySelectorAll("#beautifySubmodeSwitch .beautify-submode-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          switchBeautifySubMode(btn.dataset.submode);
+        });
+      });
+
+      // 快速模式更多風格下拉
+      const quickExtra = document.getElementById("quickExtraStyleSelect");
+      if (quickExtra) {
+        quickExtra.addEventListener("change", () => {
+          if (quickExtra.value) {
+            selectedBeautifyStyles = [quickExtra.value];
+            isPromptManuallyEdited = false;
+            customPromptsByCard = {};
+            renderQuickStyles();
+            renderBeautifyStylePills();
+            updateLivePromptEditor();
+            updateBeautifyScheduleBar();
+          }
+        });
+      }
+
       const countSel = document.getElementById("beautifyCountSelect");
       if (countSel) {
         countSel.addEventListener("change", () => {
+          const totalCount = parseInt(countSel.value || "5", 10) || 1;
+          if (currentEditingImageIndex >= totalCount) {
+            currentEditingImageIndex = totalCount - 1;
+          }
           renderBeautifyStylePills();
+          renderPerImageTabs();
+          updateLivePromptEditor();
+          updateBeautifyScheduleBar();
         });
       }
 
       const lightSel = document.getElementById("beautifyLightSelect");
       if (lightSel) {
-        lightSel.addEventListener("change", () => updateBeautifyScheduleBar());
+        lightSel.addEventListener("change", () => {
+          isPromptManuallyEdited = false;
+          updateBeautifyScheduleBar();
+          updateLivePromptEditor();
+        });
       }
 
       const angleSel = document.getElementById("beautifyAngleSelect");
       if (angleSel) {
-        angleSel.addEventListener("change", () => updateBeautifyScheduleBar());
+        angleSel.addEventListener("change", () => {
+          isPromptManuallyEdited = false;
+          renderPerImageTabs();
+          updateBeautifyScheduleBar();
+          updateLivePromptEditor();
+        });
       }
 
       const customNote = document.getElementById("beautifyCustomNote");
       if (customNote) {
-        customNote.addEventListener("input", () => updateBeautifyScheduleBar());
+        customNote.addEventListener("input", () => {
+          isPromptManuallyEdited = false;
+          updateLivePromptEditor();
+          updateBeautifyScheduleBar();
+        });
       }
 
       const btnRandom = document.getElementById("btnRandomBeautifyStyles");
@@ -4772,29 +5427,105 @@
         btnReset.addEventListener("click", resetBeautifyStyles);
       }
 
-      const propsList = document.getElementById("beautifyPropsList");
-      if (propsList) {
-        propsList.querySelectorAll(".preset-pill").forEach(pill => {
-          pill.addEventListener("click", () => {
-            const prop = pill.dataset.prop;
-            if (prop === "none") {
-              selectedBeautifyProps = ["none"];
-            } else {
-              selectedBeautifyProps = selectedBeautifyProps.filter(p => p !== "none");
-              const pIdx = selectedBeautifyProps.indexOf(prop);
-              if (pIdx !== -1) {
-                if (selectedBeautifyProps.length > 1) {
-                  selectedBeautifyProps.splice(pIdx, 1);
-                }
-              } else {
-                selectedBeautifyProps.push(prop);
-              }
-            }
-            propsList.querySelectorAll(".preset-pill").forEach(p => {
-              p.classList.toggle("active", selectedBeautifyProps.includes(p.dataset.prop));
-            });
-            updateBeautifyScheduleBar();
+      // 自由新增自訂道具標籤
+      const customPropInput = document.getElementById("beautifyCustomPropInput");
+      const btnAddProp = document.getElementById("btnAddCustomProp");
+      const handleAddCustomProp = () => {
+        if (!customPropInput) return;
+        const text = customPropInput.value.trim();
+        if (!text) return;
+        const customs = getCustomProps();
+        const id = "custom_" + Date.now();
+        customs.push({ id, name: text, desc: text });
+        saveCustomProps(customs);
+        if (!selectedBeautifyProps.includes(id)) {
+          selectedBeautifyProps.push(id);
+        }
+        customPropInput.value = "";
+        renderBeautifyPropsChips();
+        updateLivePromptEditor();
+        updateBeautifyScheduleBar();
+      };
+
+      if (btnAddProp) {
+        btnAddProp.addEventListener("click", handleAddCustomProp);
+      }
+      if (customPropInput) {
+        customPropInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleAddCustomProp();
+          }
+        });
+      }
+
+      // 即時提示詞編輯器輸入監聽
+      const promptTextarea = document.getElementById("imagePromptInput");
+      if (promptTextarea) {
+        promptTextarea.addEventListener("input", () => {
+          customPromptsByCard[currentEditingImageIndex] = promptTextarea.value;
+          isPromptManuallyEdited = true;
+          const badge = document.getElementById("promptEditStatusBadge");
+          if (badge) {
+            badge.textContent = `✏️ 已手動客製 (第 ${currentEditingImageIndex + 1} 張)`;
+            badge.style.background = "#fff3cd";
+            badge.style.color = "#856404";
+          }
+          const charCount = document.getElementById("promptCharCount");
+          if (charCount) {
+            charCount.textContent = `${promptTextarea.value.length} 字`;
+          }
+          renderPerImageTabs();
+          updateBeautifyScheduleBar();
+        });
+      }
+
+      // ↺ 依標籤重整提示詞
+      const btnRebuild = document.getElementById("btnRebuildPromptFromTags");
+      if (btnRebuild) {
+        btnRebuild.addEventListener("click", () => {
+          delete customPromptsByCard[currentEditingImageIndex];
+          isPromptManuallyEdited = false;
+          updateLivePromptEditor();
+          renderPerImageTabs();
+          updateBeautifyScheduleBar();
+        });
+      }
+
+      // ⚡ 同步提示詞至全部張數
+      const btnSyncAll = document.getElementById("btnSyncPromptToAll");
+      if (btnSyncAll) {
+        btnSyncAll.addEventListener("click", () => {
+          const currentText = document.getElementById("imagePromptInput")?.value || "";
+          const countSel = document.getElementById("beautifyCountSelect");
+          const totalCount = parseInt(countSel?.value || "5", 10) || 1;
+          for (let i = 0; i < totalCount; i++) {
+            customPromptsByCard[i] = currentText;
+          }
+          isPromptManuallyEdited = true;
+          renderPerImageTabs();
+          updateBeautifyScheduleBar();
+          alert(`已成功將目前提示詞同步至全部 ${totalCount} 張排程！`);
+        });
+      }
+
+      // ⭐ 儲存為我的專屬風格
+      const btnSavePreset = document.getElementById("btnSaveCustomStylePreset");
+      if (btnSavePreset) {
+        btnSavePreset.addEventListener("click", () => {
+          const styleName = prompt("請輸入這套客製風格的名稱（例：春日草莓野餐、復古暖陽木桌）：");
+          if (!styleName || !styleName.trim()) return;
+          const promptText = document.getElementById("imagePromptInput")?.value || "";
+          const id = "user_style_" + Date.now();
+          saveCustomStyle({
+            id: id,
+            name: styleName.trim(),
+            icon: "⭐",
+            desc: promptText
           });
+          selectedBeautifyStyles = [id];
+          renderBeautifyStylePills();
+          alert(`已成功儲存風格「${styleName.trim()}」！日後可直接點選使用。`);
         });
       }
     }
@@ -5325,9 +6056,11 @@
         const lightDesc = (lightKey !== "auto" && BEAUTIFY_LIGHTS[lightKey]) ? BEAUTIFY_LIGHTS[lightKey] : "";
         const angleKey = document.getElementById("beautifyAngleSelect")?.value || "multi_auto";
 
+        const allStyles = getAllBeautifyStyles();
+        const allProps = getAllBeautifyProps();
         const propItems = (selectedBeautifyProps || [])
-          .filter(p => p !== "none" && BEAUTIFY_PROPS[p])
-          .map(p => BEAUTIFY_PROPS[p]);
+          .filter(p => p !== "none" && allProps[p])
+          .map(p => allProps[p]);
         const propsDesc = (selectedBeautifyProps.includes("none") || propItems.length === 0)
           ? "桌面極簡乾淨，無多餘道具雜物"
           : "周圍自然優雅點綴道具：" + propItems.join("、");
@@ -5364,11 +6097,23 @@
           statusEl.textContent = "🎨 第二步：已鎖定作品「" + productDescription.slice(0, 25) + "...」，正在為【" + currentPlatformId + "】規劃 " + count + " 張商業構圖提示詞…";
         }
 
-        // 2. 構建 1~5 套多風格、多角度美化提示詞
+        // 2. 構建 1~5 套多風格、多角度美化提示詞（優先使用客製化編輯的提示詞）
         let prompts = [];
         for (let i = 0; i < count; i++) {
+          // 若使用者有針對該張進行手動客製
+          if (customPromptsByCard && customPromptsByCard[i] && customPromptsByCard[i].trim()) {
+            prompts.push(customPromptsByCard[i].trim());
+            continue;
+          }
+
+          // 若在客製工坊模式下，且目前編輯中的文字框有使用者輸入的自訂內容
+          if (beautifySubMode === "custom" && i === currentEditingImageIndex && promptInput && promptInput.value.trim() && isPromptManuallyEdited) {
+            prompts.push(promptInput.value.trim());
+            continue;
+          }
+
           const curStyleKey = selectedBeautifyStyles[i % selectedBeautifyStyles.length] || "warm_window";
-          const curStyle = BEAUTIFY_STYLES[curStyleKey] || BEAUTIFY_STYLES.warm_window;
+          const curStyle = allStyles[curStyleKey] || BEAUTIFY_STYLES.warm_window;
 
           let curAngleDesc = "";
           if (angleKey === "multi_auto") {
@@ -5385,7 +6130,7 @@
           }
 
           const prompt = "以參考圖中的【" + productDescription + "】為核心主角。嚴格保持參考圖中產品本體的外觀造型、顏色、針法與毛線紋理。" +
-            "場景風格：" + curStyle.desc + "。" +
+            "場景風格：" + (curStyle.desc || curStyle.name) + "。" +
             (lightDesc ? ("光線氛圍：" + lightDesc + "。") : "") +
             "鏡頭角度：" + curAngleDesc + "。" +
             "道具擺設：" + propsDesc + "。" +
@@ -7173,7 +7918,7 @@ ${angleText}。
 
       // ✨ 美化背景自訂風格、光線、視角與道具初始化
       initBeautifyEvents();
-      renderBeautifyStylePills();
+      switchBeautifySubMode("quick");
 
       // 初始化拖曳丟入區域與毛線配色模擬、手燈娃娃設計
       initDragAndDropZone();

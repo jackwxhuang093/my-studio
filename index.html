@@ -1018,6 +1018,46 @@
             <div class="thumb-empty">尚無這篇專屬圖片（可按「📤 上傳」或下方「🎨 生圖」）</div>
           </div>
 
+          <!-- ⭐ 素材卡專屬：主圖與加字即時預覽窗格（生圖與壓字即時可見） -->
+          <div class="form-live-preview-box" id="formLivePreviewSection" style="margin: 10px 0; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:12.5px; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:5px;">
+                👁️ 表單即時預覽（生圖與加字）
+              </span>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <span id="formPreviewBadge" style="font-size:11px; padding:2px 7px; border-radius:4px; background:#e8f4fd; color:#1877f2; font-weight:600;">
+                  IG (4:5)
+                </span>
+                <button type="button" id="btnZoomFormPreview" class="btn-light" style="padding:2px 7px; font-size:11px; border:1px solid var(--line); border-radius:4px;" title="放大查看大圖">
+                  🔍 放大
+                </button>
+              </div>
+            </div>
+
+            <!-- 預覽容器 -->
+            <div id="formPreviewContainer" style="position:relative; width:100%; border-radius:6px; overflow:hidden; background:#f4f7f9; display:flex; align-items:center; justify-content:center; min-height:160px; border:1px solid #e2e8ec; cursor:pointer;" title="點擊放大查看">
+              <!-- 有圖片時顯示 -->
+              <img id="formPreviewImg" src="" alt="預覽圖" style="display:none; width:100%; height:auto; max-height:260px; object-fit:contain; transition:opacity 0.2s;">
+              
+              <!-- 無圖片時的提示 -->
+              <div id="formPreviewEmpty" style="padding:24px 12px; text-align:center; color:var(--ink-muted); font-size:12px; line-height:1.5;">
+                <div style="font-size:24px; margin-bottom:4px;">🖼️</div>
+                尚未選取或生成圖片<br>
+                <span style="font-size:11px; color:#8c9ba5;">（可按上方「📂 載入練習圖」或下方「🎨 生圖」）</span>
+              </div>
+            </div>
+
+            <!-- 預覽資訊列與即時文字狀態 -->
+            <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:11.5px;">
+              <div id="formPreviewTextStatus" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:210px; color:var(--ink-muted);">
+                ✏️ 尚未加字
+              </div>
+              <button type="button" id="btnDownloadFromFormPreview" class="btn-light" style="padding:3px 8px; font-size:11px; border:1px solid var(--line); border-radius:4px; font-weight:600;" title="立即下載這張壓好字的圖">
+                ⬇ 下載這張
+              </button>
+            </div>
+          </div>
+
           <!-- 抽屜（localStorage）與圖片倉庫（IndexedDB）容量資訊 -->
           <div class="storage-info-box">
             <div id="storageDrawerText">瀏覽器的抽屜（localStorage）：計算中…</div>
@@ -1434,6 +1474,26 @@
       </div>
       <div class="modal-footer">
         <button class="btn-light" data-close="postsModal">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6：圖片放大檢視視窗 -->
+  <div class="modal-overlay" id="imageZoomModal">
+    <div class="modal-box" style="max-width:680px; text-align:center;">
+      <div class="modal-header">
+        <h3 id="imageZoomModalTitle">🔍 圖片大圖檢視（含加字效果）</h3>
+        <button class="modal-close" data-close="imageZoomModal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:16px; background:#111827; display:flex; justify-content:center; align-items:center; min-height:300px;">
+        <img id="imageZoomModalImg" src="" style="max-width:100%; max-height:70vh; border-radius:6px; box-shadow:0 4px 20px rgba(0,0,0,0.5);">
+      </div>
+      <div class="modal-footer" style="justify-content:space-between; align-items:center;">
+        <span id="imageZoomModalInfo" style="font-size:12px; color:var(--ink-muted);"></span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-light" data-close="imageZoomModal">關閉</button>
+          <button class="btn-success" id="btnDownloadFromZoomModal">⬇ 下載大圖</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2168,11 +2228,48 @@
       return c;
     }
 
+    function updateFormLivePreview() {
+      const imgEl = document.getElementById("formPreviewImg");
+      const emptyEl = document.getElementById("formPreviewEmpty");
+      const badgeEl = document.getElementById("formPreviewBadge");
+      const statusEl = document.getElementById("formPreviewTextStatus");
+
+      if (!imgEl || !emptyEl) return;
+
+      const picCfg = PIC_SIZE[currentPlatformId] || PIC_SIZE.FB;
+      if (badgeEl) {
+        badgeEl.textContent = `${currentPlatformId} (${picCfg.ratio || '1:1'}) ${picCfg.width}×${picCfg.height}`;
+      }
+
+      if (renderedMainDataUrl) {
+        imgEl.src = renderedMainDataUrl;
+        imgEl.style.display = "block";
+        emptyEl.style.display = "none";
+      } else {
+        imgEl.style.display = "none";
+        emptyEl.style.display = "block";
+      }
+
+      if (statusEl) {
+        const txt = (overlayConfig.text || "").trim();
+        if (txt) {
+          const posMap = { top: "上方", middle: "置中", bottom: "下方" };
+          const sizeMap = { small: "小字", medium: "中字", large: "大字" };
+          const styleMap = { white_box: "白底主色", black_box: "黑底白字", shadow: "白字陰影" };
+          statusEl.innerHTML = `<span style="color:var(--success); font-weight:600;">✏️ 已加字：</span><b>「${escapeHtml(txt)}」</b> <span style="font-size:10.5px; color:var(--ink-muted);">(${posMap[overlayConfig.pos] || "下"} / ${sizeMap[overlayConfig.size] || "大"})</span>`;
+        } else {
+          statusEl.textContent = "✏️ 尚未加字（在下方輸入文字即可即時壓字）";
+          statusEl.style.color = "var(--ink-muted)";
+        }
+      }
+    }
+
     async function updateRenderedMainImage() {
       const picCfg = PIC_SIZE[currentPlatformId] || PIC_SIZE.FB;
       const srcImg = await loadActiveSourceImage();
       const canvas = renderImageWithOverlayToCanvas(srcImg, picCfg.width, picCfg.height, overlayConfig);
       renderedMainDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+      updateFormLivePreview();
     }
 
     async function downloadOverlayImage() {
@@ -4525,6 +4622,49 @@
           el.addEventListener("change", onOverlayChange);
         }
       });
+
+      
+      // 素材卡表單即時預覽：點擊放大與快捷下載
+      function showImageZoomModal() {
+        if (!renderedMainDataUrl) return;
+        const zoomImg = document.getElementById("imageZoomModalImg");
+        const zoomInfo = document.getElementById("imageZoomModalInfo");
+        const picCfg = PIC_SIZE[currentPlatformId] || PIC_SIZE.FB;
+        if (zoomImg) zoomImg.src = renderedMainDataUrl;
+        if (zoomInfo) {
+          const txt = (overlayConfig.text || "").trim();
+          zoomInfo.textContent = `目前平台：${currentPlatformId}（${picCfg.width}×${picCfg.height}）${txt ? '｜壓字：「' + txt + '」' : '｜尚未壓字'}`;
+        }
+        openModal("imageZoomModal");
+      }
+
+      const previewContainer = document.getElementById("formPreviewContainer");
+      if (previewContainer) {
+        previewContainer.addEventListener("click", () => {
+          if (renderedMainDataUrl) showImageZoomModal();
+        });
+      }
+
+      const btnZoom = document.getElementById("btnZoomFormPreview");
+      if (btnZoom) {
+        btnZoom.addEventListener("click", (e) => {
+          e.stopPropagation();
+          showImageZoomModal();
+        });
+      }
+
+      const btnDlFormPreview = document.getElementById("btnDownloadFromFormPreview");
+      if (btnDlFormPreview) {
+        btnDlFormPreview.addEventListener("click", (e) => {
+          e.stopPropagation();
+          downloadOverlayImage();
+        });
+      }
+
+      const btnDlZoomModal = document.getElementById("btnDownloadFromZoomModal");
+      if (btnDlZoomModal) {
+        btnDlZoomModal.addEventListener("click", downloadOverlayImage);
+      }
 
       const btnDownloadOverlay = document.getElementById("btnDownloadOverlayImg");
       if (btnDownloadOverlay) {

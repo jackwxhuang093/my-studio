@@ -1529,17 +1529,16 @@
               </select>
             </div>
 
-            <!-- ✨ 三合一 AI 影像工作坊（整合「產品照美化背景」、「毛線配色模擬」與「AI 想圖生圖」） -->
+            <!-- ✨ 雙模態 AI 影像工作坊（整合「產品照美化背景」與「毛線配色模擬」） -->
             <div class="sub-section-box" id="productBeautifyBox" style="background:#fffcf9; border:1px solid #ebd9c8;">
               <div class="ai-mode-tabs" id="aiImgModeTabs">
                 <button type="button" class="ai-mode-tab active" data-imgmode="beautify">✨ 美化背景</button>
                 <button type="button" class="ai-mode-tab" data-imgmode="yarnsim">🧶 配色模擬</button>
-                <button type="button" class="ai-mode-tab" data-imgmode="scratch">🎨 想圖生圖</button>
               </div>
 
-              <!-- 模式 A：依產品照美化背景與光線 -->
+              <!-- 模式 A：依產品照美化背景、光線與多風格客製化 -->
               <div id="aiImgModeBeautifyPane">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                   <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink); cursor:pointer; user-select:none;">
                     <input type="checkbox" id="chkUseMainImgRef" checked>
                     <span style="font-weight:600;">鎖定主圖作品外觀（保留毛線紋理、換背景光影）</span>
@@ -1548,14 +1547,72 @@
                     📸 待載入照片
                   </span>
                 </div>
-                <div style="font-size:11.5px; color:var(--ink-muted); margin-bottom:5px;">選擇美化場景氛圍：</div>
-                <div class="beautify-preset-pills" id="beautifyStylePills" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;">
-                  <button type="button" class="preset-pill active" data-style="warm_window">🌿 日系午後自然窗光</button>
-                  <button type="button" class="preset-pill" data-style="craft_table">☕ 溫潤職人工作桌</button>
-                  <button type="button" class="preset-pill" data-style="minimal_clean">🌸 簡約純淨棉麻底</button>
-                  <button type="button" class="preset-pill" data-style="autumn_earth">🍂 暖陽秋日復古風</button>
+
+                <!-- 1. 10 大佈景風格多選牆 -->
+                <div style="background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px; margin-bottom:8px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:4px;">
+                    <div style="font-size:11.5px; font-weight:700; color:var(--main); display:flex; align-items:center; gap:4px;">
+                      <span>🎨 選擇佈景風格</span>
+                      <span id="beautifyStyleCountHint" style="font-size:10.5px; font-weight:normal; color:var(--ink-muted);">（可複選 1~5 種依序出圖）</span>
+                    </div>
+                    <div style="display:flex; gap:4px;">
+                      <button type="button" class="btn-light" id="btnRandomBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="依出圖張數隨機挑選不同的風格組合">🎲 智慧挑選</button>
+                      <button type="button" class="btn-light" id="btnResetBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="重設為預設第 1 種風格">↺ 重設</button>
+                    </div>
+                  </div>
+                  <div class="beautify-preset-pills" id="beautifyStylePills" style="display:flex; flex-wrap:wrap; gap:5px;">
+                    <!-- JS 動態渲染 10 大風格膠囊（支援 ① ② ③ ④ ⑤ 序號標記） -->
+                  </div>
                 </div>
 
+                <!-- 2. 光線角度 ＆ 拍攝鏡頭視角（雙欄控制） -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
+                  <div style="background:#fdfbf7; border:1px solid #ebd9c8; border-radius:6px; padding:6px;">
+                    <div style="font-size:11px; font-weight:700; color:#5a3e28; margin-bottom:3px;">☀️ 光線角度與氛圍</div>
+                    <select id="beautifyLightSelect" style="width:100%; font-size:11.5px; padding:4px 6px; border-color:#d8c4ae; background:#fff; color:var(--ink); font-weight:500;">
+                      <option value="auto" selected>✨ 依風格智慧配置（推薦）</option>
+                      <option value="side_45">🌤️ 45° 側向自然窗光（立體針目）</option>
+                      <option value="golden_hour">🌅 午後金黃斜陽（暖長影）</option>
+                      <option value="studio_soft">💡 商業柔光無影（真實色彩）</option>
+                      <option value="cozy_warm">🕯️ 溫馨室內暖黃（靜謐慢生活）</option>
+                    </select>
+                  </div>
+                  <div style="background:#fdfbf7; border:1px solid #ebd9c8; border-radius:6px; padding:6px;">
+                    <div style="font-size:11px; font-weight:700; color:#5a3e28; margin-bottom:3px;">🎥 鏡頭拍攝視角</div>
+                    <select id="beautifyAngleSelect" style="width:100%; font-size:11.5px; padding:4px 6px; border-color:#d8c4ae; background:#fff; color:var(--ink); font-weight:500;">
+                      <option value="multi_auto" selected>🔄 5 種視角自動輪播（正面+俯拍+微距）</option>
+                      <option value="front_hero">🎯 正面平視主角特寫</option>
+                      <option value="angle_45">📐 45° 立體斜角俯拍</option>
+                      <option value="flat_lay">🔍 90° 垂直平鋪俯拍（Flat-lay）</option>
+                      <option value="macro_detail">🧶 近距離微距工藝特寫</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 3. 佈景道具點綴 ＆ 自由微調補充 -->
+                <div style="background:#fcf8f3; border:1px dashed #ebd9c8; border-radius:6px; padding:6px 8px; margin-bottom:8px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--main);">🌿 桌面點綴道具（可複選）：</span>
+                  </div>
+                  <div id="beautifyPropsList" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                    <button type="button" class="preset-pill active" data-prop="crochet_yarn">🪡 木鉤針與線球</button>
+                    <button type="button" class="preset-pill active" data-prop="dry_flowers">🌿 尤加利乾燥花</button>
+                    <button type="button" class="preset-pill" data-prop="tea_cup">☕ 花草熱茶杯</button>
+                    <button type="button" class="preset-pill" data-prop="open_book">📖 敞開手寫筆記本</button>
+                    <button type="button" class="preset-pill" data-prop="bamboo_tray">🧺 竹編置物托盤</button>
+                    <button type="button" class="preset-pill" data-prop="none">🚫 純淨無道具</button>
+                  </div>
+                  <div>
+                    <input type="text" id="beautifyCustomNote" placeholder="選填補充細節（例：木桌偏淺白橡木色、右上方多留白）..." style="width:100%; font-size:11.5px; padding:5px 8px; border:1px solid var(--line); border-radius:5px; background:#fff;">
+                  </div>
+                </div>
+
+                <!-- 4. 即時排程預覽列（清楚交代 1~5 張分別拍什麼風格與角度） -->
+                <div id="beautifyScheduleBar" style="font-size:11px; color:var(--main); background:#fdf7ef; border:1px solid #eedecf; border-radius:6px; padding:6px 8px; margin-bottom:8px; line-height:1.5;">
+                  <!-- JS 動態即時呈現：第 1 張：🌿 日系窗光・正面 ➔ 第 2 張：☕ 職人桌・45°俯拍... -->
+                </div>
+
+                <!-- 操作按鈕與張數下拉 -->
                 <div class="ai-img-row" style="display:flex; gap:6px; align-items:center;">
                   <button type="button" class="btn-primary" id="btnBeautifyProduct" style="flex:1.4; justify-content:center; padding:8px 8px; font-size:12.5px; font-weight:700;">
                     ✨ 依產品照美化背景與光線
@@ -1563,9 +1620,9 @@
                   <select id="beautifyCountSelect" style="width:86px; flex-shrink:0; font-size:12px;" title="生成張數（支援多圖輪播）">
                     <option value="1">1 張</option>
                     <option value="2">2 張輪播</option>
-                    <option value="3" selected>3 張輪播</option>
+                    <option value="3">3 張輪播</option>
                     <option value="4">4 張輪播</option>
-                    <option value="5">5 張輪播</option>
+                    <option value="5" selected>5 張輪播</option>
                   </select>
                 </div>
                 <div id="beautifyStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; color:var(--main); border:1px solid #ebd9c8;"></div>
@@ -1645,32 +1702,6 @@
                   </select>
                 </div>
                 <div id="yarnSimStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; color:var(--main); border:1px solid #ebd9c8;"></div>
-              </div>
-
-              <!-- 模式 C：自訂描述生圖 ＋ 🪄 AI 想圖再畫 -->
-              <div id="aiImgModeScratchPane" style="display:none;">
-                <div style="margin-bottom:6px;">
-                  <label class="form-label" style="font-size:11.5px; margin-bottom:3px;">
-                    <span>圖片描述（或點下方「🪄 AI 想圖再畫」自動撰寫）</span>
-                  </label>
-                  <textarea id="imagePromptInput" placeholder="例：一只米白色手工鉤針泡芙花手提包靜置於實木桌上，窗邊溫柔自然光，細緻毛線紋理與木質鉤針…" style="min-height:54px; font-size:12px;"></textarea>
-                </div>
-                <div class="ai-img-row" style="display:flex; gap:6px; align-items:center;">
-                  <button type="button" class="btn-primary" id="btnGenerateAiImage" style="flex:1; justify-content:center; padding:7px 8px; font-size:12px; font-weight:700;">
-                    🎨 按描述生圖
-                  </button>
-                  <select id="imageGenCountSelect" style="width:82px; flex-shrink:0; font-size:12px;" title="一次生幾張（支援多圖輪播）">
-                    <option value="1">1 張</option>
-                    <option value="2">2 張輪播</option>
-                    <option value="3" selected>3 張輪播</option>
-                    <option value="4">4 張輪播</option>
-                    <option value="5">5 張輪播</option>
-                  </select>
-                  <button type="button" class="btn-accent" id="btnThinkAndDraw" style="flex:1.2; justify-content:center; padding:7px 8px; font-size:12px; font-weight:700;">
-                    🪄 AI 想圖再畫
-                  </button>
-                </div>
-                <div id="imageGenStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; border:1px solid #ebd9c8;"></div>
               </div>
             </div>
 
@@ -3196,6 +3227,8 @@
       initSettings();
       await loadDraftOrDefaults();
       bindEvents();
+      renderBeautifyStylePills();
+      updateBeautifyScheduleBar();
       renderYarnColorSlot();
       renderYarnPatternSlot();
       const btnTour = document.getElementById("btnAutoTour");
@@ -4415,27 +4448,279 @@
       return { cost, model: imageModel };
     }
 
-    // 風格美化場景庫定義
+    // 風格美化場景庫定義（10 大品牌質感佈景風格）
     const BEAUTIFY_STYLES = {
       warm_window: {
+        id: "warm_window",
         name: "日系午後自然窗光",
+        icon: "🌿",
         desc: "日系極簡與溫暖生活感。手工鉤針編織作品置於溫潤淺色實木桌上，百葉窗灑下柔和金黃微煦斜陽，微光細緻勾勒立體針目與毛線柔軟質感，背景搭配素雅竹編托盤與一小束乾燥尤加利葉，光影溫柔清澈，景深柔和虛化，上方預留乾淨空間供社群文字壓字。"
       },
       craft_table: {
+        id: "craft_table",
         name: "溫潤職人工作桌",
+        icon: "☕",
         desc: "專注安靜的手作職人編織工作桌視角。手工織物作品端正擺放在木質托盤中，旁邊隨性擺放一把溫潤的櫸木鉤針、手寫筆記本與一杯微熱的花草茶，自然天光傾瀉，散發慢工出細活的生活溫度，上方預留留白空間。"
       },
       minimal_clean: {
+        id: "minimal_clean",
         name: "簡約純淨棉麻底",
+        icon: "🌸",
         desc: "極簡高質感品牌商業寫真風格。手工作品平整展示於帶有些微自然褶皺的天然米白純棉麻布上，頂級商業柔光箱均勻無影光，微距細節清晰可見每一道工整針法，純淨無雜物，展現精品手作的高雅格調，大面積乾淨留白。"
       },
       autumn_earth: {
+        id: "autumn_earth",
         name: "暖陽秋日復古風",
+        icon: "🍂",
         desc: "溫暖復古秋日大地色系風格。手工編織作品靜置於深色胡桃木几，夕陽暖橘色斜射光影，溫柔點綴數顆小松果與同色系純羊毛線球，散發療癒被包裹的幸福感，構圖穩重優雅，上方預留乾淨空間。"
+      },
+      korean_cream: {
+        id: "korean_cream",
+        name: "韓系奶油極簡棚拍",
+        icon: "🥛",
+        desc: "韓系溫柔奶杏色極簡選物店寫真風格。手工編織作品置於燕麥奶白微磨砂幾何展台，背景為乾淨柔霧暖白牆面，柔和漫射天光無刺眼陰影，呈現純淨俐落又溫潤親膚的現代手工質感，畫面通透優雅。"
+      },
+      forest_picnic: {
+        id: "forest_picnic",
+        name: "森系草地野餐日照",
+        icon: "🌲",
+        desc: "戶外森系午後野餐氛圍。手工作品平置於米白格紋純棉野餐墊上，周圍有綠意草地與樹葉篩落的斑駁自然陽光，一側點綴精緻手提藤編籃與小野花，散發與大自然呼吸同頻的清新純手工生活感。"
+      },
+      nordic_sofa: {
+        id: "nordic_sofa",
+        name: "北歐針織家居沙發",
+        icon: "🛋️",
+        desc: "北歐溫暖居家慢時光視角。手工織物作品隨意而精緻地依偎在米白色亞麻布沙發上，身旁搭配一條粗棒針厚羊毛毯，自然窗光灑落，傳遞手作融入日常生活的鬆弛、治癒與居家幸福溫度。"
+      },
+      market_display: {
+        id: "market_display",
+        name: "手作市集原木展架",
+        icon: "🎪",
+        desc: "週末文創手作市集職人展位視角。手工作品陳列於原色松木階梯層架上，背景帶有微微虛化的溫暖暖黃小燈串光斑，散發市集手作尋寶的親切與獨特職人手工魅力。"
+      },
+      zen_tea: {
+        id: "zen_tea",
+        name: "靜謐茶席竹編托盤",
+        icon: "🍵",
+        desc: "日式侘寂（Wabi-sabi）靜心美學。手工編織作品靜放於手工編織圓竹盤內，背景為微水泥淺灰桌面與一盞熱陶茶杯，側逆微光勾勒作品外廓與線條，簡素凝練，禪意安寧。"
+      },
+      gift_box: {
+        id: "gift_box",
+        name: "節慶乾燥花禮盒風",
+        icon: "🎁",
+        desc: "充滿手作心意的禮物開箱寫真。作品精緻收納於原色牛皮紙禮盒內，周圍點綴天然米白棉麻拉菲草、乾燥滿天星與一捲麻繩，暖光映照，傳遞「一針一線織進祝福」的溫度手作禮品情境。"
       }
     };
 
-    let currentBeautifyStyleKey = "warm_window";
+    // 光線角度與色溫描述詞庫
+    const BEAUTIFY_LIGHTS = {
+      auto: "",
+      side_45: "45度側向自然天光照射，柔和陰影極致突顯手工毛線的立體凹凸針目與飽滿絨毛質感",
+      golden_hour: "午後斜陽金黃暖光斜射，光影拉長且色溫溫暖沈靜，散發迷人的復古慢生活情調",
+      studio_soft: "商業級頂級柔光箱均勻無影光，清晰通透，真實還原毛線纖維色彩與工整針法細節",
+      cozy_warm: "溫馨室內暖黃微光，氛圍柔和低調，展現夜晚工作室裡一人一針的靜謐專注"
+    };
+
+    // 拍攝鏡頭視角庫
+    const BEAUTIFY_ANGLES = {
+      multi_auto: [
+        "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白",
+        "【45度立體俯拍】45度斜角俯拍，突顯手作織物的厚度、手提把/邊緣細節與編織層次感",
+        "【微距毛線特寫】極近距離焦距對準精緻針目紋理，側光照耀突顯純棉毛線親膚柔軟絨毛",
+        "【生活空間中景】以稍廣景深展現作品靜置於生活空間，充滿手作溫度的生活氛圍",
+        "【光影斜射特寫】午後自然光斜射拉長陰影，作品呈現安靜、沈穩的日系職人溫度"
+      ],
+      front_hero: "【正面平視特寫】相機水平正對作品，端正完整展示手作織物的造型、比例與立體花紋，構圖端莊大氣",
+      angle_45: "【45度立體俯拍】45度斜角俯視拍攝，強烈展現編織立體厚度、底座與提把立體結構",
+      flat_lay: "【90度垂直俯拍 Flat-lay】頂視垂直往下俯拍，作品端正平鋪展示，日系手作雜誌排版風格",
+      macro_detail: "【微距近景特寫】極近對焦於編織針眼、線材纖維絨毛與接縫工藝，展現高級手作細膩手感"
+    };
+
+    // 點綴道具庫
+    const BEAUTIFY_PROPS = {
+      crochet_yarn: "一把櫸木鉤針與同色系純棉線球隨性散落",
+      dry_flowers: "一小束素雅乾燥尤加利葉與小白花點綴",
+      tea_cup: "一杯微熱冒著薄霧的花草茶手作陶杯",
+      open_book: "一本敞開的手寫布面筆記本或外文生活誌",
+      bamboo_tray: "質感竹編或藤編置物托盤托底",
+      none: "周圍極簡純淨，不擺放任何雜物與多餘道具"
+    };
+
+    let selectedBeautifyStyles = ["warm_window"];
+    let selectedBeautifyProps = ["crochet_yarn", "dry_flowers"];
+    const CIRCLE_NUMS = ["①", "②", "③", "④", "⑤"];
+
+    function renderBeautifyStylePills() {
+      const container = document.getElementById("beautifyStylePills");
+      const countHint = document.getElementById("beautifyStyleCountHint");
+      if (!container) return;
+
+      const countSel = document.getElementById("beautifyCountSelect");
+      const currentCount = parseInt(countSel?.value || "5", 10) || 1;
+
+      if (countHint) {
+        countHint.textContent = `（已選 ${selectedBeautifyStyles.length} 種風格，目前出圖 ${currentCount} 張）`;
+      }
+
+      const styleKeys = Object.keys(BEAUTIFY_STYLES);
+      container.innerHTML = styleKeys.map(key => {
+        const item = BEAUTIFY_STYLES[key];
+        const selIdx = selectedBeautifyStyles.indexOf(key);
+        const isSelected = selIdx !== -1;
+        const badge = isSelected ? `<span style="font-weight:bold; margin-right:2px; font-size:11.5px;">${CIRCLE_NUMS[selIdx] || (selIdx + 1)}</span> ` : "";
+        return `
+          <button type="button" class="preset-pill beautify-style-pill ${isSelected ? 'active' : ''}" data-style="${key}" title="${item.desc}">
+            ${badge}${item.icon} ${item.name}
+          </button>
+        `;
+      }).join("");
+
+      container.querySelectorAll(".beautify-style-pill").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const styleKey = btn.dataset.style;
+          toggleBeautifyStyle(styleKey);
+        });
+      });
+
+      updateBeautifyScheduleBar();
+    }
+
+    function toggleBeautifyStyle(styleKey) {
+      const idx = selectedBeautifyStyles.indexOf(styleKey);
+      const countSel = document.getElementById("beautifyCountSelect");
+      const currentCount = parseInt(countSel?.value || "5", 10) || 1;
+
+      if (idx !== -1) {
+        if (selectedBeautifyStyles.length > 1) {
+          selectedBeautifyStyles.splice(idx, 1);
+        }
+      } else {
+        if (selectedBeautifyStyles.length >= 5) {
+          selectedBeautifyStyles[4] = styleKey;
+        } else {
+          selectedBeautifyStyles.push(styleKey);
+          if (selectedBeautifyStyles.length > currentCount && countSel) {
+            countSel.value = String(selectedBeautifyStyles.length);
+          }
+        }
+      }
+      renderBeautifyStylePills();
+    }
+
+    function randomizeBeautifyStyles() {
+      const countSel = document.getElementById("beautifyCountSelect");
+      const count = Math.min(5, Math.max(1, parseInt(countSel?.value || "5", 10) || 1));
+      const allKeys = Object.keys(BEAUTIFY_STYLES);
+      const shuffled = [...allKeys].sort(() => 0.5 - Math.random());
+      selectedBeautifyStyles = shuffled.slice(0, count);
+      renderBeautifyStylePills();
+    }
+
+    function resetBeautifyStyles() {
+      selectedBeautifyStyles = ["warm_window"];
+      renderBeautifyStylePills();
+    }
+
+    function updateBeautifyScheduleBar() {
+      const scheduleEl = document.getElementById("beautifyScheduleBar");
+      const countSel = document.getElementById("beautifyCountSelect");
+      if (!scheduleEl) return;
+
+      const count = parseInt(countSel?.value || "5", 10) || 1;
+      const angleKey = document.getElementById("beautifyAngleSelect")?.value || "multi_auto";
+      const lightKey = document.getElementById("beautifyLightSelect")?.value || "auto";
+
+      const angleShortNames = {
+        multi_auto: ["正面主角", "45°立體俯拍", "微距特寫", "空間中景", "光影特寫"],
+        front_hero: "正面平視",
+        angle_45: "45°立體俯拍",
+        flat_lay: "90°俯拍Flat-lay",
+        macro_detail: "微距特寫"
+      };
+
+      const lightShortNames = {
+        auto: "風格光",
+        side_45: "45°側窗光",
+        golden_hour: "午後斜陽",
+        studio_soft: "柔光無影",
+        cozy_warm: "暖黃微光"
+      };
+
+      const items = [];
+      for (let i = 0; i < count; i++) {
+        const styleKey = selectedBeautifyStyles[i % selectedBeautifyStyles.length] || "warm_window";
+        const style = BEAUTIFY_STYLES[styleKey] || BEAUTIFY_STYLES.warm_window;
+        const angle = (angleKey === "multi_auto")
+          ? angleShortNames.multi_auto[i % 5]
+          : angleShortNames[angleKey];
+        const light = (lightKey !== "auto") ? `・${lightShortNames[lightKey]}` : "";
+
+        items.push(`<span style="display:inline-block; margin:2px 4px 2px 0; background:#fff; border:1px solid #ebd9c8; border-radius:4px; padding:2px 6px;"><b>第 ${i + 1} 張：</b>${style.icon} ${style.name}（${angle}${light}）</span>`);
+      }
+
+      scheduleEl.innerHTML = `<div style="font-weight:700; color:#7c5a43; margin-bottom:3px;">📋 出圖排程預覽（共 ${count} 張，將各自依序繪製不同風格）：</div>` + items.join(" ");
+    }
+
+    function initBeautifyEvents() {
+      const countSel = document.getElementById("beautifyCountSelect");
+      if (countSel) {
+        countSel.addEventListener("change", () => {
+          renderBeautifyStylePills();
+        });
+      }
+
+      const lightSel = document.getElementById("beautifyLightSelect");
+      if (lightSel) {
+        lightSel.addEventListener("change", () => updateBeautifyScheduleBar());
+      }
+
+      const angleSel = document.getElementById("beautifyAngleSelect");
+      if (angleSel) {
+        angleSel.addEventListener("change", () => updateBeautifyScheduleBar());
+      }
+
+      const customNote = document.getElementById("beautifyCustomNote");
+      if (customNote) {
+        customNote.addEventListener("input", () => updateBeautifyScheduleBar());
+      }
+
+      const btnRandom = document.getElementById("btnRandomBeautifyStyles");
+      if (btnRandom) {
+        btnRandom.addEventListener("click", randomizeBeautifyStyles);
+      }
+
+      const btnReset = document.getElementById("btnResetBeautifyStyles");
+      if (btnReset) {
+        btnReset.addEventListener("click", resetBeautifyStyles);
+      }
+
+      const propsList = document.getElementById("beautifyPropsList");
+      if (propsList) {
+        propsList.querySelectorAll(".preset-pill").forEach(pill => {
+          pill.addEventListener("click", () => {
+            const prop = pill.dataset.prop;
+            if (prop === "none") {
+              selectedBeautifyProps = ["none"];
+            } else {
+              selectedBeautifyProps = selectedBeautifyProps.filter(p => p !== "none");
+              const pIdx = selectedBeautifyProps.indexOf(prop);
+              if (pIdx !== -1) {
+                if (selectedBeautifyProps.length > 1) {
+                  selectedBeautifyProps.splice(pIdx, 1);
+                }
+              } else {
+                selectedBeautifyProps.push(prop);
+              }
+            }
+            propsList.querySelectorAll(".preset-pill").forEach(p => {
+              p.classList.toggle("active", selectedBeautifyProps.includes(p.dataset.prop));
+            });
+            updateBeautifyScheduleBar();
+          });
+        });
+      }
+    }
+
     let currentLeftFormTab = "material";
 
     function switchLeftFormTab(tabKey) {
@@ -4463,14 +4748,12 @@
 
     let currentAiImgMode = "beautify";
     function switchAiImgMode(modeKey) {
-      currentAiImgMode = modeKey || "beautify";
+      currentAiImgMode = modeKey === "yarnsim" ? "yarnsim" : "beautify";
       const paneBeautify = document.getElementById("aiImgModeBeautifyPane");
       const paneYarnSim = document.getElementById("aiImgModeYarnSimPane");
-      const paneScratch = document.getElementById("aiImgModeScratchPane");
 
       if (paneBeautify) paneBeautify.style.display = (currentAiImgMode === "beautify") ? "block" : "none";
       if (paneYarnSim) paneYarnSim.style.display = (currentAiImgMode === "yarnsim") ? "block" : "none";
-      if (paneScratch) paneScratch.style.display = (currentAiImgMode === "scratch") ? "block" : "none";
 
       document.querySelectorAll("#aiImgModeTabs .ai-mode-tab").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.imgmode === currentAiImgMode);
@@ -4948,7 +5231,23 @@
         const settings = getSettings();
         const imageSpec = (settings.imageSpec && settings.imageSpec.trim()) ? settings.imageSpec.trim() : DEFAULT_IMAGE_SPEC;
         const picCfg = PIC_SIZE[currentPlatformId] || PIC_SIZE.FB;
-        const styleInfo = BEAUTIFY_STYLES[currentBeautifyStyleKey] || BEAUTIFY_STYLES.warm_window;
+
+        if (!selectedBeautifyStyles || selectedBeautifyStyles.length === 0) {
+          selectedBeautifyStyles = ["warm_window"];
+        }
+        const lightKey = document.getElementById("beautifyLightSelect")?.value || "warm_window";
+        const lightInfo = BEAUTIFY_LIGHTS[lightKey] || BEAUTIFY_LIGHTS.warm_window;
+        const angleKey = document.getElementById("beautifyAngleSelect")?.value || "multi_auto";
+        const angleInfo = BEAUTIFY_ANGLES[angleKey] || BEAUTIFY_ANGLES.multi_auto;
+
+        const propNames = (selectedBeautifyProps || [])
+          .filter(p => p !== "none" && BEAUTIFY_PROPS[p])
+          .map(p => BEAUTIFY_PROPS[p].label);
+        const propsDesc = (selectedBeautifyProps.includes("none") || propNames.length === 0)
+          ? "桌面極簡乾淨，無多餘道具雜物"
+          : "周圍自然優雅點綴道具：" + propNames.join("、");
+
+        const customNote = (document.getElementById("beautifyCustomNote")?.value || "").trim();
 
         // 1. 透過 Multimodal Vision 辨識作品特徵
         let productDescription = "";
@@ -4977,24 +5276,36 @@
         }
 
         if (statusEl) {
-          statusEl.textContent = "🎨 第二步：已鎖定作品「" + productDescription.slice(0, 25) + "...」，正在為【" + currentPlatformId + "】生成 " + count + " 張商業構圖提示詞…";
+          statusEl.textContent = "🎨 第二步：已鎖定作品「" + productDescription.slice(0, 25) + "...」，正在為【" + currentPlatformId + "】規劃 " + count + " 張商業構圖提示詞…";
         }
 
-        // 2. 構建 1~5 套不同鏡頭視角的美化提示詞
-        const cameraAngles = [
-          "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白",
-          "【45度立體俯拍】45度斜角俯拍，突顯手作織物的厚度、手提把/邊緣細節與編織層次感",
-          "【微距毛線特寫】極近距離焦距對準精緻針目紋理，側光照耀突顯純棉毛線親膚柔軟絨毛",
-          "【生活工作桌情境】以稍廣景深展現作品靜置於桌面，搭配木質鉤針與線球的慢生活情境",
-          "【午後光影氛圍】午後微金黃陽光斜射拉長陰影，作品呈現安靜、沈穩的日系職人溫度"
-        ];
-
+        // 2. 構建 1~5 套多風格、多角度美化提示詞
         let prompts = [];
         for (let i = 0; i < count; i++) {
-          const angle = cameraAngles[i] || cameraAngles[0];
-          const prompt = "以參考圖中的【" + productDescription + "】為核心主角。嚴格保持參考圖中產品本體的外觀造型、顏色與毛線針織紋理。" +
-            "場景與光線：" + styleInfo.desc + "。" +
-            "鏡頭構圖與安全區：" + angle + "，且核心毛線作品主體必須完整置於畫面中央 75% 正方形安全區內，四周預留 20%~25% 桌面與留白緩衝空間（確保 4:5 直式與 1:1 正方形跨平台切換裁切時，作品本體與提把絕不切邊）。純單一鏡頭滿版特寫照片，絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割。";
+          const curStyleKey = selectedBeautifyStyles[i % selectedBeautifyStyles.length] || "warm_window";
+          const curStyle = BEAUTIFY_STYLES[curStyleKey] || BEAUTIFY_STYLES.warm_window;
+
+          let curAngleDesc = "";
+          if (angleKey === "multi_auto") {
+            const seq = angleInfo.sequence || [
+              "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白",
+              "【45度立體俯拍】45度斜角俯拍，突顯手作織物的厚度、手提把/邊緣細節與編織層次感",
+              "【微距毛線特寫】極近距離焦距對準精緻針目紋理，側光照耀突顯純棉毛線親膚柔軟絨毛",
+              "【生活工作桌情境】以稍廣景深展現作品靜置於桌面，搭配木質鉤針與線球的慢生活情境",
+              "【午後光影氛圍】午後微金黃陽光斜射拉長陰影，作品呈現安靜、沈穩的日系職人溫度"
+            ];
+            curAngleDesc = seq[i % seq.length];
+          } else {
+            curAngleDesc = angleInfo.desc || "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白";
+          }
+
+          const prompt = "以參考圖中的【" + productDescription + "】為核心主角。嚴格保持參考圖中產品本體的外觀造型、顏色、針法與毛線紋理。" +
+            "場景風格：" + curStyle.desc + "。" +
+            "光線氛圍：" + lightInfo.desc + "。" +
+            "鏡頭角度：" + curAngleDesc + "。" +
+            "道具擺設：" + propsDesc + "。" +
+            (customNote ? ("特別指定要求：" + customNote + "。") : "") +
+            "安全區與構圖規範：核心毛線作品主體必須完整置於畫面中央 75% 正方形安全區內，四周預留 20%~25% 桌面與留白緩衝空間（確保 4:5 直式與 1:1 正方形跨平台切換裁切時，作品本體與提把絕不切邊）。純單一鏡頭特寫滿版商業攝影照片，背景柔焦景深，絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割。";
           prompts.push(prompt);
         }
 
@@ -5217,251 +5528,6 @@
       const btnSim = document.getElementById("btnSimulateYarnPattern");
       if (btnSim) {
         btnSim.addEventListener("click", handleSimulateYarnPattern);
-      }
-    }
-
-    // 🎨 生圖按鈕觸發（支援 1~3 張數下拉）
-    async function handleGenerateAiImage(overridePrompt = null, thinkStepSummary = "", countOverride = null) {
-      const promptInput = document.getElementById("imagePromptInput");
-      const rawPrompt = (overridePrompt !== null ? overridePrompt : promptInput?.value || "").trim();
-      const statusEl = document.getElementById("imageGenStatus");
-
-      if (!rawPrompt) {
-        alert("請先在「圖片描述」輸入要畫什麼，或按「🪄 AI 想圖再畫」！");
-        if (promptInput) promptInput.focus();
-        return;
-      }
-
-      const countSel = document.getElementById("imageGenCountSelect");
-      const selectedCount = parseInt(countSel?.value || "1", 10) || 1;
-      const count = countOverride !== null ? countOverride : (overridePrompt !== null ? 1 : selectedCount);
-
-      const btnGen = document.getElementById("btnGenerateAiImage");
-      const btnThink = document.getElementById("btnThinkAndDraw");
-
-      if (btnGen) {
-        btnGen.disabled = true;
-        btnGen.style.opacity = "0.6";
-        btnGen.style.filter = "grayscale(1)";
-        btnGen.textContent = "🎨 畫圖中…";
-      }
-      if (btnThink) {
-        btnThink.disabled = true;
-        btnThink.style.opacity = "0.6";
-      }
-
-      if (statusEl) {
-        statusEl.style.display = "block";
-        statusEl.style.color = "var(--main)";
-        statusEl.innerHTML = thinkStepSummary
-          ? `${escapeHtml(thinkStepSummary)}<br>🎨 畫圖中（約需 10～40 秒）…`
-          : `🎨 畫圖中（共 ${count} 張，約需 10～40 秒）…`;
-      }
-
-      let totalBatchCost = 0;
-      let successCount = 0;
-
-      try {
-        for (let i = 0; i < count; i++) {
-          if (count > 1 && statusEl) {
-            statusEl.textContent = `🎨 畫圖中（第 ${i + 1} / ${count} 張）…`;
-          }
-          const res = await callOpenRouterImageSingle(rawPrompt);
-          totalBatchCost += res.cost;
-          successCount++;
-        }
-
-        const stats = recordDailyImageUsage(successCount, totalBatchCost);
-        const batchCostStr = `$${totalBatchCost.toFixed(3)}`;
-        const dayCostStr = `$${stats.imageCost.toFixed(3)}`;
-
-        if (statusEl) {
-          statusEl.style.display = "block";
-          statusEl.style.color = "var(--success)";
-          if (thinkStepSummary) {
-            statusEl.innerHTML = `<div>${escapeHtml(thinkStepSummary)}</div><div style="font-weight:700;">畫圖：這張約 ${batchCostStr}｜今天生了 ${stats.imageCount} 張 約 ${dayCostStr}</div>`;
-          } else {
-            const label = count > 1 ? `這 ${successCount} 張共約 ${batchCostStr}` : `這張約 ${batchCostStr}`;
-            statusEl.innerHTML = `<span style="font-weight:700;">✅ ${label}｜今天生了 ${stats.imageCount} 張 約 ${dayCostStr}</span>`;
-          }
-        }
-
-        if (window.innerWidth <= 900) {
-          switchMobileTab("preview");
-        }
-      } catch (err) {
-        if (statusEl) {
-          statusEl.style.display = "block";
-          statusEl.style.color = "#d9534f";
-          statusEl.innerHTML = `<span style="font-weight:700;">${escapeHtml(err.message)}</span>`;
-        }
-      } finally {
-        if (btnGen) {
-          btnGen.disabled = false;
-          btnGen.style.opacity = "";
-          btnGen.style.filter = "";
-          btnGen.textContent = "🎨 生圖";
-        }
-        if (btnThink) {
-          btnThink.disabled = false;
-          btnThink.style.opacity = "";
-          btnThink.textContent = "🪄 AI 想圖再畫";
-        }
-      }
-    }
-
-    // 🪄 AI 想圖再畫：依所選張數（1～5張）分別生成獨立照片，並自動套用至三平台專屬比例
-    async function handleThinkAndDraw() {
-      const currentPostText = (postContents[currentPlatformId] || document.getElementById("postEditor")?.value || "").trim();
-      if (!currentPostText) {
-        alert("請先讓 AI 寫貼文或輸入貼文內容！");
-        return;
-      }
-
-      const countSel = document.getElementById("imageGenCountSelect");
-      const count = parseInt(countSel?.value || "1", 10) || 1;
-
-      const btnGen = document.getElementById("btnGenerateAiImage");
-      const btnThink = document.getElementById("btnThinkAndDraw");
-      const statusEl = document.getElementById("imageGenStatus");
-      const promptInput = document.getElementById("imagePromptInput");
-
-      if (btnThink) {
-        btnThink.disabled = true;
-        btnThink.style.opacity = "0.6";
-        btnThink.textContent = "🪄 構思中…";
-      }
-      if (btnGen) {
-        btnGen.disabled = true;
-        btnGen.style.opacity = "0.6";
-      }
-      if (statusEl) {
-        statusEl.style.display = "block";
-        statusEl.style.color = "var(--main)";
-        statusEl.textContent = count > 1
-          ? "🪄 第一步：AI 美術指導正在為【" + currentPlatformId + "】規劃 " + count + " 張【獨立單幅照片】（絕非拼貼九宮格）…"
-          : "🪄 第一步：AI 美術指導正在構思單幅獨立照片畫面…";
-      }
-
-      try {
-        const settings = getSettings();
-        const imageSpec = (settings.imageSpec && settings.imageSpec.trim()) ? settings.imageSpec.trim() : DEFAULT_IMAGE_SPEC;
-        const picCfg = PIC_SIZE[currentPlatformId] || PIC_SIZE.FB;
-
-        const rawDate = document.getElementById("field_date")?.value || "";
-        const formattedDate = formatDateWithWeekday(rawDate);
-        const topic = document.getElementById("field_topic")?.value.trim() || "（未填）";
-        const story = document.getElementById("field_story")?.value.trim() || "（未填）";
-        const price = document.getElementById("field_price")?.value.trim() || "（未填）";
-
-        // 明確定義輪播鏡頭主題（確保 5 張各自獨立、視角完全不同）
-        const shotThemes = [
-          "【鏡頭1・主角特寫】手工鉤針編織包（或毛線花束）靜置於溫潤實木桌上，午後自然窗光輕柔斜灑，針目立體飽滿，毛線質感蓬鬆親膚",
-          "【鏡頭2・工具細節】一把溫潤木質鉤針穿梭於燕麥色天然棉線球與編織半成品之間，焦距集中在線頭與鉤針頭，單一特寫",
-          "【鏡頭3・線材特寫】木質托盤上擺放數顆溫暖莫蘭迪色系的高級毛線球，細緻柔和的纖維絨毛紋理，光線乾淨柔美",
-          "【鏡頭4・手作空間】手作工作桌一隅，實木桌邊放置一只竹編針線籃，百葉窗灑下溫暖條紋光影，生活安靜感",
-          "【鏡頭5・生活餘韻】完成的鉤針手作作品旁擺放一本復古手寫筆記本與一杯花草茶，畫面極簡大面積留白，充滿手作溫度"
-        ];
-
-        let prompts = [];
-
-        if (count === 1) {
-          const systemPrompt = "你是" + BRAND.name + "的美術指導。請為這篇貼文寫一段給生圖模型用的【單幅獨立照片描述】。只描述單一畫面：主角、場景、光線、顏色、氣氛。主角毛線作品必須完整置於畫面中央 75% 正方形安全構圖區內，四周預留 20%~25% 桌面與留白緩衝空間（確保在 4:5 與 1:1 跨平台切換時不切邊）。絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格分割。純單一鏡頭特寫。一律繁體中文，80～120字。";
-          const userContent = "【圖片規格】\n" + imageSpec + "\n\n【貼文】\n" + currentPostText + "\n\n【比例】\n" + picCfg.ratio + "（" + picCfg.width + "×" + picCfg.height + "）";
-          const thinkRes = await askAi([
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userContent }
-          ], 2000);
-          recordDailyUsage(thinkRes.provider, thinkRes.tokens, thinkRes.cost);
-          prompts.push(thinkRes.text.trim());
-        } else {
-          // 多張輪播：為每張照片個別生成獨特描述
-          const systemPrompt = "你是" + BRAND.name + "的美術指導。使用者需要為【" + currentPlatformId + "】貼文規劃一套共 " + count + " 張【各自獨立的單幅照片】來做輪播。每一張都必須是單獨一張照片，主角毛線作品置於畫面中央 75% 正方形安全構圖區內並預留四周緩衝空間（確保 4:5 與 1:1 切換不切邊），嚴禁一張圖畫多格或拼貼！請嚴格輸出 JSON 陣列格式，內含 " + count + " 個字串，例如：[\"第1張描述...\", \"第2張描述...\"]。不要其他任何 markdown 或解釋。";
-          const userContent = "【圖片規格】\n" + imageSpec + "\n\n【貼文】\n" + currentPostText + "\n\n【參考鏡頭主題】\n" + shotThemes.slice(0, count).join("\n");
-          
-          let thinkText = "";
-          try {
-            const thinkRes = await askAi([
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userContent }
-            ], 3000);
-            recordDailyUsage(thinkRes.provider, thinkRes.tokens, thinkRes.cost);
-            thinkText = thinkRes.text.trim();
-          } catch (e) {}
-
-          // 解析 JSON 陣列
-          try {
-            const jsonMatch = thinkText.match(/\[[\s\S]*\]/);
-            if (jsonMatch) {
-              const parsed = JSON.parse(jsonMatch[0]);
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                prompts = parsed.slice(0, count).map(p => String(p).trim());
-              }
-            }
-          } catch (e) {}
-
-          // 若解析未達張數，用預備的高質感職人鏡頭主題補足
-          while (prompts.length < count) {
-            const idx = prompts.length;
-            prompts.push(shotThemes[idx] + "，風格符合手作日常，日系溫暖手作質感，上方留白以供壓字");
-          }
-        }
-
-        if (promptInput) {
-          promptInput.value = prompts.map((p, idx) => "【第 " + (idx + 1) + " 張獨立照片】\n" + p).join("\n\n");
-        }
-        saveDraft();
-
-        // 第二步：嚴格分次獨立呼叫 API，分別繪製出 count 張獨立單張滿版照片！
-        let totalCost = 0;
-        let successCount = 0;
-
-        for (let i = 0; i < prompts.length; i++) {
-          if (statusEl) {
-            statusEl.style.display = "block";
-            statusEl.style.color = "var(--main)";
-            statusEl.textContent = "🎨 正在分別繪製第 " + (i + 1) + " / " + prompts.length + " 張獨立照片…（約需 10～30 秒）";
-          }
-
-          // 核心紅線保護：嚴格強制單一特寫鏡頭，絕對不畫拼貼九宮格！
-          const strictSingleShotPrompt = prompts[i] + "（單一鏡頭、滿版單幅照片。絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割、嚴禁一張圖內出現多個視窗。畫面中不要出現任何文字、字母、數字或標誌。）";
-          
-          const res = await callOpenRouterImageSingle(strictSingleShotPrompt);
-          totalCost += res.cost;
-          successCount++;
-        }
-
-        const stats = recordDailyImageUsage(successCount, totalCost);
-        const costStr = "$" + totalCost.toFixed(3);
-        const dayCostStr = "$" + stats.imageCost.toFixed(3);
-
-        if (statusEl) {
-          statusEl.style.display = "block";
-          statusEl.style.color = "var(--success)";
-          statusEl.innerHTML = "<div style=\"font-weight:700; font-size:13px;\">🎉 成功分別生成 " + successCount + " 張獨立單幅照片！</div><div style=\"font-size:11.5px; margin-top:2px;\">已完整套用至 FB (1:1)、IG (4:5)、LINE (1:1) 三平台專屬輪播。這組約 " + costStr + "。</div>";
-        }
-
-        // 自動切換至 IG 模式展示輪播
-        await switchPlatform(currentPlatformId);
-
-      } catch (err) {
-        console.error("生圖失敗", err);
-        if (statusEl) {
-          statusEl.style.display = "block";
-          statusEl.style.color = "#d9534f";
-          statusEl.innerHTML = "<span style=\"font-weight:700;\">" + escapeHtml(err.message) + "</span>";
-        }
-      } finally {
-        if (btnGen) {
-          btnGen.disabled = false;
-          btnGen.style.opacity = "";
-          btnGen.textContent = "🎨 生圖";
-        }
-        if (btnThink) {
-          btnThink.disabled = false;
-          btnThink.style.opacity = "";
-          btnThink.textContent = "🪄 AI 想圖再畫";
-        }
       }
     }
 
@@ -6643,7 +6709,7 @@
         btnBackToMat.addEventListener("click", () => switchLeftFormTab("material"));
       }
 
-      // 二合一 AI 影像工作坊模式切換（✨ 產品照美化背景 vs 🎨 AI 描述／想圖生圖）
+      // 二合一 AI 影像工作坊模式切換（✨ 產品照美化背景 vs 🧶 毛線配色與織物模擬）
       document.querySelectorAll("#aiImgModeTabs .ai-mode-tab").forEach(btn => {
         btn.addEventListener("click", () => {
           switchAiImgMode(btn.dataset.imgmode);
@@ -6689,33 +6755,13 @@
         btnBeautify.addEventListener("click", handleBeautifyProductPhoto);
       }
 
-      // 風格選鈕點擊切換
-      document.querySelectorAll("#beautifyStylePills .preset-pill").forEach(pill => {
-        pill.addEventListener("click", () => {
-          document.querySelectorAll("#beautifyStylePills .preset-pill").forEach(p => p.classList.remove("active"));
-          pill.classList.add("active");
-          currentBeautifyStyleKey = pill.dataset.style || "warm_window";
-        });
-      });
+      // ✨ 美化背景自訂風格、光線、視角與道具初始化
+      initBeautifyEvents();
+      renderBeautifyStylePills();
 
-      // 初始化拖曳丟入區域
+      // 初始化拖曳丟入區域與毛線配色模擬
       initDragAndDropZone();
       initYarnSimulationEvents();
-
-      const btnGenAiImg = document.getElementById("btnGenerateAiImage");
-      if (btnGenAiImg) {
-        btnGenAiImg.addEventListener("click", () => handleGenerateAiImage(null, ""));
-      }
-
-      const btnThinkDraw = document.getElementById("btnThinkAndDraw");
-      if (btnThinkDraw) {
-        btnThinkDraw.addEventListener("click", handleThinkAndDraw);
-      }
-
-      const imgPromptInput = document.getElementById("imagePromptInput");
-      if (imgPromptInput) {
-        imgPromptInput.addEventListener("input", () => saveDraft());
-      }
 
       const onOverlayChange = async () => {
         overlayConfig.text = document.getElementById("overlayTextInput")?.value || "";

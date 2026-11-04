@@ -215,6 +215,10 @@
       flex-direction: column;
       gap: 8px;
     }
+    /* 當左欄處於「② 配圖片」分頁時，隱藏寫作按鈕區塊，將垂直空間完整留給選圖與預覽 */
+    #colCardForm.tab-images #colFormFooter {
+      display: none !important;
+    }
 
     /* 情境選擇器膠囊 (6 大情境) */
     .scenario-selector-card {
@@ -1302,7 +1306,7 @@
   <main class="app-main">
 
     <!-- 左欄：素材與配圖（雙分頁設計，解決捲動過長） -->
-    <section class="col-card" id="colCardForm">
+    <section class="col-card tab-material" id="colCardForm">
       <div class="left-sub-tabs" id="leftSubTabBar">
         <button type="button" class="left-sub-tab-btn active" id="btnLeftTabMaterial" data-lefttab="material">
           <span>① 📝 填素材</span>
@@ -1518,9 +1522,13 @@
               </div>
             </div>
           </div>
+          <!-- 底部引導返回填素材寫貼文按鈕 -->
+          <button type="button" class="btn-light" id="btnBackToMaterialTab" style="width:100%; justify-content:center; padding:9px 12px; font-size:12.5px; border:1.5px dashed var(--line-stitch); background:#fdfaf5; color:var(--main); margin-top:8px;">
+            👈 配好圖了，回「① 📝 填素材」生成貼文
+          </button>
         </div>
       </div>
-      <div class="col-footer">
+      <div class="col-footer" id="colFormFooter">
         <!-- 一鍵套版按鈕（免開 AI 立即生成貼文） -->
         <button class="btn-accent" id="btnAutoGenerateTemplate" style="width:100%; justify-content:center; font-weight:700; font-size:14px; padding:10px 14px; box-shadow:0 2px 8px rgba(198,125,59,0.3);">
           ⚡ 一鍵套版生成（免問 AI 立即出文）
@@ -2963,6 +2971,9 @@
       if (urlParams.get("lefttab") === "images") {
         switchLeftFormTab("images");
       }
+      if (urlParams.get("mobiletab")) {
+        switchMobileTab(urlParams.get("mobiletab"));
+      }
       if (urlParams.get("platform")) {
         const targetP = urlParams.get("platform").toUpperCase();
         if (PLATFORMS.some(p => p.id === targetP)) {
@@ -4181,10 +4192,18 @@
 
     function switchLeftFormTab(tabKey) {
       currentLeftFormTab = tabKey === "images" ? "images" : "material";
+      const colCard = document.getElementById("colCardForm");
+      if (colCard) {
+        colCard.classList.toggle("tab-material", currentLeftFormTab === "material");
+        colCard.classList.toggle("tab-images", currentLeftFormTab === "images");
+      }
       const paneMat = document.getElementById("leftPaneMaterial");
       const paneImg = document.getElementById("leftPaneImages");
+      const formFooter = document.getElementById("colFormFooter");
+
       if (paneMat) paneMat.style.display = currentLeftFormTab === "material" ? "block" : "none";
       if (paneImg) paneImg.style.display = currentLeftFormTab === "images" ? "block" : "none";
+      if (formFooter) formFooter.style.display = currentLeftFormTab === "material" ? "flex" : "none";
 
       document.querySelectorAll("#leftSubTabBar .left-sub-tab-btn").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.lefttab === currentLeftFormTab);
@@ -5364,6 +5383,7 @@
           if (el) el.value = "";
         });
         selectScenario("daily");
+        switchLeftFormTab("material");
         postContents = { FB: "", IG: "", LINE: "" };
         assistantChatHistory = { FB: [], IG: [], LINE: [] };
         lastPostSnapshot = null;
@@ -5692,6 +5712,11 @@
       const btnGoToImg = document.getElementById("btnGoToImagesTab");
       if (btnGoToImg) {
         btnGoToImg.addEventListener("click", () => switchLeftFormTab("images"));
+      }
+
+      const btnBackToMat = document.getElementById("btnBackToMaterialTab");
+      if (btnBackToMat) {
+        btnBackToMat.addEventListener("click", () => switchLeftFormTab("material"));
       }
 
       // 二合一 AI 影像工作坊模式切換（✨ 產品照美化背景 vs 🎨 AI 描述／想圖生圖）

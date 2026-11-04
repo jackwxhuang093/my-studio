@@ -228,6 +228,48 @@
     }
 
     /* 🖼 這篇的圖 區塊樣式 */
+    
+    .product-dropzone {
+      border: 2px dashed #c4a48c;
+      border-radius: 8px;
+      background: #fffcf9;
+      padding: 12px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 6px;
+    }
+    .product-dropzone:hover {
+      background: #fdf6ee;
+      border-color: #8c5e3c;
+    }
+    .product-dropzone.dragover {
+      border-color: #8c5e3c !important;
+      background: #faefe4 !important;
+      box-shadow: 0 0 12px rgba(140,94,60,0.3) !important;
+      transform: scale(1.01);
+    }
+    .preset-pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #e0d0c2;
+      background: #ffffff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .preset-pill:hover {
+      border-color: #8c5e3c;
+      background: #faf4ed;
+    }
+    .preset-pill.active {
+      background: #8c5e3c;
+      color: #ffffff;
+      border-color: #8c5e3c;
+      font-weight: 600;
+    }
     .post-images-card {
       background: #f8fbfd;
       border: 1px solid var(--line);
@@ -1013,6 +1055,13 @@
             </div>
           </div>
 
+          <!-- 📸 產品照拖曳與點擊上傳區 -->
+          <div id="productPhotoDropZone" class="product-dropzone">
+            <div style="font-size:24px; margin-bottom:2px;">📸</div>
+            <div style="font-size:13px; font-weight:700; color:#8c5e3c;">把手作產品照拖曳丟入這裡，或點此選取</div>
+            <div style="font-size:11px; color:var(--ink-muted); margin-top:2px;">支援手機拍照 JPG / PNG，自動作為基底進行背景、光線與構圖美化</div>
+          </div>
+
           <!-- 縮圖列表（點一下選主圖、右上角 × 刪除） -->
           <div class="thumb-list" id="postThumbList">
             <div class="thumb-empty">尚無這篇專屬圖片（可按「📤 上傳」或下方「🎨 生圖」）</div>
@@ -1065,7 +1114,44 @@
             <div id="storageErrorMsg" class="storage-error-msg">⚠️ 抽屜滿了，剛剛的沒存到！</div>
           </div>
 
-          <!-- 🎨 AI 生圖 ＋ 🪄 AI 想圖再畫 -->
+          <!-- ✨ 依產品照美化背景、光線與構圖 -->
+          <div class="sub-section-box" id="productBeautifyBox" style="background:#fffcf9; border:1px solid #ebd9c8; margin-top:8px;">
+            <div class="sub-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:#8c5e3c; font-weight:700;">✨ 依產品照美化背景與光線</span>
+              <span id="beautifyRefBadge" style="font-size:10.5px; padding:2px 7px; border-radius:4px; background:#f4ede4; color:#8c5e3c; font-weight:600;">
+                📸 待載入產品照
+              </span>
+            </div>
+
+            <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink); cursor:pointer; user-select:none; margin: 4px 0 8px 0;">
+              <input type="checkbox" id="chkUseMainImgRef" checked>
+              <span style="font-weight:600;">鎖定產品本體：保留商品外觀與編織紋理，重新打造背景與光影</span>
+            </label>
+
+            <div style="font-size:11.5px; color:var(--ink-muted); margin-bottom:5px;">選擇美化場景氛圍：</div>
+            <div class="beautify-preset-pills" id="beautifyStylePills" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
+              <button type="button" class="preset-pill active" data-style="warm_window">🌿 日系午後自然窗光</button>
+              <button type="button" class="preset-pill" data-style="craft_table">☕ 溫潤職人工作桌</button>
+              <button type="button" class="preset-pill" data-style="minimal_clean">🌸 簡約純淨棉麻底</button>
+              <button type="button" class="preset-pill" data-style="autumn_earth">🍂 暖陽秋日復古風</button>
+            </div>
+
+            <div class="ai-img-row" style="display:flex; gap:6px; align-items:center;">
+              <button type="button" class="btn-primary" id="btnBeautifyProduct" style="flex:1.4; justify-content:center; padding:8px 8px; font-size:12.5px; font-weight:700; background:linear-gradient(135deg, #a06e48 0%, #8c5e3c 100%); border:none; color:#fff; box-shadow:0 2px 5px rgba(140,94,60,0.25);">
+                ✨ 依產品照美化背景與光線
+              </button>
+              <select id="beautifyCountSelect" style="width:82px; flex-shrink:0; font-size:12px;" title="生成張數（支援多圖輪播）">
+                <option value="1">1 張</option>
+                <option value="2">2 張輪播</option>
+                <option value="3" selected>3 張輪播</option>
+                <option value="4">4 張輪播</option>
+                <option value="5">5 張輪播</option>
+              </select>
+            </div>
+            <div id="beautifyStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; color:#8c5e3c; border:1px solid #ebd9c8;"></div>
+          </div>
+
+          <!-- 🎨 自訂描述生圖 ＋ 🪄 AI 想圖再畫 -->
           <div class="sub-section-box">
             <div class="sub-section-title">
               <span>🎨 AI 生圖 ／ 🪄 想圖再畫</span>
@@ -2016,6 +2102,7 @@
       saveDraft();
       renderPreview();
       await updateStorageUsageInfo();
+      updateBeautifyRefBadge();
       return id;
     }
 
@@ -2024,7 +2111,8 @@
       const list = document.getElementById("postThumbList");
       if (!list) return;
       if (!postImages || postImages.length === 0) {
-        list.innerHTML = `<div class="thumb-empty">尚無這篇專屬圖片（可按「📤 上傳」、「📂 載入練習圖」或下方「🎨 生圖」）</div>`;
+        list.innerHTML = `<div class="thumb-empty">尚無這篇專屬圖片（可拖曳至上方「📸 產品照拖曳區」或按「📤 上傳」）</div>`;
+        if (typeof updateBeautifyRefBadge === "function") updateBeautifyRefBadge();
         return;
       }
       if (!mainImageId || !postImages.some(img => img.id === mainImageId)) {
@@ -2057,9 +2145,11 @@
             await updateRenderedMainImage();
             saveDraft();
             renderPreview();
+            if (typeof updateBeautifyRefBadge === "function") updateBeautifyRefBadge();
           }
         });
       });
+      if (typeof updateBeautifyRefBadge === "function") updateBeautifyRefBadge();
     }
 
     // 刪除縮圖（若已存貼文沒在用，同步從 IndexedDB 刪除）
@@ -3564,13 +3654,13 @@
         n: 1
       };
 
-      // 延伸挑戰 ⭐⭐⭐：用主圖當參考
+      // 產品照作為基底參考（換背景、光線與構圖美化）
       const useRef = document.getElementById("chkUseMainImgRef")?.checked;
       if (useRef) {
         let refDataUrl = "";
         if (postImages.length > 0) {
           const mainItem = postImages.find(x => x.id === mainImageId) || postImages[0];
-          refDataUrl = mainItem.dataUrl;
+          refDataUrl = mainItem ? mainItem.dataUrl : "";
         }
         if (refDataUrl) {
           body.input_references = [
@@ -3633,6 +3723,231 @@
 
       await addImageToCurrentPost(rawDataUrl);
       return { cost, model: imageModel };
+    }
+
+    // 風格美化場景庫定義
+    const BEAUTIFY_STYLES = {
+      warm_window: {
+        name: "日系午後自然窗光",
+        desc: "日系極簡與溫暖生活感。手工鉤針編織作品置於溫潤淺色實木桌上，百葉窗灑下柔和金黃微煦斜陽，微光細緻勾勒立體針目與毛線柔軟質感，背景搭配素雅竹編托盤與一小束乾燥尤加利葉，光影溫柔清澈，景深柔和虛化，上方預留乾淨空間供社群文字壓字。"
+      },
+      craft_table: {
+        name: "溫潤職人工作桌",
+        desc: "專注安靜的手作職人編織工作桌視角。手工織物作品端正擺放在木質托盤中，旁邊隨性擺放一把溫潤的櫸木鉤針、手寫筆記本與一杯微熱的花草茶，自然天光傾瀉，散發慢工出細活的生活溫度，上方預留留白空間。"
+      },
+      minimal_clean: {
+        name: "簡約純淨棉麻底",
+        desc: "極簡高質感品牌商業寫真風格。手工作品平整展示於帶有些微自然褶皺的天然米白純棉麻布上，頂級商業柔光箱均勻無影光，微距細節清晰可見每一道工整針法，純淨無雜物，展現精品手作的高雅格調，大面積乾淨留白。"
+      },
+      autumn_earth: {
+        name: "暖陽秋日復古風",
+        desc: "溫暖復古秋日大地色系風格。手工編織作品靜置於深色胡桃木几，夕陽暖橘色斜射光影，溫柔點綴數顆小松果與同色系純羊毛線球，散發療癒被包裹的幸福感，構圖穩重優雅，上方預留乾淨空間。"
+      }
+    };
+
+    let currentBeautifyStyleKey = "warm_window";
+
+    function updateBeautifyRefBadge() {
+      const badge = document.getElementById("beautifyRefBadge");
+      if (!badge) return;
+      if (postImages && postImages.length > 0) {
+        badge.textContent = "📸 產品照已就緒 (" + postImages.length + "張)";
+        badge.style.background = "#e8f5e9";
+        badge.style.color = "#2e7d32";
+      } else {
+        badge.textContent = "📸 待載入產品照";
+        badge.style.background = "#f4ede4";
+        badge.style.color = "#8c5e3c";
+      }
+    }
+
+    // ✨ 依產品照美化背景、光線與構圖核心流程
+    async function handleBeautifyProductPhoto() {
+      if (!postImages || postImages.length === 0) {
+        alert("請先將手作產品照「拖曳丟入」或點擊「上傳」，AI 才能以您的產品為基底進行美化！");
+        return;
+      }
+
+      const mainItem = postImages.find(x => x.id === mainImageId) || postImages[0];
+      if (!mainItem || !mainItem.dataUrl) {
+        alert("找不到有效的主圖產品照，請重新丟入或點選主圖！");
+        return;
+      }
+
+      const countSel = document.getElementById("beautifyCountSelect");
+      const count = parseInt(countSel?.value || "3", 10) || 1;
+
+      const btnBeautify = document.getElementById("btnBeautifyProduct");
+      const statusEl = document.getElementById("beautifyStatus");
+      const promptInput = document.getElementById("imagePromptInput");
+      const chkRef = document.getElementById("chkUseMainImgRef");
+      if (chkRef) chkRef.checked = true;
+
+      if (btnBeautify) {
+        btnBeautify.disabled = true;
+        btnBeautify.style.opacity = "0.6";
+        btnBeautify.textContent = "✨ 正在美化中…";
+      }
+      if (statusEl) {
+        statusEl.style.display = "block";
+        statusEl.style.color = "#8c5e3c";
+        statusEl.textContent = "🔍 第一步：AI 視覺正在細緻觀察您的手作產品外觀與針織紋理…";
+      }
+
+      try {
+        const settings = getSettings();
+        const imageSpec = (settings.imageSpec && settings.imageSpec.trim()) ? settings.imageSpec.trim() : DEFAULT_IMAGE_SPEC;
+        const picCfg = PIC_SIZE[currentPlatformId] || PIC_SIZE.FB;
+        const styleInfo = BEAUTIFY_STYLES[currentBeautifyStyleKey] || BEAUTIFY_STYLES.warm_window;
+
+        // 1. 透過 Multimodal Vision 辨識作品特徵
+        let productDescription = "";
+        try {
+          const visionPrompt = [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: "你是手作針織品牌 Momobear_crochet 的資深攝影總監。請觀察這張產品照片，用繁體中文在一句話（40字以內）說明它是什麼手作織物作品、主要顏色與針織紋理特徵（例如：燕麥奶白色立體泡芙花針手提包、焦糖色密針鉤針小熊玩偶）。只回覆這句描述短句，不要多餘贅字。"
+                },
+                {
+                  type: "image_url",
+                  image_url: { url: mainItem.dataUrl }
+                }
+              ]
+            }
+          ];
+          const visionRes = await askAi(visionPrompt, 1000);
+          productDescription = visionRes.text.trim();
+        } catch (visionErr) {
+          console.warn("Vision API fallback:", visionErr);
+          const topic = document.getElementById("field_topic")?.value.trim() || "手作鉤針毛線作品";
+          productDescription = topic + "，純手工立體編織紋理與細膩質感";
+        }
+
+        if (statusEl) {
+          statusEl.textContent = "🎨 第二步：已鎖定作品「" + productDescription.slice(0, 25) + "...」，正在為【" + currentPlatformId + "】生成 " + count + " 張商業構圖提示詞…";
+        }
+
+        // 2. 構建 1~5 套不同鏡頭視角的美化提示詞
+        const cameraAngles = [
+          "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白",
+          "【45度立體俯拍】45度斜角俯拍，突顯手作織物的厚度、手提把/邊緣細節與編織層次感",
+          "【微距毛線特寫】極近距離焦距對準精緻針目紋理，側光照耀突顯純棉毛線親膚柔軟絨毛",
+          "【生活工作桌情境】以稍廣景深展現作品靜置於桌面，搭配木質鉤針與線球的慢生活情境",
+          "【午後光影氛圍】午後微金黃陽光斜射拉長陰影，作品呈現安靜、沈穩的日系職人溫度"
+        ];
+
+        let prompts = [];
+        for (let i = 0; i < count; i++) {
+          const angle = cameraAngles[i] || cameraAngles[0];
+          const prompt = "以參考圖中的【" + productDescription + "】為核心主角。嚴格保持參考圖中產品本體的外觀造型、顏色與毛線針織紋理。" +
+            "場景與光線：" + styleInfo.desc + "。" +
+            "鏡頭構圖：" + angle + "。純單一鏡頭滿版特寫照片，絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割。畫面乾淨，上方保留空白。";
+          prompts.push(prompt);
+        }
+
+        if (promptInput) {
+          promptInput.value = prompts.map((p, idx) => "【第 " + (idx + 1) + " 張美化構圖】\n" + p).join("\n\n");
+        }
+        saveDraft();
+
+        // 3. 呼叫生圖模型（帶入 input_references）
+        let successCount = 0;
+        let totalCost = 0;
+
+        for (let i = 0; i < prompts.length; i++) {
+          if (statusEl) {
+            statusEl.textContent = "📸 第三步：正在繪製第 " + (i + 1) + " / " + prompts.length + " 張美化照片（帶入產品照進行換背景與打光）…";
+          }
+
+          try {
+            const res = await callOpenRouterImageSingle(prompts[i]);
+            successCount++;
+            totalCost += (res.cost || 0);
+          } catch (imgErr) {
+            console.error("美化生圖單張錯誤:", imgErr);
+            if (statusEl) {
+              statusEl.textContent = "⚠️ 第 " + (i + 1) + " 張生成失敗：" + imgErr.message + "，繼續繪製其餘照片…";
+            }
+          }
+        }
+
+        if (statusEl) {
+          if (successCount > 0) {
+            statusEl.style.color = "#2e7d32";
+            statusEl.textContent = "✅ 成功完成 " + successCount + " 張產品美化照片（花費約 $" + totalCost.toFixed(4) + "）！已自動更新預覽並加入輪播。";
+          } else {
+            statusEl.style.color = "#d9534f";
+            statusEl.textContent = "❌ 美化生圖失敗，請檢查 OpenRouter 金鑰或稍後再試。";
+          }
+        }
+
+        if (window.innerWidth <= 900) {
+          switchMobileTab("preview");
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.style.color = "#d9534f";
+          statusEl.textContent = "美化過程發生錯誤：" + err.message;
+        }
+      } finally {
+        if (btnBeautify) {
+          btnBeautify.disabled = false;
+          btnBeautify.style.opacity = "";
+          btnBeautify.textContent = "✨ 依產品照美化背景與光線";
+        }
+      }
+    }
+
+    // 拖曳丟入產品照事件綁定
+    function initDragAndDropZone() {
+      const dropZone = document.getElementById("productPhotoDropZone");
+      const previewBox = document.getElementById("formPreviewContainer");
+      const thumbList = document.getElementById("postThumbList");
+      const postFileInput = document.getElementById("postImagesFileInput");
+
+      if (dropZone && postFileInput) {
+        dropZone.addEventListener("click", () => postFileInput.click());
+      }
+
+      [dropZone, previewBox, thumbList].forEach(el => {
+        if (!el) return;
+        ["dragenter", "dragover"].forEach(evtName => {
+          el.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (dropZone) dropZone.classList.add("dragover");
+            if (el === previewBox) el.style.borderColor = "#8c5e3c";
+          });
+        });
+        ["dragleave", "drop"].forEach(evtName => {
+          el.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (dropZone) dropZone.classList.remove("dragover");
+            if (el === previewBox) el.style.borderColor = "";
+          });
+        });
+        el.addEventListener("drop", async (e) => {
+          const files = Array.from(e.dataTransfer?.files || []).filter(f => f.type.startsWith("image/"));
+          if (files.length > 0) {
+            for (const file of files) {
+              const dataUrl = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (ev) => resolve(ev.target.result);
+                reader.readAsDataURL(file);
+              });
+              await addImageToCurrentPost(dataUrl);
+            }
+            const chkRef = document.getElementById("chkUseMainImgRef");
+            if (chkRef) chkRef.checked = true;
+            updateBeautifyRefBadge();
+          }
+        });
+      });
     }
 
     // 🎨 生圖按鈕觸發（支援 1~3 張數下拉）
@@ -4862,6 +5177,24 @@
       if (btnSampleImgs) {
         btnSampleImgs.addEventListener("click", loadSamplePracticeImages);
       }
+
+      // ✨ 依產品照美化背景與光線
+      const btnBeautify = document.getElementById("btnBeautifyProduct");
+      if (btnBeautify) {
+        btnBeautify.addEventListener("click", handleBeautifyProductPhoto);
+      }
+
+      // 風格選鈕點擊切換
+      document.querySelectorAll("#beautifyStylePills .preset-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+          document.querySelectorAll("#beautifyStylePills .preset-pill").forEach(p => p.classList.remove("active"));
+          pill.classList.add("active");
+          currentBeautifyStyleKey = pill.dataset.style || "warm_window";
+        });
+      });
+
+      // 初始化拖曳丟入區域
+      initDragAndDropZone();
 
       const btnGenAiImg = document.getElementById("btnGenerateAiImage");
       if (btnGenAiImg) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>織心手作｜鉤針毛線社群工作台</title>
+  <title>Momobear_crochet｜鉤針毛線社群工作台</title>
   <style>
     :root {
       --main: #3b6e8a;
@@ -955,7 +955,7 @@
   <!-- 頂部標題列 -->
   <header>
     <div class="brand-title">
-      <h1>織心手作｜鉤針毛線工作台</h1>
+      <h1>Momobear_crochet｜鉤針毛線工作台</h1>
       <span class="badge">專屬手作職人發文系統</span>
     </div>
     <div class="top-actions">
@@ -1579,8 +1579,8 @@
        1. 品牌、平台與 6 大發文情境與語氣
        ========================================================== */
     const BRAND = {
-      name: "織心手作",
-      account: "@zhixin.crochet",
+      name: "Momobear_crochet",
+      account: "@momobear_crochet",
       color: "#8c5e3c",
       address: "手作工作室（預約制）｜支援全台寄送",
       hours: "週二～週六 13:00–20:00（週日、週一休編）",
@@ -1593,21 +1593,21 @@
         name: "Facebook",
         maxLen: 350,
         tip: "手作同好・生活感故事・建議 200~350 字・固定附工作室資訊",
-        example: `【手作日常】\n這兩天窩在工作室，手裡的鉤針沒停過。米白色的棉線在指尖繞過，一針一針長成了一只泡芙花手提包。\n\n手作的迷人之處，大概就是那份急不來的踏實感。每一道針目都留下了時間與專注的痕跡。\n\n一針一線，織進溫暖與日常。\n\n📍 織心手作工作室｜支援全台寄送\n工作室採預約制開放`
+        example: `【手作日常】\n這兩天窩在工作室，手裡的鉤針沒停過。米白色的棉線在指尖繞過，一針一針長成了一只泡芙花手提包。\n\n手作的迷人之處，大概就是那份急不來的踏實感。每一道針目都留下了時間與專注的痕跡。\n\n一針一線，織進溫暖與日常。\n\n📍 Momobear_crochet工作室｜支援全台寄送\n工作室採預約制開放`
       },
       {
         id: "IG",
         name: "Instagram",
         maxLen: 150,
         tip: "年輕族群・呼吸感短句・以「.」留白・tag 官方帳號",
-        example: `新款泡芙花手提包 🧶\n\n選用日本天然棉線\n手感柔軟蓬鬆，帶著質樸的燕麥色調\n.\n一針一線，織進溫暖與日常。\n.\n@zhixin.crochet\n#鉤針編織 #手作包包 #泡芙花 #毛線手作 #慢生活 #手作日常`
+        example: `新款泡芙花手提包 🧶\n\n選用日本天然棉線\n手感柔軟蓬鬆，帶著質樸的燕麥色調\n.\n一針一線，織進溫暖與日常。\n.\n@momobear_crochet\n#鉤針編織 #手作包包 #泡芙花 #毛線手作 #慢生活 #手作日常`
       },
       {
         id: "LINE",
         name: "LINE 官方帳號",
         maxLen: 180,
         tip: "好友限定・一屏讀完・✔ 重點最多 3 條・手作者固定署名",
-        example: `【好友限定】新款手作泡芙包少量現貨通知！\n\n✔ 尺寸：底寬 20cm × 高 18cm\n✔ 材質：日本透氣天然棉線\n✔ 限量：現貨僅 3 份（亦可私訊客製配色）\n\n👉 喜歡的朋友直接回覆「現貨＋1」為您保留\n\n一針一線，織進溫暖與日常。\n織心手作`
+        example: `【好友限定】新款手作泡芙包少量現貨通知！\n\n✔ 尺寸：底寬 20cm × 高 18cm\n✔ 材質：日本透氣天然棉線\n✔ 限量：現貨僅 3 份（亦可私訊客製配色）\n\n👉 喜歡的朋友直接回覆「現貨＋1」為您保留\n\n一針一線，織進溫暖與日常。\nMomobear_crochet`
       }
     ];
 
@@ -1620,9 +1620,9 @@
         desc: "沉靜・心流・手感溫度",
         defaultStory: "這兩天埋首在編織桌前，手握木質鉤針，米白色的線圈在指尖穿梭，一針一針織出立體的泡芙花紋理，心裡也跟著安靜下來。",
         generate: (d) => ({
-          FB: `【手作日常】\n${d.story}\n\n手作沒有捷徑，每一件作品都是時間的累積。\n這次的「${d.topic}」預計在 ${d.date} 正式完工釋出。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 織心手作工作室｜全台支援寄送`,
-          IG: `編織心流 🪡🧶\n\n${d.topic}\n${d.story}\n${d.price ? d.price + '\n' : ''}.\n${d.date} 溫暖亮相\n.\n一針一線，織進溫暖與日常。\n.\n@zhixin.crochet\n#手作日常 #鉤針編織 #毛線手作 #慢活日常 #職人手作 #編織療癒`,
-          LINE: `【手作札記】${d.topic} 編織近況\n\n✔ 預計出爐：${d.date}\n✔ 編織心得：${d.story}\n${d.price ? '✔ 預估費用：' + d.price : '✔ 狀態：純手工細緻製作中'}\n\n👉 喜歡這個系列的朋友，歡迎直接在對話框跟我聊聊喔！\n\n一針一線，織進溫暖與日常。\n織心手作`
+          FB: `【手作日常】\n${d.story}\n\n手作沒有捷徑，每一件作品都是時間的累積。\n這次的「${d.topic}」預計在 ${d.date} 正式完工釋出。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 Momobear_crochet工作室｜全台支援寄送`,
+          IG: `編織心流 🪡🧶\n\n${d.topic}\n${d.story}\n${d.price ? d.price + '\n' : ''}.\n${d.date} 溫暖亮相\n.\n一針一線，織進溫暖與日常。\n.\n@momobear_crochet\n#手作日常 #鉤針編織 #毛線手作 #慢活日常 #職人手作 #編織療癒`,
+          LINE: `【手作札記】${d.topic} 編織近況\n\n✔ 預計出爐：${d.date}\n✔ 編織心得：${d.story}\n${d.price ? '✔ 預估費用：' + d.price : '✔ 狀態：純手工細緻製作中'}\n\n👉 喜歡這個系列的朋友，歡迎直接在對話框跟我聊聊喔！\n\n一針一線，織進溫暖與日常。\nMomobear_crochet`
         })
       },
       {
@@ -1632,9 +1632,9 @@
         desc: "細節紋理・材質特色・手感分享",
         defaultStory: "全新設計的立體泡芙手提包，選用日本天然透氣棉線，質地輕盈蓬鬆，搭配溫潤的木質鈕扣，實用又充滿手作溫度。",
         generate: (d) => ({
-          FB: `【手作新品通知】\n許多常來問訂製的朋友一直想要一款輕巧好帶的手提包。\n剛剛完成了這款「${d.topic}」，握在手裡的觸感非常溫暖舒服。\n\n${d.story}\n從線材挑選到最後收尾藏線，每一處細節都反覆微調，希望陪伴你度過每個從容的午後。\n${d.date} 起開放預約訂製與現貨選購。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 織心手作工作室｜全台支援寄送`,
-          IG: `新品上架：${d.topic} 🧶\n\n${d.story}\n${d.price ? d.price + '\n' : ''}.\n${d.date} 正式釋出\n.\n一針一線，織進溫暖與日常。\n.\n@zhixin.crochet\n#鉤針包包 #手作包 #手工編織 #日本棉線 #毛線編織 #泡芙花包 #文青穿搭`,
-          LINE: `【手作新品】${d.topic} 溫柔登場！\n\n✔ 開放時間：${d.date}\n✔ 作品特色：${d.story}\n${d.price ? '✔ 訂製價格：' + d.price : '✔ 規格：可客製喜愛色系'}\n\n👉 純手工製作數量有限，如需預留現貨請回覆「新品＋1」\n\n一針一線，織進溫暖與日常。\n織心手作`
+          FB: `【手作新品通知】\n許多常來問訂製的朋友一直想要一款輕巧好帶的手提包。\n剛剛完成了這款「${d.topic}」，握在手裡的觸感非常溫暖舒服。\n\n${d.story}\n從線材挑選到最後收尾藏線，每一處細節都反覆微調，希望陪伴你度過每個從容的午後。\n${d.date} 起開放預約訂製與現貨選購。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 Momobear_crochet工作室｜全台支援寄送`,
+          IG: `新品上架：${d.topic} 🧶\n\n${d.story}\n${d.price ? d.price + '\n' : ''}.\n${d.date} 正式釋出\n.\n一針一線，織進溫暖與日常。\n.\n@momobear_crochet\n#鉤針包包 #手作包 #手工編織 #日本棉線 #毛線編織 #泡芙花包 #文青穿搭`,
+          LINE: `【手作新品】${d.topic} 溫柔登場！\n\n✔ 開放時間：${d.date}\n✔ 作品特色：${d.story}\n${d.price ? '✔ 訂製價格：' + d.price : '✔ 規格：可客製喜愛色系'}\n\n👉 純手工製作數量有限，如需預留現貨請回覆「新品＋1」\n\n一針一線，織進溫暖與日常。\nMomobear_crochet`
         })
       },
       {
@@ -1644,9 +1644,9 @@
         desc: "專屬心意・送禮紀念・真誠共鳴",
         defaultStory: "一位客人為即將出國留學的好友訂製了這件小毛線玩偶，希望能像個安靜的朋友，在異鄉書桌上默默陪伴她。",
         generate: (d) => ({
-          FB: `【客製手作故事】\n常常覺得，鉤針不僅僅是把毛線勾在一起，更是把客人的心意一針針縫進織物裡。\n這次受託製作的「${d.topic}」，背後藏著很動人的友誼：\n\n${d.story}\n完成打包寄出前，特地在陽光下替它拍了照。願這份溫暖，跨越千山萬水如期抵達。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 織心手作工作室｜全台支援寄送`,
-          IG: `一份專屬心意 💌🧶\n\n${d.topic}\n${d.story}\n.\n為重要的人，織一份時間的禮物\n.\n一針一線，織進溫暖與日常。\n.\n@zhixin.crochet\n#客製手作 #手作禮物 #友誼禮物 #毛線手作 #鉤針娃娃 #客製化`,
-          LINE: `【客製分享】${d.topic} 的背後心意\n\n感謝每位願意耐心等待手作訂製的朋友：\n\n✔ 客製主題：${d.topic}\n✔ 訂製故事：${d.story}\n${d.price ? '✔ 排單進度：' + d.price : '✔ 狀態：純手工排單製作中'}\n\n👉 如有紀念日送禮需求，歡迎提前私訊討論客製方案\n\n一針一線，織進溫暖與日常。\n織心手作`
+          FB: `【客製手作故事】\n常常覺得，鉤針不僅僅是把毛線勾在一起，更是把客人的心意一針針縫進織物裡。\n這次受託製作的「${d.topic}」，背後藏著很動人的友誼：\n\n${d.story}\n完成打包寄出前，特地在陽光下替它拍了照。願這份溫暖，跨越千山萬水如期抵達。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 Momobear_crochet工作室｜全台支援寄送`,
+          IG: `一份專屬心意 💌🧶\n\n${d.topic}\n${d.story}\n.\n為重要的人，織一份時間的禮物\n.\n一針一線，織進溫暖與日常。\n.\n@momobear_crochet\n#客製手作 #手作禮物 #友誼禮物 #毛線手作 #鉤針娃娃 #客製化`,
+          LINE: `【客製分享】${d.topic} 的背後心意\n\n感謝每位願意耐心等待手作訂製的朋友：\n\n✔ 客製主題：${d.topic}\n✔ 訂製故事：${d.story}\n${d.price ? '✔ 排單進度：' + d.price : '✔ 狀態：純手工排單製作中'}\n\n👉 如有紀念日送禮需求，歡迎提前私訊討論客製方案\n\n一針一線，織進溫暖與日常。\nMomobear_crochet`
         })
       },
       {
@@ -1656,9 +1656,9 @@
         desc: "實用保養・耐用訣竅・手作者叮嚀",
         defaultStory: "常有朋友問：手作毛線包髒了怎麼洗？其實只要冷水加入少許中性洗劑輕壓，勿用力擰乾，平鋪在毛巾上陰乾，就能常保蓬鬆不變形。",
         generate: (d) => ({
-          FB: `【手作者的保養筆記】\n${d.story}\n\n毛線作品就像好朋友一樣，細心照料就能陪伴你很久很久。\n今天跟大家分享關於「${d.topic}」的清洗與保養小細節，大家帶回去的作品記得這樣呵護它喔！\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 織心手作工作室｜全台支援寄送`,
-          IG: `手作織物保養學 🌿🧶\n\n${d.topic}\n${d.story}\n.\n善待手作，讓溫暖延續\n.\n一針一線，織進溫暖與日常。\n.\n@zhixin.crochet\n#手作保養 #毛線清潔 #編織技巧 #生活好物 #手工製作`,
-          LINE: `【貼心叮嚀】毛線織物日常保養訣竅\n\n收到「${d.topic}」的朋友們，分享一個延長作品壽命的小技巧：\n\n✔ 保養指南：${d.story}\n✔ 洗滌重點：請勿機洗脫水，手洗平鋪陰乾最佳\n\n👉 對於作品保養有任何疑問，隨時在此拍照回覆諮詢\n\n一針一線，織進溫暖與日常。\n織心手作`
+          FB: `【手作者的保養筆記】\n${d.story}\n\n毛線作品就像好朋友一樣，細心照料就能陪伴你很久很久。\n今天跟大家分享關於「${d.topic}」的清洗與保養小細節，大家帶回去的作品記得這樣呵護它喔！\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 Momobear_crochet工作室｜全台支援寄送`,
+          IG: `手作織物保養學 🌿🧶\n\n${d.topic}\n${d.story}\n.\n善待手作，讓溫暖延續\n.\n一針一線，織進溫暖與日常。\n.\n@momobear_crochet\n#手作保養 #毛線清潔 #編織技巧 #生活好物 #手工製作`,
+          LINE: `【貼心叮嚀】毛線織物日常保養訣竅\n\n收到「${d.topic}」的朋友們，分享一個延長作品壽命的小技巧：\n\n✔ 保養指南：${d.story}\n✔ 洗滌重點：請勿機洗脫水，手洗平鋪陰乾最佳\n\n👉 對於作品保養有任何疑問，隨時在此拍照回覆諮詢\n\n一針一線，織進溫暖與日常。\nMomobear_crochet`
         })
       },
       {
@@ -1668,9 +1668,9 @@
         desc: "午後陽光・毛線色票・安靜時光",
         defaultStory: "午後工作室的窗邊光線特別溫柔。剛拆封的一箱新線材散發著質樸的植物香氣，擺在木架上一字排開，像是一道柔和的彩虹。",
         generate: (d) => ({
-          FB: `【工作室隨筆】\n${d.story}\n\n每當挑選新作品的配色時，心情總是特別雀躍。\n今天試鉤的是「${d.topic}」，選了很耐看的燕麥色搭配灰綠，感覺特別沉靜安詳。\n${d.date} 即將跟各位見面。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 織心手作工作室｜全台支援寄送`,
-          IG: `工作室的午後日常 ☕🧶\n\n${d.topic}\n${d.story}\n.\n享受與毛線相處的安靜時光\n.\n一針一線，織進溫暖與日常。\n.\n@zhixin.crochet\n#手作工作室 #工作桌日常 #毛線收納 #手作人日常 #日常片刻`,
-          LINE: `【工作室手記】午後選色隨想\n\n今天在工作室為下一季作品挑選了新線材：\n\n✔ 近期試作：${d.topic}\n✔ 色系靈感：${d.story}\n${d.price ? '✔ 詳情：' + d.price : '✔ 進度：預計本週末完成樣品'}\n\n👉 喜歡什麼樣的毛線配色呢？歡迎直接回覆告訴我！\n\n一針一線，織進溫暖與日常。\n織心手作`
+          FB: `【工作室隨筆】\n${d.story}\n\n每當挑選新作品的配色時，心情總是特別雀躍。\n今天試鉤的是「${d.topic}」，選了很耐看的燕麥色搭配灰綠，感覺特別沉靜安詳。\n${d.date} 即將跟各位見面。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 Momobear_crochet工作室｜全台支援寄送`,
+          IG: `工作室的午後日常 ☕🧶\n\n${d.topic}\n${d.story}\n.\n享受與毛線相處的安靜時光\n.\n一針一線，織進溫暖與日常。\n.\n@momobear_crochet\n#手作工作室 #工作桌日常 #毛線收納 #手作人日常 #日常片刻`,
+          LINE: `【工作室手記】午後選色隨想\n\n今天在工作室為下一季作品挑選了新線材：\n\n✔ 近期試作：${d.topic}\n✔ 色系靈感：${d.story}\n${d.price ? '✔ 詳情：' + d.price : '✔ 進度：預計本週末完成樣品'}\n\n👉 喜歡什麼樣的毛線配色呢？歡迎直接回覆告訴我！\n\n一針一線，織進溫暖與日常。\nMomobear_crochet`
         })
       },
       {
@@ -1680,9 +1680,9 @@
         desc: "排單狀態・體驗課程預約・貼心提醒",
         defaultStory: "由於每一件作品皆為一人純手工鉤織，近期客製訂單已排至下個月中旬，提醒想挑選節慶送禮的朋友請及早確認。",
         generate: (d) => ({
-          FB: `【工作室排單與活動公告】\n親愛的朋友們：\n${d.story}\n\n📅 公告事項：${d.topic}\n📅 影響／預約時段：${d.date}\n為了維持每件作品的扎實品質與手感，不急促趕單是我們的堅持。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 織心手作工作室｜支援全台寄送`,
-          IG: `重要公告 📢🧶\n\n${d.topic}\n${d.story}\n.\n時段：${d.date}\n.\n慢慢織，用心過生活。一針一線，織進溫暖與日常。\n.\n@zhixin.crochet\n#手作公告 #排單通知 #手作課程 #客製化預約 #毛線編織`,
-          LINE: `【重要公告】最新排單與體驗預約\n\n親愛的好友，向您說明近期的手作排程異動：\n\n✔ 公告主旨：${d.topic}\n✔ 排程時程：${d.date}\n✔ 詳細說明：${d.story}\n${d.price ? '✔ 備註：' + d.price : '✔ 提醒：急件請先告知'}\n\n👉 如需卡位排單或預約手作課程，請直接在此回覆「預約＋姓名」\n\n一針一線，織進溫暖與日常。\n織心手作`
+          FB: `【工作室排單與活動公告】\n親愛的朋友們：\n${d.story}\n\n📅 公告事項：${d.topic}\n📅 影響／預約時段：${d.date}\n為了維持每件作品的扎實品質與手感，不急促趕單是我們的堅持。\n${d.price ? d.price + '。' : ''}\n\n一針一線，織進溫暖與日常。\n\n📍 Momobear_crochet工作室｜支援全台寄送`,
+          IG: `重要公告 📢🧶\n\n${d.topic}\n${d.story}\n.\n時段：${d.date}\n.\n慢慢織，用心過生活。一針一線，織進溫暖與日常。\n.\n@momobear_crochet\n#手作公告 #排單通知 #手作課程 #客製化預約 #毛線編織`,
+          LINE: `【重要公告】最新排單與體驗預約\n\n親愛的好友，向您說明近期的手作排程異動：\n\n✔ 公告主旨：${d.topic}\n✔ 排程時程：${d.date}\n✔ 詳細說明：${d.story}\n${d.price ? '✔ 備註：' + d.price : '✔ 提醒：急件請先告知'}\n\n👉 如需卡位排單或預約手作課程，請直接在此回覆「預約＋姓名」\n\n一針一線，織進溫暖與日常。\nMomobear_crochet`
         })
       }
     ];
@@ -1770,9 +1770,9 @@
     const STORAGE_KEY_DRAFT = "island_studio_draft_v1";
     const STORAGE_KEY_DAILY_USAGE = "island_studio_daily_usage_v1";
 
-    const DEFAULT_BRAND_SPEC = `# 織心手作 品牌規格\n- 稱呼：親切使用「你」，像是跟手作好友喝茶分享。\n- 口氣：沉靜、溫柔、生活感、手作職人溫度。\n- 標點：乾淨優雅，一篇最多 1 個驚嘆號（！），多用句點與適度留白。\n- 用詞：稱呼一律用「作品」、「毛線織物」、「線材」，絕不要說冷冰冰的「商品」或「便宜貨」。\n- 禁用詞：爆表、必買、神作、秒殺、CP值破表、俗又大碗。\n- 結尾精神句：固定收在「一針一線，織進溫暖與日常。」\n- 工作室資訊：手作工作室（預約制）｜支援全台寄送與超商取貨`;
+    const DEFAULT_BRAND_SPEC = `# Momobear_crochet 品牌規格\n- 稱呼：親切使用「你」，像是跟手作好友喝茶分享。\n- 口氣：沉靜、溫柔、生活感、手作職人溫度。\n- 標點：乾淨優雅，一篇最多 1 個驚嘆號（！），多用句點與適度留白。\n- 用詞：稱呼一律用「作品」、「毛線織物」、「線材」，絕不要說冷冰冰的「商品」或「便宜貨」。\n- 禁用詞：爆表、必買、神作、秒殺、CP值破表、俗又大碗。\n- 結尾精神句：固定收在「一針一線，織進溫暖與日常。」\n- 工作室資訊：手作工作室（預約制）｜支援全台寄送與超商取貨`;
 
-    const DEFAULT_CHECKLIST = `## 事實檢查\n1. 日期、星期幾、作品尺寸、材質、價格，跟素材卡一模一樣嗎？\n2. 有沒有出現素材卡上沒有的捏造事實？\n3. 客人怎麼訂購（怎麼私訊、現貨或排單預購），寫清楚了嗎？\n\n## 平台與防雷\n4. 「先不要講的」，每一篇都沒有出現嗎？\n5. FB 有工作室資訊、IG 有標記 @zhixin.crochet、LINE 有手作者署名嗎？\n6. 口氣有沒有用到禁用詞？`;
+    const DEFAULT_CHECKLIST = `## 事實檢查\n1. 日期、星期幾、作品尺寸、材質、價格，跟素材卡一模一樣嗎？\n2. 有沒有出現素材卡上沒有的捏造事實？\n3. 客人怎麼訂購（怎麼私訊、現貨或排單預購），寫清楚了嗎？\n\n## 平台與防雷\n4. 「先不要講的」，每一篇都沒有出現嗎？\n5. FB 有工作室資訊、IG 有標記 @momobear_crochet、LINE 有手作者署名嗎？\n6. 口氣有沒有用到禁用詞？`;
 
     /* ==========================================================
        2. 應用狀態與 IndexedDB 圖片倉庫（studio-images）
@@ -2847,7 +2847,7 @@
             <div class="carousel-badge">${countLabel}</div>
             <span class="carousel-tag">${cur.tag || '手作日常'}</span>
             <div style="font-size:32px; margin-bottom:4px;">${cur.icon || '🧶'}</div>
-            <h4 style="font-size:16px; font-weight:700; margin-bottom:2px; color:#fff;">${escapeHtml(topic !== '手作織物日常' ? topic : (cur.title || '織心手作'))}</h4>
+            <h4 style="font-size:16px; font-weight:700; margin-bottom:2px; color:#fff;">${escapeHtml(topic !== '手作織物日常' ? topic : (cur.title || 'Momobear_crochet'))}</h4>
             <p style="font-size:11.5px; opacity:0.88; color:#eee;">${cur.subtitle || ''}</p>
           </div>
           <div class="carousel-badge">${countLabel}</div>
@@ -3170,7 +3170,7 @@
       prompt += `=====================================\n\n`;
 
       prompt += `=====================================\n`;
-      prompt += `【織心手作 品牌規格】\n${settings.brandSpec}\n`;
+      prompt += `【Momobear_crochet 品牌規格】\n${settings.brandSpec}\n`;
       prompt += `=====================================\n\n`;
 
       if (settings.checklist.trim()) {
@@ -4752,8 +4752,11 @@
         const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
         if (raw) {
           const data = JSON.parse(raw);
-          if (data.brandSpec && data.brandSpec.includes("小島咖啡")) {
+          if (data.brandSpec && (data.brandSpec.includes("小島咖啡") || data.brandSpec.includes("織心手作"))) {
             data.brandSpec = DEFAULT_BRAND_SPEC;
+          }
+          if (data.checklist && (data.checklist.includes("島哥") || data.checklist.includes("zhixin"))) {
+            data.checklist = DEFAULT_CHECKLIST;
           }
           if (data.imageSpec && (data.imageSpec.includes("咖啡色") || data.imageSpec.includes("陶杯"))) {
             data.imageSpec = DEFAULT_IMAGE_SPEC;

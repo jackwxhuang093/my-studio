@@ -1085,10 +1085,12 @@
               <button type="button" class="btn-primary" id="btnGenerateAiImage" style="flex:1; justify-content:center; padding:7px 8px; font-size:12.5px; font-weight:700;">
                 🎨 生圖
               </button>
-              <select id="imageGenCountSelect" style="width:68px; flex-shrink:0;" title="一次生幾張">
-                <option value="1" selected>1 張</option>
-                <option value="2">2 張</option>
-                <option value="3">3 張</option>
+              <select id="imageGenCountSelect" style="width:78px; flex-shrink:0; font-size:12px;" title="一次生幾張（支援 IG 多圖輪播）">
+                <option value="1">1 張</option>
+                <option value="2">2 張輪播</option>
+                <option value="3" selected>3 張輪播</option>
+                <option value="4">4 張輪播</option>
+                <option value="5">5 張輪播</option>
               </select>
               <button type="button" class="btn-accent" id="btnThinkAndDraw" style="flex:1.25; justify-content:center; padding:7px 8px; font-size:12.5px; font-weight:700;">
                 🪄 AI 想圖再畫
@@ -2754,10 +2756,12 @@
             <span class="carousel-dot ${i === igCarouselActiveIdx ? 'active' : ''}" data-iggoto="${i}"></span>
           `).join("");
           return `
-            <div class="carousel-container" style="margin-bottom:${platform === 'LINE' ? '0' : '10px'};">
+            <div class="carousel-container" style="position:relative; margin-bottom:${platform === 'LINE' ? '0' : '10px'};">
               <div class="ig-snap-carousel" id="igSnapCarousel">
                 ${slidesHtml}
               </div>
+              <button type="button" class="carousel-arrow prev" id="btnIgSnapPrev" title="上一張" style="display:flex;">‹</button>
+              <button type="button" class="carousel-arrow next" id="btnIgSnapNext" title="下一張" style="display:flex;">›</button>
               <div class="carousel-dots" id="igOverlayDots">${dotsHtml}</div>
             </div>
           `;
@@ -2830,9 +2834,27 @@
     }
 
     function bindCarouselEvents() {
-      // IG 多圖 scroll-snap 圓點同步
+      // IG 多圖 scroll-snap 圓點同步與左右箭頭按鈕
       const igSnap = document.getElementById("igSnapCarousel");
       if (igSnap) {
+        const igPrev = document.getElementById("btnIgSnapPrev");
+        const igNext = document.getElementById("btnIgSnapNext");
+
+        if (igPrev) {
+          igPrev.onclick = (e) => {
+            e.stopPropagation();
+            const w = igSnap.clientWidth || 300;
+            igSnap.scrollBy({ left: -w, behavior: "smooth" });
+          };
+        }
+        if (igNext) {
+          igNext.onclick = (e) => {
+            e.stopPropagation();
+            const w = igSnap.clientWidth || 300;
+            igSnap.scrollBy({ left: w, behavior: "smooth" });
+          };
+        }
+
         igSnap.addEventListener("scroll", () => {
           const w = igSnap.clientWidth || 1;
           const idx = Math.round(igSnap.scrollLeft / w);
@@ -2937,7 +2959,20 @@
         btn.textContent = "▶ 輪播: 關";
         btn.style.color = "var(--main)";
       } else {
-        autoSlideInterval = setInterval(nextImage, 3000);
+        autoSlideInterval = setInterval(() => {
+          const igSnap = document.getElementById("igSnapCarousel");
+          if (igSnap) {
+            const w = igSnap.clientWidth || 300;
+            const maxScroll = igSnap.scrollWidth - w;
+            if (igSnap.scrollLeft >= maxScroll - 5) {
+              igSnap.scrollTo({ left: 0, behavior: "smooth" });
+            } else {
+              igSnap.scrollBy({ left: w, behavior: "smooth" });
+            }
+          } else {
+            nextImage();
+          }
+        }, 3000);
         btn.textContent = "⏸ 輪播: 開";
         btn.style.color = "var(--danger)";
       }
@@ -3496,7 +3531,7 @@
     }
 
     // 🎨 生圖按鈕觸發（支援 1~3 張數下拉）
-    async function handleGenerateAiImage(overridePrompt = null, thinkStepSummary = "") {
+    async function handleGenerateAiImage(overridePrompt = null, thinkStepSummary = "", countOverride = null) {
       const promptInput = document.getElementById("imagePromptInput");
       const rawPrompt = (overridePrompt !== null ? overridePrompt : promptInput?.value || "").trim();
       const statusEl = document.getElementById("imageGenStatus");
@@ -3508,7 +3543,8 @@
       }
 
       const countSel = document.getElementById("imageGenCountSelect");
-      const count = overridePrompt !== null ? 1 : (parseInt(countSel?.value || "1", 10) || 1);
+      const selectedCount = parseInt(countSel?.value || "1", 10) || 1;
+      const count = countOverride !== null ? countOverride : (overridePrompt !== null ? 1 : selectedCount);
 
       const btnGen = document.getElementById("btnGenerateAiImage");
       const btnThink = document.getElementById("btnThinkAndDraw");
@@ -3584,13 +3620,16 @@
       }
     }
 
-    // 🪄 AI 想圖再畫（兩步法：先請語言模型依圖片規格寫描述，再自動送去生圖）
+    // 🪄 AI 想圖再畫（兩步法：先請語言模型依圖片規格寫描述，再自動送去生圖；若張數>1則規劃多圖輪播故事）
     async function handleThinkAndDraw() {
       const currentPostText = (postContents[currentPlatformId] || document.getElementById("postEditor")?.value || "").trim();
       if (!currentPostText) {
         alert("先讓 AI 寫貼文");
         return;
       }
+
+      const countSel = document.getElementById("imageGenCountSelect");
+      const count = parseInt(countSel?.value || "1", 10) || 1;
 
       const btnGen = document.getElementById("btnGenerateAiImage");
       const btnThink = document.getElementById("btnThinkAndDraw");
@@ -3609,7 +3648,9 @@
       if (statusEl) {
         statusEl.style.display = "block";
         statusEl.style.color = "var(--main)";
-        statusEl.textContent = "🪄 第一步：AI 美術指導正在根據貼文與圖片規格構思畫面…";
+        statusEl.textContent = count > 1
+          ? "🪄 第一步：AI 美術指導正在為 IG 輪播規劃 " + count + " 張不同視角的連續畫面…"
+          : "🪄 第一步：AI 美術指導正在根據貼文與圖片規格構思畫面…";
       }
 
       try {
@@ -3623,9 +3664,16 @@
         const story = document.getElementById("field_story")?.value.trim() || "（未填）";
         const price = document.getElementById("field_price")?.value.trim() || "（未填）";
 
-        const systemPrompt = `你是${BRAND.name}的美術指導。使用者會給你一篇社群貼文，請你寫一段給 AI 畫圖用的畫面描述。只描述畫面：主角、場景、構圖、光線、顏色、氣氛，要具體到看得到。照圖片規格寫。畫面裡不要有任何文字、字母、數字、標誌。不要畫名人，不要畫別的品牌的 logo。素材卡和貼文裡沒有的東西，不要自己加進畫面。一律用台灣的繁體中文。只回一段 80～150 字的畫面描述，不要標題、不要解釋。`;
+        let systemPrompt = "";
+        let userContent = "";
 
-        const userContent = `【圖片規格】\n${imageSpec}\n\n【素材卡】\n・日期：${formattedDate}\n・主題：${topic}\n・故事：${story}\n・價格／行動：${price}\n\n【目前平台（${currentPlatformId}）的貼文】\n${currentPostText}\n\n【圖的比例】\n${picCfg.ratio}（${picCfg.width}×${picCfg.height}）`;
+        if (count === 1) {
+          systemPrompt = "你是" + BRAND.name + "的美術指導。使用者會給你一篇社群貼文，請你寫一段給 AI 畫圖用的畫面描述。只描述畫面：主角、場景、構圖、光線、顏色、氣氛，要具體到看得到。照圖片規格寫。畫面裡不要有任何文字、字母、數字、標誌。不要畫名人，不要畫別的品牌的 logo。素材卡和貼文裡沒有的東西，不要自己加進畫面。一律用台灣的繁體中文。只回一段 80～150 字的畫面描述，不要標題、不要解釋。";
+          userContent = "【圖片規格】\n" + imageSpec + "\n\n【素材卡】\n・日期：" + formattedDate + "\n・主題：" + topic + "\n・故事：" + story + "\n・價格／行動：" + price + "\n\n【目前平台（" + currentPlatformId + "）的貼文】\n" + currentPostText + "\n\n【圖的比例】\n" + picCfg.ratio + "（" + picCfg.width + "×" + picCfg.height + "）";
+        } else {
+          systemPrompt = "你是" + BRAND.name + "的美術指導。使用者會給你一篇社群貼文，請你為這篇貼文規劃一套共 " + count + " 張的 Instagram（IG）輪播圖畫面描述，說一個有層次的咖啡故事（例如：第 1 張封面主角特寫、第 2 張沖煮與器具細節、第 3 張木桌空間與光影生活感）。每張畫面必須符合品牌圖片規格，彼此視角互補。畫面中絕對不要出現任何文字、字母、數字或標誌。一律繁體中文。請嚴格使用以下格式輸出，不要其他多餘廢話：\n【第1張】（60～100字畫面描述）\n【第2張】（60～100字畫面描述）";
+          userContent = "【圖片規格】\n" + imageSpec + "\n\n【素材卡】\n・日期：" + formattedDate + "\n・主題：" + topic + "\n・故事：" + story + "\n・價格／行動：" + price + "\n\n【目前貼文】\n" + currentPostText + "\n\n【圖的比例】\n" + picCfg.ratio + "（" + picCfg.width + "×" + picCfg.height + "）";
+        }
 
         const thinkRes = await askAi([
           { role: "system", content: systemPrompt },
@@ -3633,27 +3681,70 @@
         ], 4000);
 
         recordDailyUsage(thinkRes.provider, thinkRes.tokens, thinkRes.cost);
-        const desc = thinkRes.text.replace(/^```[a-zA-Z]*\n?/, "").replace(/\n?```$/, "").trim();
-        if (!desc) {
+        let descText = thinkRes.text.trim();
+        if (!descText) {
           throw new Error("AI 沒有回傳畫面描述");
         }
 
-        if (promptInput) {
-          promptInput.value = desc;
+        const thinkCostStr = thinkRes.cost > 0 ? ("$" + thinkRes.cost.toFixed(4)) : "$0";
+        const thinkSummary = "想圖：這次用 " + thinkRes.provider + " 約 " + thinkCostStr;
+
+        if (count === 1) {
+          if (promptInput) promptInput.value = descText;
+          saveDraft();
+          const finalDrawPrompt = descText + "（畫面中不要出現任何文字、字母、數字或標誌。）";
+          await handleGenerateAiImage(finalDrawPrompt, thinkSummary, 1);
+        } else {
+          // 解析多張輪播描述
+          const regex = /【第(d+)張】([sS]*?)(?=【第d+張】|$)/g;
+          const multiPrompts = [];
+          let m;
+          while ((m = regex.exec(descText)) !== null) {
+            const promptContent = m[2].trim();
+            if (promptContent) multiPrompts.push(promptContent);
+          }
+          if (multiPrompts.length === 0) {
+            multiPrompts.push(descText);
+          }
+          if (promptInput) {
+            promptInput.value = multiPrompts.map((p, idx) => "【第" + (idx + 1) + "張】" + p).join("\n\n");
+          }
+          saveDraft();
+
+          // 連續生成這 N 張輪播圖
+          let totalCost = 0;
+          let success = 0;
+          for (let i = 0; i < multiPrompts.length; i++) {
+            if (statusEl) {
+              statusEl.style.display = "block";
+              statusEl.style.color = "var(--main)";
+              statusEl.textContent = "🎨 正在繪製輪播第 " + (i + 1) + " / " + multiPrompts.length + " 張…";
+            }
+            const singlePrompt = multiPrompts[i] + "（畫面中不要出現任何文字、字母、數字或標誌。）";
+            const res = await callOpenRouterImageSingle(singlePrompt);
+            totalCost += res.cost;
+            success++;
+          }
+
+          const stats = recordDailyImageUsage(success, totalCost);
+          const costStr = "$" + totalCost.toFixed(3);
+          const dayCostStr = "$" + stats.imageCost.toFixed(3);
+
+          if (statusEl) {
+            statusEl.style.display = "block";
+            statusEl.style.color = "var(--success)";
+            statusEl.innerHTML = "<div>" + escapeHtml(thinkSummary) + "</div><div style=\"font-weight:700;\">✅ 成功繪製 " + success + " 張 IG 輪播圖（約 " + costStr + "）！已自動加入輪播。</div>";
+          }
+
+          // 自動切換到 IG 預覽，讓使用者馬上看輪播
+          const igTabBtn = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes("IG"));
+          if (igTabBtn) igTabBtn.click();
         }
-        saveDraft();
-
-        const thinkCostStr = thinkRes.cost > 0 ? `$${thinkRes.cost.toFixed(4)}` : "$0";
-        const thinkSummary = `想圖：這次用 ${thinkRes.provider} 約 ${thinkCostStr}`;
-
-        // 第二步：自動拿這段描述去生圖，並在最後加上不要文字的叮嚀
-        const finalDrawPrompt = `${desc}（畫面中不要出現任何文字、字母、數字或標誌。）`;
-        await handleGenerateAiImage(finalDrawPrompt, thinkSummary);
       } catch (err) {
         if (statusEl) {
           statusEl.style.display = "block";
           statusEl.style.color = "#d9534f";
-          statusEl.innerHTML = `<span style="font-weight:700;">${escapeHtml(err.message)}</span>`;
+          statusEl.innerHTML = "<span style=\"font-weight:700;\">" + escapeHtml(err.message) + "</span>";
         }
         if (btnGen) {
           btnGen.disabled = false;

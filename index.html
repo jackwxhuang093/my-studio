@@ -84,6 +84,12 @@
       gap: 10px;
       align-items: center;
     }
+    .top-actions-short {
+      display: none;
+    }
+    #aiAskMeBox:empty {
+      display: none !important;
+    }
     button {
       font: inherit;
       cursor: pointer;
@@ -1104,7 +1110,7 @@
 
       /* 頂部導覽在手機端自動分為上下兩排，徹底解決 390px 破版與文字擠壓 */
       header {
-        padding: 8px 10px;
+        padding: 8px 6px;
         flex-wrap: wrap;
         gap: 6px;
         width: 100%;
@@ -1126,17 +1132,23 @@
       .top-actions {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 4px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 3px;
+      }
+      .top-actions-full {
+        display: none !important;
+      }
+      .top-actions-short {
+        display: inline !important;
       }
       .top-actions button {
         justify-content: center;
-        padding: 5px 2px !important;
-        font-size: 11px !important;
-        border-radius: 8px !important;
+        padding: 5px 1px !important;
+        font-size: 10.5px !important;
+        border-radius: 6px !important;
         white-space: nowrap;
         min-width: 0;
-        gap: 2px;
+        gap: 1px;
       }
 
       /* 行動端切換頁籤列 */
@@ -1263,10 +1275,19 @@
       <span class="badge">專屬手作職人發文系統</span>
     </div>
     <div class="top-actions">
-      <button class="btn-accent" id="btnAutoTour" style="font-weight:700; padding:6px 12px; border-radius:20px;" title="點一下，AI 自動帶你看今日所有操作">🎬 自動導覽</button>
-      <button class="btn-outline" id="btnOpenPosts">📁 我的貼文</button>
-      <button class="btn-outline" id="btnOpenSettings">⚙ 設定</button>
-      <button class="btn-light" id="btnNewPost" style="border-radius:20px;">＋ 新的一篇</button>
+      <button class="btn-accent" id="btnAutoTour" style="font-weight:700; padding:6px 12px; border-radius:20px;" title="點一下，AI 自動帶你看今日所有操作">
+        <span class="top-actions-full">🎬 自動導覽</span><span class="top-actions-short">🎬 導覽</span>
+      </button>
+      <button class="btn-success" id="btnSavePost" style="border-radius:20px; font-weight:700; padding:6px 14px; box-shadow:0 2px 6px rgba(45,106,79,0.2);" title="將這篇完整圖文內容保存至貼文庫">
+        <span class="top-actions-full">💾 存入貼文庫</span><span class="top-actions-short">💾 存檔</span>
+      </button>
+      <button class="btn-outline" id="btnOpenPosts" style="border-radius:20px;">
+        <span class="top-actions-full">📁 我的貼文</span><span class="top-actions-short">📁 貼文庫</span>
+      </button>
+      <button class="btn-outline" id="btnOpenSettings" style="border-radius:20px;">⚙ 設定</button>
+      <button class="btn-light" id="btnNewPost" style="border-radius:20px;">
+        <span class="top-actions-full">＋ 新的一篇</span><span class="top-actions-short">＋ 新篇</span>
+      </button>
     </div>
   </header>
 
@@ -1531,17 +1552,6 @@
           </div>
         </div>
 
-        <div style="display:flex; gap:6px;">
-          <button class="btn-light" id="btnBuildPrompt" style="flex:1; justify-content:center; border:1px solid var(--line); font-size:12.5px; padding:6px 8px;">
-            🧩 組好指令
-          </button>
-          <button class="btn-light" id="btnPasteAI" style="flex:1; justify-content:center; border:1px solid var(--line); font-size:12.5px; padding:6px 8px;">
-            📥 貼回 AI
-          </button>
-          <button class="btn-success" id="btnSavePost" style="flex:1; justify-content:center; font-size:12.5px; padding:6px 8px;">
-            💾 存檔
-          </button>
-        </div>
         <div class="auto-saved-hint" id="autoSavedHint"></div>
       </div>
     </section>
@@ -4667,8 +4677,9 @@
       statusEl.style.display = "block";
       statusEl.style.color = "var(--main)";
       statusEl.textContent = "AI 寫作中…";
-      askMeBox.style.display = "none";
-      askMeBox.innerHTML = "";
+      if (askMeBox) askMeBox.style.display = "none";
+      const initialAskBody = document.getElementById("aiAskMeBody");
+      if (initialAskBody) initialAskBody.innerHTML = "";
 
       try {
         const promptText = buildAiPrompt();
@@ -4711,26 +4722,27 @@
           statusEl.innerHTML = noticesHtml.join("");
           statusEl.style.display = "block";
 
-          if (qMatch && qMatch[1].trim()) {
-            const qText = qMatch[1].trim();
+          const qTextClean = (qMatch && qMatch[1]) ? qMatch[1].trim() : "";
+          const hasRealQuestions = qTextClean.replace(/[-*•\s]/g, "").length > 0;
+          if (hasRealQuestions) {
             const bodyEl = document.getElementById("aiAskMeBody");
             const badgeEl = document.getElementById("aiAskMeBadge");
             const toggleBtn = document.getElementById("btnToggleAskMe");
             const footerEl = document.getElementById("aiAskMeFooter");
             
             if (bodyEl) {
-              bodyEl.innerHTML = escapeHtml(qText).replace(/\n/g, '<br>');
+              bodyEl.innerHTML = escapeHtml(qTextClean).replace(/\n/g, '<br>');
               bodyEl.style.display = "block";
             }
             if (footerEl) footerEl.style.display = "flex";
             if (toggleBtn) toggleBtn.textContent = "▲ 收折";
 
-            const count = (qText.match(/[-•*]/g) || []).length || 1;
+            const count = (qTextClean.match(/[-•*]/g) || []).length || 1;
             if (badgeEl) badgeEl.textContent = `${count} 項提醒`;
 
-            askMeBox.style.display = "block";
+            if (askMeBox) askMeBox.style.display = "block";
           } else {
-            askMeBox.style.display = "none";
+            if (askMeBox) askMeBox.style.display = "none";
           }
 
           if (window.innerWidth <= 900) {
@@ -5239,7 +5251,7 @@
       const posts = getSavedPosts();
 
       if (posts.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ink-muted);">目前尚無任何存檔紀錄，點擊左下方「💾 存檔」即可儲存！</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ink-muted);">目前尚無任何存檔紀錄，點擊上方導覽列「💾 存入貼文庫」即可儲存！</div>`;
         return;
       }
 
@@ -5371,6 +5383,12 @@
         await updateRenderedMainImage();
         renderPreview();
         renderAssistantChat();
+        const statusEl = document.getElementById("aiWritingStatus");
+        if (statusEl) { statusEl.style.display = "none"; statusEl.innerHTML = ""; }
+        const askBox = document.getElementById("aiAskMeBox");
+        if (askBox) { askBox.style.display = "none"; }
+        const askBody = document.getElementById("aiAskMeBody");
+        if (askBody) { askBody.innerHTML = ""; }
         localStorage.removeItem(STORAGE_KEY_DRAFT);
         await updateStorageUsageInfo();
         alert("已開啟全新空白篇章！");
@@ -5879,34 +5897,48 @@
         openModal("postsModal");
       });
 
-      document.getElementById("btnNewPost").addEventListener("click", startNewPost);
-      document.getElementById("btnSavePost").addEventListener("click", saveCurrentPost);
+      const btnNew = document.getElementById("btnNewPost");
+      if (btnNew) btnNew.addEventListener("click", startNewPost);
+      const btnSave = document.getElementById("btnSavePost");
+      if (btnSave) btnSave.addEventListener("click", saveCurrentPost);
 
-      // 組好指令
-      document.getElementById("btnBuildPrompt").addEventListener("click", () => {
-        const prompt = buildAiPrompt();
-        document.getElementById("promptContentBox").textContent = prompt;
-        document.getElementById("promptCopyFeedback").textContent = "";
-        openModal("promptModal");
-      });
-
-      document.getElementById("btnCopyPrompt").addEventListener("click", () => {
-        const promptText = document.getElementById("promptContentBox").textContent;
-        navigator.clipboard.writeText(promptText).then(() => {
-          document.getElementById("promptCopyFeedback").textContent = "✅ 已成功複製到剪貼簿！可直接貼給 AI";
+      // 組好指令（舊按鈕已自介面移除，保留防禦性相容綁定）
+      const btnBuild = document.getElementById("btnBuildPrompt");
+      if (btnBuild) {
+        btnBuild.addEventListener("click", () => {
+          const prompt = buildAiPrompt();
+          document.getElementById("promptContentBox").textContent = prompt;
+          document.getElementById("promptCopyFeedback").textContent = "";
+          openModal("promptModal");
         });
-      });
+      }
 
-      // 一次貼回 AI
-      document.getElementById("btnPasteAI").addEventListener("click", () => {
-        document.getElementById("pasteAIInput").value = "";
-        document.getElementById("aiQuestionBox").style.display = "none";
-        openModal("pasteAIModal");
-      });
+      const btnCopyPr = document.getElementById("btnCopyPrompt");
+      if (btnCopyPr) {
+        btnCopyPr.addEventListener("click", () => {
+          const promptText = document.getElementById("promptContentBox").textContent;
+          navigator.clipboard.writeText(promptText).then(() => {
+            document.getElementById("promptCopyFeedback").textContent = "✅ 已成功複製到剪貼簿！可直接貼給 AI";
+          });
+        });
+      }
 
-      document.getElementById("btnDoSplitAI").addEventListener("click", () => {
-        doSplitAiResponse(document.getElementById("pasteAIInput").value);
-      });
+      // 一次貼回 AI（舊按鈕已自介面移除，保留防禦性相容綁定）
+      const btnPaste = document.getElementById("btnPasteAI");
+      if (btnPaste) {
+        btnPaste.addEventListener("click", () => {
+          document.getElementById("pasteAIInput").value = "";
+          document.getElementById("aiQuestionBox").style.display = "none";
+          openModal("pasteAIModal");
+        });
+      }
+
+      const btnDoSplit = document.getElementById("btnDoSplitAI");
+      if (btnDoSplit) {
+        btnDoSplit.addEventListener("click", () => {
+          doSplitAiResponse(document.getElementById("pasteAIInput").value);
+        });
+      }
 
       // 一鍵複製當前貼文
       document.getElementById("btnCopyCurrentPost").addEventListener("click", () => {

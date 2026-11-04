@@ -1249,6 +1249,21 @@
               <div class="thumb-empty">尚無專屬照片（目前顯示預設輪播卡，可點上方拖曳區上傳）</div>
             </div>
 
+            <!-- 📐 跨平台比例適配模式（FB 1:1 ⇄ IG 4:5 ⇄ LINE 1:1 切換不切邊） -->
+            <div style="background:#f9f5ef; border:1px solid #e4d6c5; border-radius:8px; padding:6px 8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; gap:4px;">
+                <span style="font-size:11.5px; font-weight:700; color:#5a3e28; white-space:nowrap;">📐 三平台比例適配</span>
+                <span style="font-size:10.5px; color:var(--ink-muted); white-space:nowrap;">FB/LINE 1:1・IG 4:5・輪播同步</span>
+              </div>
+              <select id="overlayFitSelect" style="width:100%; font-size:12px; padding:5px 7px; border-color:#d8c4ae; background:#fffdf9; color:var(--ink); font-weight:600;">
+                <option value="cover_center" selected>📐 滿版裁切・置中對齊（預設）</option>
+                <option value="cover_bottom">📐 滿版裁切・偏下對齊（保護桌面作品不切邊）</option>
+                <option value="cover_top">📐 滿版裁切・偏上對齊</option>
+                <option value="contain_blur">✨ 完整不裁切・柔焦延伸光影底（100% 保留原圖）</option>
+                <option value="contain_frame">🖼️ 完整不裁切・溫暖燕麥相框底（日系畫報風）</option>
+              </select>
+            </div>
+
             <!-- ✨ 二合一 AI 影像工作坊（整合「產品照美化背景」與「AI 從零生圖」，消除重複按鈕） -->
             <div class="sub-section-box" id="productBeautifyBox" style="background:#fffcf9; border:1px solid #ebd9c8;">
               <div class="ai-mode-tabs" id="aiImgModeTabs">
@@ -1837,7 +1852,7 @@
       "google/gemini-3.1-flash-lite-image": 0.034
     };
 
-    const DEFAULT_IMAGE_SPEC = `風格：日系溫暖手作感，柔和自然光，呈現細緻毛線紋理與針目\n光線：溫暖柔和的自然窗光，陽光輕柔灑在編織作品上\n顏色：米白、奶茶色、燕麥色、大地色系、柔和莫蘭迪色；純淨溫暖、不刺眼\n常出現的東西：手工鉤針作品（如手提包、泡芙花、圍巾、毛線玩偶）、木質/金屬鉤針、毛線球、竹編托盤、實木桌、乾燥花\n構圖：主角作品居中偏下特寫，展現編織立體質感，上方預留乾淨空間以供壓字\n不要的：人臉、雜亂背景、任何文字、數字與商業標誌`;
+    const DEFAULT_IMAGE_SPEC = `風格：日系溫暖手作感，柔和自然光，呈現細緻毛線紋理與針目\n光線：溫暖柔和的自然窗光，陽光輕柔灑在編織作品上\n顏色：米白、奶茶色、燕麥色、大地色系、柔和莫蘭迪色；純淨溫暖、不刺眼\n常出現的東西：手工鉤針作品（如手提包、泡芙花、圍巾、毛線玩偶）、木質/金屬鉤針、毛線球、竹編托盤、實木桌、乾燥花\n構圖與安全區：主角毛線作品完整置於畫面中央 75% 正方形安全區內，四周預留 20%~25% 桌面與留白緩衝空間（確保在 4:5 直式與 1:1 正方形跨平台切換裁切時，作品本體與提把絕不切邊），上方預留乾淨空間供壓字\n不要的：人臉、雜亂背景、任何文字、數字與商業標誌`;
 
     /* ==========================================================
        1. 品牌、平台與 6 大發文情境與語氣
@@ -2071,18 +2086,24 @@
     let igCarouselActiveIdx = 0;
 
     function syncActivePlatformPointers() {
-      if (!platformImages[currentPlatformId]) platformImages[currentPlatformId] = [];
-      postImages = platformImages[currentPlatformId];
-      mainImageId = platformMainImageId[currentPlatformId] || (postImages[0] ? postImages[0].id : null);
+      if (!Array.isArray(postImages)) postImages = [];
+      if (!mainImageId || !postImages.some(img => img.id === mainImageId)) {
+        mainImageId = postImages[0] ? postImages[0].id : null;
+      }
+      ["FB", "IG", "LINE"].forEach(p => {
+        platformImages[p] = postImages;
+        platformMainImageId[p] = mainImageId;
+      });
       igCarouselActiveIdx = platformCarouselActiveIdx[currentPlatformId] || 0;
     }
 
-    // 加字設定（跟著這一篇存）
+    // 比例適配與加字設定（跟著這一篇存）
     let overlayConfig = {
       text: "",
       pos: "bottom",
       size: "large",
-      style: "white_box"
+      style: "white_box",
+      fit: "cover_center"
     };
 
     const IDB_NAME = "studio-images";
@@ -2174,6 +2195,20 @@
       }
     }
 
+    async function idbGetAllKeys() {
+      try {
+        const db = await openImageDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, "readonly");
+          const req = tx.objectStore(IDB_STORE).getAllKeys();
+          req.onsuccess = () => resolve(Array.isArray(req.result) ? req.result.map(String) : []);
+          req.onerror = () => resolve([]);
+        });
+      } catch (e) {
+        return [];
+      }
+    }
+
     // 計算 localStorage 與 IndexedDB 儲存空間用量
     async function updateStorageUsageInfo(quotaExceeded = false) {
       const drawerEl = document.getElementById("storageDrawerText");
@@ -2252,28 +2287,18 @@
       });
     }
 
-    async function addImageToCurrentPost(rawDataUrl, targetPlatform = null, syncOtherPlatformsIfEmpty = true) {
-      const pid = targetPlatform || currentPlatformId;
-      const picCfg = PIC_SIZE[pid] || PIC_SIZE.FB;
-      const compressed = await compressImageToJpegDataUrl(rawDataUrl, Math.max(picCfg.width, picCfg.height, 1080), 0.85);
+    async function addImageToCurrentPost(rawDataUrl) {
+      const compressed = await compressImageToJpegDataUrl(rawDataUrl, 1350, 0.85);
       const id = "img_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
       await idbSaveImage(id, compressed);
 
-      if (!platformImages[pid]) platformImages[pid] = [];
-      platformImages[pid].push({ id, dataUrl: compressed });
-      if (!platformMainImageId[pid]) platformMainImageId[pid] = id;
-
-      // 若其他平台目前是空的，自動同步套用給其他兩平台（依各平台比例顯示）
-      if (syncOtherPlatformsIfEmpty) {
-        ["FB", "IG", "LINE"].forEach(p => {
-          if (p !== pid && (!platformImages[p] || platformImages[p].length === 0)) {
-            if (!platformImages[p]) platformImages[p] = [];
-            platformImages[p].push({ id, dataUrl: compressed });
-            if (!platformMainImageId[p]) platformMainImageId[p] = id;
-          }
-        });
+      if (!Array.isArray(postImages)) postImages = [];
+      postImages.push({ id, dataUrl: compressed });
+      if (!mainImageId || !postImages.some(x => x.id === mainImageId)) {
+        mainImageId = id;
       }
 
+      // 三平台（FB、IG、LINE）強制共用同一組輪播圖庫與主圖，確保 1~5 張多圖在三平台完全同步
       syncActivePlatformPointers();
       renderPostThumbnails();
       await updateRenderedMainImage();
@@ -2318,7 +2343,8 @@
           const id = el.dataset.imgid;
           if (id && id !== mainImageId) {
             mainImageId = id;
-            igCarouselActiveIdx = 0;
+            platformCarouselActiveIdx = { FB: 0, IG: 0, LINE: 0 };
+            syncActivePlatformPointers();
             renderPostThumbnails();
             await updateRenderedMainImage();
             saveDraft();
@@ -2336,7 +2362,8 @@
       if (mainImageId === id) {
         mainImageId = postImages.length > 0 ? postImages[0].id : null;
       }
-      igCarouselActiveIdx = 0;
+      platformCarouselActiveIdx = { FB: 0, IG: 0, LINE: 0 };
+      syncActivePlatformPointers();
 
       // 檢查 📁 存過的貼文是否還在用這張圖
       const savedPosts = getSavedPosts();
@@ -2430,24 +2457,80 @@
       canvas.height = targetHeight;
       const ctx = canvas.getContext("2d");
 
-      // 1. 底圖依目標比例 object-fit: cover 置中裁切繪製
       const srcW = imgOrSourceCanvas.naturalWidth || imgOrSourceCanvas.width || targetWidth;
       const srcH = imgOrSourceCanvas.naturalHeight || imgOrSourceCanvas.height || targetHeight;
       const srcRatio = srcW / srcH;
       const dstRatio = targetWidth / targetHeight;
+      const fitMode = ovCfg?.fit || "cover_center";
 
+      // 計算滿版 cover 的來源裁切座標
       let sx = 0, sy = 0, sw = srcW, sh = srcH;
       if (srcRatio > dstRatio) {
         sw = srcH * dstRatio;
         sx = (srcW - sw) / 2;
       } else {
         sh = srcW / dstRatio;
-        sy = (srcH - sh) / 2;
+        if (fitMode === "cover_bottom") {
+          sy = Math.max(0, (srcH - sh) * 0.82);
+        } else if (fitMode === "cover_top") {
+          sy = Math.max(0, (srcH - sh) * 0.14);
+        } else {
+          sy = (srcH - sh) / 2;
+        }
       }
 
-      ctx.fillStyle = "#2b3a42";
-      ctx.fillRect(0, 0, targetWidth, targetHeight);
-      ctx.drawImage(imgOrSourceCanvas, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+      if (fitMode === "contain_frame") {
+        // 🖼️ 完整不裁切・溫暖燕麥相框底
+        ctx.fillStyle = "#f7f2ea";
+        ctx.fillRect(0, 0, targetWidth, targetHeight);
+        const pad = Math.round(Math.min(targetWidth, targetHeight) * 0.035);
+        const availW = targetWidth - pad * 2;
+        const availH = targetHeight - pad * 2;
+        const scale = Math.min(availW / srcW, availH / srcH);
+        const dw = Math.round(srcW * scale);
+        const dh = Math.round(srcH * scale);
+        const dx = Math.round((targetWidth - dw) / 2);
+        const dy = Math.round((targetHeight - dh) / 2);
+
+        ctx.save();
+        ctx.shadowColor = "rgba(74, 53, 37, 0.14)";
+        ctx.shadowBlur = Math.round(targetWidth * 0.02);
+        ctx.shadowOffsetY = Math.round(targetWidth * 0.006);
+        ctx.drawImage(imgOrSourceCanvas, 0, 0, srcW, srcH, dx, dy, dw, dh);
+        ctx.restore();
+
+        ctx.strokeStyle = "rgba(140, 94, 60, 0.22)";
+        ctx.lineWidth = Math.max(2, Math.round(targetWidth * 0.0025));
+        ctx.strokeRect(dx, dy, dw, dh);
+      } else if (fitMode === "contain_blur") {
+        // ✨ 完整不裁切・柔焦延伸光影底
+        ctx.fillStyle = "#3d2c22";
+        ctx.fillRect(0, 0, targetWidth, targetHeight);
+        ctx.save();
+        try {
+          ctx.filter = `blur(${Math.round(targetWidth * 0.026)}px) brightness(0.92)`;
+        } catch (e) {}
+        const bleed = Math.round(targetWidth * 0.06);
+        ctx.drawImage(imgOrSourceCanvas, sx, sy, sw, sh, -bleed, -bleed, targetWidth + bleed * 2, targetHeight + bleed * 2);
+        ctx.restore();
+
+        const scale = Math.min(targetWidth / srcW, targetHeight / srcH);
+        const dw = Math.round(srcW * scale);
+        const dh = Math.round(srcH * scale);
+        const dx = Math.round((targetWidth - dw) / 2);
+        const dy = Math.round((targetHeight - dh) / 2);
+
+        ctx.save();
+        ctx.shadowColor = "rgba(25, 16, 10, 0.35)";
+        ctx.shadowBlur = Math.round(targetWidth * 0.025);
+        ctx.drawImage(imgOrSourceCanvas, 0, 0, srcW, srcH, dx, dy, dw, dh);
+        ctx.restore();
+      } else {
+        // 📐 滿版裁切（置中 / 偏下 / 偏上）
+        ctx.fillStyle = "#3d2c22";
+        ctx.fillRect(0, 0, targetWidth, targetHeight);
+        ctx.drawImage(imgOrSourceCanvas, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+      }
 
       // 2. 如果有填「圖上的字」，畫在圖上
       const text = (ovCfg?.text || "").trim();
@@ -2584,14 +2667,20 @@
 
       if (statusEl) {
         const txt = (overlayConfig.text || "").trim();
+        const fitLabels = {
+          cover_center: "滿版置中",
+          cover_bottom: "滿版偏下",
+          cover_top: "滿版偏上",
+          contain_blur: "柔焦不裁切",
+          contain_frame: "燕麥框不裁切"
+        };
+        const fitTag = `<span style="background:#f3eae0; color:#6b4423; padding:1px 6px; border-radius:4px; font-size:10.5px; font-weight:700; margin-right:4px;">📐 ${fitLabels[overlayConfig.fit] || "滿版置中"}</span>`;
         if (txt) {
           const posMap = { top: "上方", middle: "置中", bottom: "下方" };
           const sizeMap = { small: "小字", medium: "中字", large: "大字" };
-          const styleMap = { white_box: "白底主色", black_box: "黑底白字", shadow: "白字陰影" };
-          statusEl.innerHTML = `<span style="color:var(--success); font-weight:600;">✏️ 已加字：</span><b>「${escapeHtml(txt)}」</b> <span style="font-size:10.5px; color:var(--ink-muted);">(${posMap[overlayConfig.pos] || "下"} / ${sizeMap[overlayConfig.size] || "大"})</span>`;
+          statusEl.innerHTML = `${fitTag}<span style="color:var(--success); font-weight:600;">✏️ 已加字：</span><b>「${escapeHtml(txt)}」</b> <span style="font-size:10.5px; color:var(--ink-muted);">(${posMap[overlayConfig.pos] || "下"} / ${sizeMap[overlayConfig.size] || "大"})</span>`;
         } else {
-          statusEl.textContent = "✏️ 尚未加字（在下方輸入文字即可即時壓字）";
-          statusEl.style.color = "var(--ink-muted)";
+          statusEl.innerHTML = `${fitTag}<span style="color:var(--ink-muted);">✏️ 尚未加字（可選比例適配或輸入文字即時壓字）</span>`;
         }
       }
     }
@@ -3059,31 +3148,61 @@
       bindCarouselEvents();
     }
 
+    function renderSlideMediaHtml(url, altText, fitMode, isPreRenderedCanvas = false) {
+      if (isPreRenderedCanvas) {
+        return `<img src="${url}" class="carousel-custom-img" alt="${altText}">`;
+      }
+      const mode = fitMode || "cover_center";
+      if (mode === "contain_frame") {
+        return `
+          <div style="width:100%; height:100%; background:#f7f2ea; display:flex; align-items:center; justify-content:center; padding:3.5%; box-sizing:border-box;">
+            <img src="${url}" alt="${altText}" style="max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; display:block; box-shadow:0 4px 14px rgba(74,53,37,0.14); border:1px solid rgba(140,94,60,0.22);">
+          </div>
+        `;
+      }
+      if (mode === "contain_blur") {
+        return `
+          <div style="width:100%; height:100%; position:relative; overflow:hidden; background:#3d2c22; display:flex; align-items:center; justify-content:center;">
+            <img src="${url}" alt="" aria-hidden="true" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:blur(18px) brightness(0.92); transform:scale(1.12);">
+            <img src="${url}" alt="${altText}" style="position:relative; z-index:1; width:100%; height:100%; object-fit:contain; display:block; filter:drop-shadow(0 4px 14px rgba(25,16,10,0.35));">
+          </div>
+        `;
+      }
+      let objPos = "center center";
+      if (mode === "cover_bottom") objPos = "center 82%";
+      else if (mode === "cover_top") objPos = "center 14%";
+      return `<img src="${url}" class="carousel-custom-img" alt="${altText}" style="object-fit:cover; object-position:${objPos};">`;
+    }
+
     function generateCarouselHtml(platform, topic) {
       const picCfg = PIC_SIZE[platform] || PIC_SIZE.FB;
       const aspectRatioStyle = "aspect-ratio: " + picCfg.cssRatio + "; width: 100%; height: auto;";
+      const fitMode = overlayConfig?.fit || "cover_center";
 
-      // 取得該平台專屬的圖片列表
-      const targetList = (platformImages[platform] && platformImages[platform].length > 0)
-        ? platformImages[platform]
-        : (postImages.length > 0 ? postImages : []);
+      // 三平台共用同一組輪播圖庫（確保 1~5 張多圖在 FB、IG、LINE 完全同步）
+      const targetList = (postImages && postImages.length > 0)
+        ? postImages
+        : ((platformImages[platform] && platformImages[platform].length > 0) ? platformImages[platform] : []);
 
       if (targetList.length > 0) {
-        const targetMainId = platformMainImageId[platform] || targetList[0].id;
+        const targetMainId = mainImageId || platformMainImageId[platform] || targetList[0].id;
         const main = targetList.find(x => x.id === targetMainId) || targetList[0];
         const rest = targetList.filter(x => x.id !== main.id);
         const ordered = [main, ...rest];
-        const mainDisplayUrl = (platform === currentPlatformId && renderedMainDataUrl) ? renderedMainDataUrl : ordered[0].dataUrl;
+        const usePreRenderedMain = Boolean(platform === currentPlatformId && renderedMainDataUrl);
+        const mainDisplayUrl = usePreRenderedMain ? renderedMainDataUrl : ordered[0].dataUrl;
 
         // 三平台（FB、IG、LINE）多圖皆支援左右輪播與翻頁箭頭
         if (ordered.length > 1) {
           const activeIdx = platformCarouselActiveIdx[platform] || 0;
           const slidesHtml = ordered.map((imgItem, idx) => {
-            const url = idx === 0 ? mainDisplayUrl : imgItem.dataUrl;
+            const isMainSlide = idx === 0;
+            const url = isMainSlide ? mainDisplayUrl : imgItem.dataUrl;
+            const mediaHtml = renderSlideMediaHtml(url, `${platform}圖片${idx + 1}`, fitMode, isMainSlide && usePreRenderedMain);
             return `
               <div class="ig-snap-slide" style="${aspectRatioStyle}">
-                <img src="${url}" class="carousel-custom-img" alt="${platform}圖片${idx + 1}">
-                <div class="carousel-badge" style="background:rgba(0,0,0,0.65);">${idx + 1}/${ordered.length}</div>
+                ${mediaHtml}
+                <div class="carousel-badge" style="background:rgba(0,0,0,0.65); z-index:3;">${idx + 1}/${ordered.length}</div>
               </div>
             `;
           }).join("");
@@ -3107,7 +3226,7 @@
         // 單張主圖
         return `
           <div class="carousel-container" style="${aspectRatioStyle} margin-bottom:${platform === 'LINE' ? '0' : '10px'};">
-            <img src="${mainDisplayUrl}" class="carousel-custom-img" alt="${platform}主圖">
+            ${renderSlideMediaHtml(mainDisplayUrl, `${platform}主圖`, fitMode, usePreRenderedMain)}
           </div>
         `;
       }
@@ -4062,7 +4181,7 @@
           const angle = cameraAngles[i] || cameraAngles[0];
           const prompt = "以參考圖中的【" + productDescription + "】為核心主角。嚴格保持參考圖中產品本體的外觀造型、顏色與毛線針織紋理。" +
             "場景與光線：" + styleInfo.desc + "。" +
-            "鏡頭構圖：" + angle + "。純單一鏡頭滿版特寫照片，絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割。畫面乾淨，上方保留空白。";
+            "鏡頭構圖與安全區：" + angle + "，且核心毛線作品主體必須完整置於畫面中央 75% 正方形安全區內，四周預留 20%~25% 桌面與留白緩衝空間（確保 4:5 直式與 1:1 正方形跨平台切換裁切時，作品本體與提把絕不切邊）。純單一鏡頭滿版特寫照片，絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割。";
           prompts.push(prompt);
         }
 
@@ -4314,7 +4433,7 @@
         let prompts = [];
 
         if (count === 1) {
-          const systemPrompt = "你是" + BRAND.name + "的美術指導。請為這篇貼文寫一段給生圖模型用的【單幅獨立照片描述】。只描述單一畫面：主角、場景、光線、顏色、氣氛。絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格分割。純單一鏡頭特寫。一律繁體中文，80～120字。";
+          const systemPrompt = "你是" + BRAND.name + "的美術指導。請為這篇貼文寫一段給生圖模型用的【單幅獨立照片描述】。只描述單一畫面：主角、場景、光線、顏色、氣氛。主角毛線作品必須完整置於畫面中央 75% 正方形安全構圖區內，四周預留 20%~25% 桌面與留白緩衝空間（確保在 4:5 與 1:1 跨平台切換時不切邊）。絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格分割。純單一鏡頭特寫。一律繁體中文，80～120字。";
           const userContent = "【圖片規格】\n" + imageSpec + "\n\n【貼文】\n" + currentPostText + "\n\n【比例】\n" + picCfg.ratio + "（" + picCfg.width + "×" + picCfg.height + "）";
           const thinkRes = await askAi([
             { role: "system", content: systemPrompt },
@@ -4324,7 +4443,7 @@
           prompts.push(thinkRes.text.trim());
         } else {
           // 多張輪播：為每張照片個別生成獨特描述
-          const systemPrompt = "你是" + BRAND.name + "的美術指導。使用者需要為【" + currentPlatformId + "】貼文規劃一套共 " + count + " 張【各自獨立的單幅照片】來做輪播。每一張都必須是單獨一張照片，嚴禁一張圖畫多格或拼貼！請嚴格輸出 JSON 陣列格式，內含 " + count + " 個字串，例如：[\"第1張描述...\", \"第2張描述...\"]。不要其他任何 markdown 或解釋。";
+          const systemPrompt = "你是" + BRAND.name + "的美術指導。使用者需要為【" + currentPlatformId + "】貼文規劃一套共 " + count + " 張【各自獨立的單幅照片】來做輪播。每一張都必須是單獨一張照片，主角毛線作品置於畫面中央 75% 正方形安全構圖區內並預留四周緩衝空間（確保 4:5 與 1:1 切換不切邊），嚴禁一張圖畫多格或拼貼！請嚴格輸出 JSON 陣列格式，內含 " + count + " 個字串，例如：[\"第1張描述...\", \"第2張描述...\"]。不要其他任何 markdown 或解釋。";
           const userContent = "【圖片規格】\n" + imageSpec + "\n\n【貼文】\n" + currentPostText + "\n\n【參考鏡頭主題】\n" + shotThemes.slice(0, count).join("\n");
           
           let thinkText = "";
@@ -5039,12 +5158,19 @@
         assistantChatHistory = p.assistantChatHistory ? { ...p.assistantChatHistory } : { FB: [], IG: [], LINE: [] };
         lastPostSnapshot = p.lastPostSnapshot || null;
 
-        // 載入圖片與自動搬遷舊版 dataUrl 至 IndexedDB
-        const { loaded, migrated } = await hydrateAndMigrateImages(p.imageIds, p.images);
+        // 載入圖片與自動搬遷舊版 dataUrl 至 IndexedDB（合併三平台所有已存圖片 ID，確保多圖輪播同步）
+        const mergedSavedIds = Array.from(new Set([
+          ...(p.imageIds || []),
+          ...(p.platformImages?.IG || []),
+          ...(p.platformImages?.FB || []),
+          ...(p.platformImages?.LINE || [])
+        ]));
+        const { loaded, migrated } = await hydrateAndMigrateImages(mergedSavedIds, p.images);
         postImages = loaded;
         mainImageId = p.mainImageId && postImages.some(x => x.id === p.mainImageId)
           ? p.mainImageId
           : (postImages[0]?.id || null);
+        syncActivePlatformPointers();
 
         if (migrated) {
           p.imageIds = postImages.map(x => x.id);
@@ -5059,7 +5185,8 @@
           text: p.overlayConfig?.text || "",
           pos: p.overlayConfig?.pos || "bottom",
           size: p.overlayConfig?.size || "large",
-          style: p.overlayConfig?.style || "white_box"
+          style: p.overlayConfig?.style || "white_box",
+          fit: p.overlayConfig?.fit || "cover_center"
         };
         syncOverlayInputsFromState();
 
@@ -5116,8 +5243,9 @@
 
         const promptEl = document.getElementById("imagePromptInput");
         if (promptEl) promptEl.value = "";
-        overlayConfig = { text: "", pos: "bottom", size: "large", style: "white_box" };
+        overlayConfig = { text: "", pos: "bottom", size: "large", style: "white_box", fit: "cover_center" };
         syncOverlayInputsFromState();
+        syncActivePlatformPointers();
 
         document.getElementById("postEditor").value = "";
         updateCharCount();
@@ -5136,10 +5264,12 @@
       const posEl = document.getElementById("overlayPosSelect");
       const sizeEl = document.getElementById("overlaySizeSelect");
       const styleEl = document.getElementById("overlayStyleSelect");
+      const fitEl = document.getElementById("overlayFitSelect");
       if (txtEl) txtEl.value = overlayConfig.text || "";
       if (posEl) posEl.value = overlayConfig.pos || "bottom";
       if (sizeEl) sizeEl.value = overlayConfig.size || "large";
       if (styleEl) styleEl.value = overlayConfig.style || "white_box";
+      if (fitEl) fitEl.value = overlayConfig.fit || "cover_center";
     }
 
     /* ==========================================================
@@ -5229,11 +5359,33 @@
             lastPostSnapshot = saved.lastPostSnapshot;
           }
 
-          const { loaded, migrated } = await hydrateAndMigrateImages(saved.imageIds, saved.images);
+          const mergedDraftIds = Array.from(new Set([
+            ...(saved.imageIds || []),
+            ...(saved.platformImages?.IG || []),
+            ...(saved.platformImages?.FB || []),
+            ...(saved.platformImages?.LINE || [])
+          ]));
+          // 若曾因舊版跨平台切換導致暫存只記到第 1 張，自動從 IndexedDB 找回同批次生成的輪播圖
+          if (mergedDraftIds.length === 1) {
+            try {
+              const allKeys = await idbGetAllKeys();
+              const baseTs = parseInt((mergedDraftIds[0].split("_")[1] || "0"), 10);
+              if (baseTs > 0) {
+                const siblingKeys = allKeys.filter(k => {
+                  if (mergedDraftIds.includes(k)) return false;
+                  const ts = parseInt((k.split("_")[1] || "0"), 10);
+                  return ts >= baseTs && (ts - baseTs) <= 180000;
+                }).sort();
+                mergedDraftIds.push(...siblingKeys);
+              }
+            } catch (e) {}
+          }
+          const { loaded, migrated } = await hydrateAndMigrateImages(mergedDraftIds, saved.images);
           postImages = loaded;
           mainImageId = saved.mainImageId && postImages.some(x => x.id === saved.mainImageId)
             ? saved.mainImageId
             : (postImages[0]?.id || null);
+          syncActivePlatformPointers();
 
           const promptEl = document.getElementById("imagePromptInput");
           if (promptEl) promptEl.value = saved.imagePrompt || "";
@@ -5243,7 +5395,8 @@
               text: saved.overlayConfig.text || "",
               pos: saved.overlayConfig.pos || "bottom",
               size: saved.overlayConfig.size || "large",
-              style: saved.overlayConfig.style || "white_box"
+              style: saved.overlayConfig.style || "white_box",
+              fit: saved.overlayConfig.fit || "cover_center"
             };
           }
           syncOverlayInputsFromState();
@@ -5483,12 +5636,13 @@
         overlayConfig.pos = document.getElementById("overlayPosSelect")?.value || "bottom";
         overlayConfig.size = document.getElementById("overlaySizeSelect")?.value || "large";
         overlayConfig.style = document.getElementById("overlayStyleSelect")?.value || "white_box";
+        overlayConfig.fit = document.getElementById("overlayFitSelect")?.value || "cover_center";
         await updateRenderedMainImage();
         saveDraft();
         renderPreview();
       };
 
-      ["overlayTextInput", "overlayPosSelect", "overlaySizeSelect", "overlayStyleSelect"].forEach(id => {
+      ["overlayTextInput", "overlayPosSelect", "overlaySizeSelect", "overlayStyleSelect", "overlayFitSelect"].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           el.addEventListener("input", onOverlayChange);

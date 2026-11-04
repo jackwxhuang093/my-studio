@@ -148,19 +148,21 @@
     button.btn-danger { background: var(--danger); color: #fff; }
     button.btn-danger:hover { background: #ab3935; }
 
-    /* 主要三欄佈局：彈性自適應，左右欄縮放保護中欄在視窗折疊時不被壓擠 */
+    /* 主要三欄佈局：預設三欄各佔 1/3（1fr : 1fr : 1fr），並支援左右拖曳調整欄寬 */
     .app-main {
+      --col-left: 1fr;
+      --col-mid: 1fr;
+      --col-right: 1fr;
       flex: 1;
       display: grid;
-      grid-template-columns: minmax(290px, 350px) minmax(280px, 1fr) minmax(280px, 340px);
-      gap: 12px;
+      grid-template-columns: minmax(260px, var(--col-left)) 12px minmax(260px, var(--col-mid)) 12px minmax(260px, var(--col-right));
+      gap: 0;
       padding: 12px;
       overflow: hidden;
     }
     @media (max-width: 1180px) and (min-width: 821px) {
       .app-main {
-        grid-template-columns: 290px 1fr 285px;
-        gap: 8px;
+        grid-template-columns: minmax(240px, var(--col-left)) 10px minmax(240px, var(--col-mid)) 10px minmax(240px, var(--col-right));
         padding: 8px;
       }
       .col-header {
@@ -169,6 +171,46 @@
       .col-body {
         padding: 10px;
       }
+    }
+
+    /* 欄位可拖曳分隔條（Resizer） */
+    .col-resizer {
+      width: 100%;
+      height: 100%;
+      cursor: col-resize;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      user-select: none;
+      touch-action: none;
+      z-index: 15;
+    }
+    .col-resizer::before {
+      content: "⋮";
+      font-size: 12px;
+      font-weight: 700;
+      color: #8c6d53;
+      width: 6px;
+      height: 46px;
+      border-radius: 6px;
+      background: #e2d4c3;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .col-resizer:hover::before,
+    .col-resizer.dragging::before {
+      height: 80px;
+      width: 8px;
+      background: var(--main);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(124, 86, 61, 0.35);
+    }
+    body.is-resizing-cols {
+      cursor: col-resize !important;
+      user-select: none !important;
     }
 
     /* 欄位卡片基底：日系手作溫暖卡片 🧵 */
@@ -414,7 +456,7 @@
     /* 🧶 毛線配色與織物模擬工坊專屬樣式 */
     .yarn-sim-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 8px;
       margin-top: 6px;
     }
@@ -426,11 +468,14 @@
       display: flex;
       flex-direction: column;
       gap: 5px;
+      min-width: 0;
     }
     .yarn-slot-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 3px;
     }
     .yarn-drop-area {
       border: 1.5px dashed #c4a48c;
@@ -758,21 +803,23 @@
       gap: 10px;
     }
     .platform-info-box {
-      font-size: 12.5px;
+      font-size: 12px;
       background: #fbf7f1;
       border: 1px solid #ebd9c8;
-      padding: 9px 14px;
+      padding: 8px 12px;
       border-radius: 8px;
       color: var(--main);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
     .post-editor {
       flex: 1;
       width: 100%;
       height: 100%;
-      min-height: 250px;
+      min-height: 220px;
       border: 1.5px solid var(--line);
       border-radius: 8px;
       padding: 14px;
@@ -784,6 +831,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
       font-size: 13px;
       color: var(--ink-muted);
     }
@@ -804,7 +853,7 @@
       max-height: 720px;
       margin: 0 auto;
       width: 100%;
-      max-width: 340px;
+      max-width: 370px;
     }
     .phone-screen {
       background: #fff;
@@ -1292,6 +1341,9 @@
         gap: 0;
         overflow: hidden;
       }
+      .col-resizer {
+        display: none !important;
+      }
 
       /* 欄位卡片：非當前頁籤隱藏，當前頁籤 100% 滿版展示 */
       .col-card {
@@ -1397,8 +1449,8 @@
     <button class="mobile-nav-btn" data-tab="editor">③ ✍️ 貼文編輯</button>
   </nav>
 
-  <!-- 主工作區（三欄） -->
-  <main class="app-main">
+  <!-- 主工作區（三欄：預設各佔 1/3，中間分隔條支援拖曳調整寬度） -->
+  <main class="app-main" id="appMainGrid">
 
     <!-- 左欄：素材與配圖（雙分頁設計，解決捲動過長） -->
     <section class="col-card tab-material" id="colCardForm">
@@ -1524,31 +1576,30 @@
                 <div class="yarn-sim-grid">
                   <!-- 左槽：毛線顏色參考 -->
                   <div class="yarn-slot-card" id="yarnColorSlot">
-                    <div class="yarn-slot-header">
-                      <span style="font-weight:700; color:var(--main); font-size:11.5px;">🧶 1. 毛線色卡 (1~3張)</span>
-                      <button type="button" class="btn-light" id="btnUploadYarnColor" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;">＋ 選照片</button>
+                    <div class="yarn-slot-header" style="gap:4px;">
+                      <span style="font-weight:700; color:var(--main); font-size:11.5px; white-space:nowrap;">🧶 1. 毛線色 (1~3張)</span>
+                      <button type="button" class="btn-light" id="btnUploadYarnColor" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; flex-shrink:0; gap:2px;">＋ 選照</button>
                       <input type="file" id="yarnColorFileInput" accept="image/*" multiple style="display:none;">
                     </div>
                     <div class="yarn-drop-area" id="yarnColorDropZone" title="點擊或拖曳毛線球照丟入這裡">
                       <div id="yarnColorEmptyPrompt" style="font-size:11px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
                         📸 點此或拖曳毛線照<br><span style="font-size:10px; color:#8c5e3c;">（自動辨識色號與纖維）</span>
                       </div>
-                      <div id="yarnColorThumbList" class="yarn-thumb-list" style="display:none;"></div>
+                      <div id="yarnColorThumbList" class="yarn-thumb-list"></div>
                     </div>
                     <!-- 自動取色色票條 -->
-                    <div id="yarnColorSwatchesBar" class="yarn-swatches-bar" style="display:none;">
-                      <span style="font-size:10.5px; color:var(--ink-muted); font-weight:600;">已辨識色票：</span>
-                      <div id="yarnColorSwatchesContainer" style="display:inline-flex; gap:4px; align-items:center; flex-wrap:wrap;"></div>
+                    <div id="yarnColorSwatches" class="yarn-swatches-bar">
+                      <span style="font-size:10.5px; color:var(--ink-muted);">尚未上傳毛線照</span>
                     </div>
                   </div>
 
                   <!-- 右槽：想要編成的款式模樣 -->
                   <div class="yarn-slot-card" id="yarnPatternSlot">
-                    <div class="yarn-slot-header">
-                      <span style="font-weight:700; color:var(--main); font-size:11.5px;">👜 2. 想編的模樣 (1張)</span>
-                      <div style="display:flex; gap:3px;">
-                        <button type="button" class="btn-light" id="btnUseCurrentMainForPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="直接引用上方圖庫的主圖作品">📥 帶入主圖</button>
-                        <button type="button" class="btn-light" id="btnUploadYarnPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;">＋ 選照</button>
+                    <div class="yarn-slot-header" style="gap:4px;">
+                      <span style="font-weight:700; color:var(--main); font-size:11.5px; white-space:nowrap;">👜 2. 款式圖 (1張)</span>
+                      <div style="display:flex; gap:3px; flex-shrink:0;">
+                        <button type="button" class="btn-light" id="btnUseCurrentMainForPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;" title="直接引用上方圖庫的主圖作品">📥 主圖</button>
+                        <button type="button" class="btn-light" id="btnUploadYarnPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;">＋ 選照</button>
                         <input type="file" id="yarnPatternFileInput" accept="image/*" style="display:none;">
                       </div>
                     </div>
@@ -1736,6 +1787,9 @@
       </div>
     </section>
 
+    <!-- 左／中欄可拖曳分隔條 -->
+    <div class="col-resizer" id="resizerLeftMid" title="左右拖曳調整「填素材/配圖片」與「三平台文案」寬度（連點兩下恢復三等分）"></div>
+
     <!-- 中欄：貼文內容編輯 -->
     <section class="col-card" id="colCardEditor">
       <div style="display:flex; flex-direction:column; gap:8px; background:#faf6f0; border-bottom:1.5px dashed var(--line); padding:10px 14px; flex-shrink:0;">
@@ -1743,9 +1797,14 @@
           <span style="font-size:13.5px; font-weight:700; color:var(--main); white-space:nowrap; display:flex; align-items:center; gap:5px;">
             ③ ✍️ 三平台文案
           </span>
-          <span style="font-size:11px; color:var(--ink-muted); background:#f0e6d9; padding:2px 8px; border-radius:10px; font-weight:600;">
-            三平台獨立排版
-          </span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button type="button" id="btnResetColWidths" class="btn-light" style="display:none; padding:2px 7px; font-size:10.5px; border:1px solid var(--line); border-radius:10px; color:var(--main);" title="將三欄版面寬度恢復為 1/3 均等比例">
+              ⚖️ 恢復三等分
+            </button>
+            <span style="font-size:11px; color:var(--ink-muted); background:#f0e6d9; padding:2px 8px; border-radius:10px; font-weight:600;">
+              三平台獨立排版
+            </span>
+          </div>
         </div>
         <div class="tab-bar platform-tab-grid" id="platformTabBar" style="border-bottom:0; margin:0;">
           <!-- JS 動態產生各平台分頁按鈕（FB / IG / LINE 三等分，視窗折疊永不收折） -->
@@ -1827,6 +1886,9 @@
         </div>
       </div>
     </section>
+
+    <!-- 中／右欄可拖曳分隔條 -->
+    <div class="col-resizer" id="resizerMidRight" title="左右拖曳調整「三平台文案」與「手機預覽」寬度（連點兩下恢復三等分）"></div>
 
     <!-- 右欄：擬真手機模擬器 -->
     <section class="col-card" id="colCardPreview">
@@ -6435,10 +6497,135 @@
       alert("⚙ 設定已成功儲存至瀏覽器！");
     });
 
+    // ⚖️ 三欄版面可拖曳調整寬度（預設 1/3 : 1/3 : 1/3，支援滑鼠與觸控拖曳、連點兩下或按按鈕恢復三等分）
+    const STORAGE_KEY_COL_RATIOS = "momobear_col_ratios_v1";
+
+    function applyColRatios(leftFr, midFr, rightFr, isCustom = false) {
+      const appMain = document.getElementById("appMainGrid");
+      const btnReset = document.getElementById("btnResetColWidths");
+      if (!appMain) return;
+      appMain.style.setProperty("--col-left", `${leftFr}fr`);
+      appMain.style.setProperty("--col-mid", `${midFr}fr`);
+      appMain.style.setProperty("--col-right", `${rightFr}fr`);
+      if (btnReset) {
+        btnReset.style.display = isCustom ? "inline-flex" : "none";
+      }
+    }
+
+    function resetColWidths() {
+      localStorage.removeItem(STORAGE_KEY_COL_RATIOS);
+      applyColRatios(1, 1, 1, false);
+    }
+
+    function initColumnResizers() {
+      const appMain = document.getElementById("appMainGrid");
+      const colForm = document.getElementById("colCardForm");
+      const colEditor = document.getElementById("colCardEditor");
+      const colPreview = document.getElementById("colCardPreview");
+      const resizerLeftMid = document.getElementById("resizerLeftMid");
+      const resizerMidRight = document.getElementById("resizerMidRight");
+      const btnReset = document.getElementById("btnResetColWidths");
+
+      if (!appMain || !colForm || !colEditor || !colPreview) return;
+
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_COL_RATIOS);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.left > 0 && parsed.mid > 0 && parsed.right > 0) {
+            const isDiff = Math.abs(parsed.left - parsed.mid) > 1 || Math.abs(parsed.mid - parsed.right) > 1;
+            applyColRatios(parsed.left, parsed.mid, parsed.right, isDiff);
+          }
+        }
+      } catch (e) {}
+
+      if (btnReset) {
+        btnReset.addEventListener("click", resetColWidths);
+      }
+
+      const setupResizer = (resizerEl, mode) => {
+        if (!resizerEl) return;
+
+        resizerEl.addEventListener("dblclick", resetColWidths);
+
+        const onPointerDown = (startEvent) => {
+          if (window.innerWidth <= 820) return;
+          startEvent.preventDefault();
+
+          const startX = startEvent.touches ? startEvent.touches[0].clientX : startEvent.clientX;
+          const startWLeft = colForm.getBoundingClientRect().width;
+          const startWMid = colEditor.getBoundingClientRect().width;
+          const startWRight = colPreview.getBoundingClientRect().width;
+          const totalW = startWLeft + startWMid + startWRight;
+          if (totalW <= 0) return;
+
+          const MIN_W = 240;
+          resizerEl.classList.add("dragging");
+          document.body.classList.add("is-resizing-cols");
+
+          let latestRatios = null;
+
+          const onPointerMove = (moveEvent) => {
+            const curX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+            const dx = curX - startX;
+
+            let newWLeft = startWLeft;
+            let newWMid = startWMid;
+            let newWRight = startWRight;
+
+            if (mode === "left-mid") {
+              const pairW = startWLeft + startWMid;
+              newWLeft = Math.max(MIN_W, Math.min(pairW - MIN_W, startWLeft + dx));
+              newWMid = pairW - newWLeft;
+            } else {
+              const pairW = startWMid + startWRight;
+              newWMid = Math.max(MIN_W, Math.min(pairW - MIN_W, startWMid + dx));
+              newWRight = pairW - newWMid;
+            }
+
+            const leftFr = Number(((newWLeft / totalW) * 100).toFixed(2));
+            const midFr = Number(((newWMid / totalW) * 100).toFixed(2));
+            const rightFr = Number(((newWRight / totalW) * 100).toFixed(2));
+            latestRatios = { left: leftFr, mid: midFr, right: rightFr };
+            applyColRatios(leftFr, midFr, rightFr, true);
+          };
+
+          const onPointerUp = () => {
+            resizerEl.classList.remove("dragging");
+            document.body.classList.remove("is-resizing-cols");
+            window.removeEventListener("mousemove", onPointerMove);
+            window.removeEventListener("mouseup", onPointerUp);
+            window.removeEventListener("touchmove", onPointerMove);
+            window.removeEventListener("touchend", onPointerUp);
+
+            if (latestRatios) {
+              try {
+                localStorage.setItem(STORAGE_KEY_COL_RATIOS, JSON.stringify(latestRatios));
+              } catch (e) {}
+            }
+          };
+
+          window.addEventListener("mousemove", onPointerMove);
+          window.addEventListener("mouseup", onPointerUp);
+          window.addEventListener("touchmove", onPointerMove, { passive: false });
+          window.addEventListener("touchend", onPointerUp);
+        };
+
+        resizerEl.addEventListener("mousedown", onPointerDown);
+        resizerEl.addEventListener("touchstart", onPointerDown, { passive: false });
+      };
+
+      setupResizer(resizerLeftMid, "left-mid");
+      setupResizer(resizerMidRight, "mid-right");
+    }
+
     /* ==========================================================
        11. 事件綁定（按鈕與 Modal 控制）
        ========================================================== */
     function bindEvents() {
+      // 初始化三欄可拖曳分隔條（預設各 1/3）
+      initColumnResizers();
+
       // 左欄雙分頁切換（① 填素材 / ② 配圖片）
       document.querySelectorAll("#leftSubTabBar .left-sub-tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {

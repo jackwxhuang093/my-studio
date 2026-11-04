@@ -1154,7 +1154,26 @@
           ✨ 讓 AI 寫
         </button>
         <div id="aiWritingStatus" style="display:none; font-size:12.5px; color:var(--main); text-align:center; padding:3px 0; font-weight:600;"></div>
-        <div id="aiAskMeBox" style="display:none; background:#fff8e6; border:1px solid #ffd591; border-radius:6px; padding:8px 10px; font-size:12px; color:#ad6800; line-height:1.5;"></div>
+        <!-- ❓ AI 想向你確認（可收折／關閉／一鍵跳轉小幫手回應） -->
+        <div id="aiAskMeBox" style="display:none; background:#fffbf0; border:1px solid #fed7aa; border-radius:8px; padding:9px 12px; font-size:12px; color:#9a3412; line-height:1.5; margin-bottom:6px; box-shadow:0 1px 4px rgba(234,88,12,0.06); transition:all 0.2s ease;">
+          <div style="display:flex; justify-content:space-between; align-items:center;" id="aiAskMeHeader">
+            <div style="display:flex; align-items:center; gap:6px; font-weight:700; color:#c2410c; cursor:pointer;" id="aiAskMeTitleGroup">
+              <span>❓ AI 想向你確認</span>
+              <span id="aiAskMeBadge" style="font-size:10.5px; background:#ffedd5; color:#c2410c; padding:1px 6px; border-radius:10px; font-weight:600;">待確認細節</span>
+            </div>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button type="button" id="btnToggleAskMe" style="background:#ffedd5; border:1px solid #fed7aa; color:#c2410c; font-size:11px; cursor:pointer; font-weight:600; padding:2px 7px; border-radius:4px;" title="收折此區塊">▲ 收折</button>
+              <button type="button" id="btnCloseAskMe" style="background:transparent; border:none; color:#9ca3af; font-size:16px; cursor:pointer; font-weight:bold; line-height:1; padding:0 3px;" title="已閱讀，關閉此提示">×</button>
+            </div>
+          </div>
+          <div id="aiAskMeBody" style="margin-top:6px; padding-top:6px; border-top:1px dashed #fed7aa; font-size:12px; line-height:1.6; color:#7c2d12;">
+            <!-- JS 動態填入問題清單 -->
+          </div>
+          <div id="aiAskMeFooter" style="margin-top:8px; display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" id="btnCloseAskMeText" class="btn-light" style="padding:3px 8px; font-size:11px; border:1px solid #fed7aa; color:#9a3412; border-radius:4px;" title="確認完畢，關閉提示">✓ 知道了</button>
+            <button type="button" id="btnReplyInAssistant" style="background:#ea580c; color:#ffffff; border:none; border-radius:4px; padding:3px 9px; font-size:11px; font-weight:600; cursor:pointer;" title="跳到中間欄 AI 小幫手進行修改">💬 去 AI 小幫手修改</button>
+          </div>
+        </div>
 
         <div style="display:flex; gap:6px;">
           <button class="btn-light" id="btnBuildPrompt" style="flex:1; justify-content:center; border:1px solid var(--line); font-size:12.5px; padding:6px 8px;">
@@ -3711,7 +3730,22 @@
           statusEl.style.display = "block";
 
           if (qMatch && qMatch[1].trim()) {
-            askMeBox.innerHTML = `<strong>❓ AI 想向你確認：</strong><br>${escapeHtml(qMatch[1].trim()).replace(/\n/g, '<br>')}`;
+            const qText = qMatch[1].trim();
+            const bodyEl = document.getElementById("aiAskMeBody");
+            const badgeEl = document.getElementById("aiAskMeBadge");
+            const toggleBtn = document.getElementById("btnToggleAskMe");
+            const footerEl = document.getElementById("aiAskMeFooter");
+            
+            if (bodyEl) {
+              bodyEl.innerHTML = escapeHtml(qText).replace(/\n/g, '<br>');
+              bodyEl.style.display = "block";
+            }
+            if (footerEl) footerEl.style.display = "flex";
+            if (toggleBtn) toggleBtn.textContent = "▲ 收折";
+
+            const count = (qText.match(/[-•*]/g) || []).length || 1;
+            if (badgeEl) badgeEl.textContent = `${count} 項提醒`;
+
             askMeBox.style.display = "block";
           } else {
             askMeBox.style.display = "none";
@@ -4662,6 +4696,51 @@
       }
 
       const btnDlZoomModal = document.getElementById("btnDownloadFromZoomModal");
+
+      // ❓ AI 想向你確認：收折、展開、關閉與跳轉 AI 小幫手
+      let isAskMeCollapsed = false;
+      function toggleAskMeCollapse() {
+        const bodyEl = document.getElementById("aiAskMeBody");
+        const footerEl = document.getElementById("aiAskMeFooter");
+        const toggleBtn = document.getElementById("btnToggleAskMe");
+        isAskMeCollapsed = !isAskMeCollapsed;
+        if (bodyEl) bodyEl.style.display = isAskMeCollapsed ? "none" : "block";
+        if (footerEl) footerEl.style.display = isAskMeCollapsed ? "none" : "flex";
+        if (toggleBtn) toggleBtn.textContent = isAskMeCollapsed ? "▼ 展開" : "▲ 收折";
+      }
+
+      function closeAskMeBox() {
+        const askBox = document.getElementById("aiAskMeBox");
+        if (askBox) askBox.style.display = "none";
+      }
+
+      function jumpToAssistantToReply() {
+        if (window.innerWidth <= 900) {
+          switchMobileTab("editor");
+        }
+        const asstInput = document.getElementById("assistantInput");
+        if (asstInput) {
+          asstInput.focus();
+          asstInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          asstInput.placeholder = "請輸入補充資訊（例如：價格半磅 450 元、幫我加上去）...";
+        }
+      }
+
+      const btnToggleAsk = document.getElementById("btnToggleAskMe");
+      if (btnToggleAsk) btnToggleAsk.addEventListener("click", (e) => { e.stopPropagation(); toggleAskMeCollapse(); });
+
+      const titleGroupAsk = document.getElementById("aiAskMeTitleGroup");
+      if (titleGroupAsk) titleGroupAsk.addEventListener("click", toggleAskMeCollapse);
+
+      const btnCloseAsk = document.getElementById("btnCloseAskMe");
+      if (btnCloseAsk) btnCloseAsk.addEventListener("click", closeAskMeBox);
+
+      const btnCloseAskTxt = document.getElementById("btnCloseAskMeText");
+      if (btnCloseAskTxt) btnCloseAskTxt.addEventListener("click", closeAskMeBox);
+
+      const btnReplyAsst = document.getElementById("btnReplyInAssistant");
+      if (btnReplyAsst) btnReplyAsst.addEventListener("click", jumpToAssistantToReply);
+
       if (btnDlZoomModal) {
         btnDlZoomModal.addEventListener("click", downloadOverlayImage);
       }

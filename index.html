@@ -1765,10 +1765,24 @@
     let currentImageIndex = 0;
     let autoSlideInterval = null;
 
-    const STORAGE_KEY_SETTINGS = "island_studio_settings_v1";
-    const STORAGE_KEY_POSTS = "island_studio_posts_v1";
-    const STORAGE_KEY_DRAFT = "island_studio_draft_v1";
-    const STORAGE_KEY_DAILY_USAGE = "island_studio_daily_usage_v1";
+    const STORAGE_KEY_SETTINGS = "momobear_studio_settings_v1";
+    const STORAGE_KEY_POSTS = "momobear_studio_posts_v1";
+    const STORAGE_KEY_DRAFT = "momobear_studio_draft_v1";
+    const STORAGE_KEY_DAILY_USAGE = "momobear_studio_daily_usage_v1";
+
+    // 自動將舊版儲存資料平滑移轉到 momobear_
+    try {
+      [
+        ["island_studio_settings_v1", STORAGE_KEY_SETTINGS],
+        ["island_studio_posts_v1", STORAGE_KEY_POSTS],
+        ["island_studio_draft_v1", STORAGE_KEY_DRAFT],
+        ["island_studio_daily_usage_v1", STORAGE_KEY_DAILY_USAGE]
+      ].forEach(([oldKey, newKey]) => {
+        if (!localStorage.getItem(newKey) && localStorage.getItem(oldKey)) {
+          localStorage.setItem(newKey, localStorage.getItem(oldKey));
+        }
+      });
+    } catch (e) {}
 
     const DEFAULT_BRAND_SPEC = `# Momobear_crochet 品牌規格\n- 稱呼：親切使用「你」，像是跟手作好友喝茶分享。\n- 口氣：沉靜、溫柔、生活感、手作職人溫度。\n- 標點：乾淨優雅，一篇最多 1 個驚嘆號（！），多用句點與適度留白。\n- 用詞：稱呼一律用「作品」、「毛線織物」、「線材」，絕不要說冷冰冰的「商品」或「便宜貨」。\n- 禁用詞：爆表、必買、神作、秒殺、CP值破表、俗又大碗。\n- 結尾精神句：固定收在「一針一線，織進溫暖與日常。」\n- 工作室資訊：手作工作室（預約制）｜支援全台寄送與超商取貨`;
 
@@ -2256,22 +2270,22 @@
           const img = new Image();
           img.crossOrigin = "anonymous";
           img.onload = () => resolve(img);
-          img.onerror = () => resolve(createFallbackCoffeeCanvas());
+          img.onerror = () => resolve(createFallbackCrochetCanvas());
           img.src = srcUrl;
         } else {
-          resolve(createFallbackCoffeeCanvas());
+          resolve(createFallbackCrochetCanvas());
         }
       });
     }
 
-    function createFallbackCoffeeCanvas() {
+    function createFallbackCrochetCanvas() {
       const c = document.createElement("canvas");
       c.width = 1080;
       c.height = 1080;
       const ctx = c.getContext("2d");
       const grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-      grad.addColorStop(0, "#3d2b1d");
-      grad.addColorStop(1, "#20150d");
+      grad.addColorStop(0, "#4a3b32");
+      grad.addColorStop(1, "#291e18");
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 1080, 1080);
       return c;
@@ -4747,7 +4761,7 @@
     }
 
     function getSettings() {
-      // 若瀏覽器舊暫存仍是小島咖啡，自動平滑升級為鉤針毛線手作規格
+      // 若瀏覽器舊暫存仍是舊設定，自動平滑升級為 Momobear_crochet 毛線手作規格
       try {
         const raw = localStorage.getItem(STORAGE_KEY_SETTINGS);
         if (raw) {

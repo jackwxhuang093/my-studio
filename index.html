@@ -1529,11 +1529,12 @@
               </select>
             </div>
 
-            <!-- ✨ 雙模態 AI 影像工作坊（整合「產品照美化背景」與「毛線配色模擬」） -->
+            <!-- ✨ 三合一 AI 影像工作坊（整合「產品照美化背景」、「毛線配色模擬」與「手燈／娃娃設計」） -->
             <div class="sub-section-box" id="productBeautifyBox" style="background:#fffcf9; border:1px solid #ebd9c8;">
               <div class="ai-mode-tabs" id="aiImgModeTabs">
                 <button type="button" class="ai-mode-tab active" data-imgmode="beautify">✨ 美化背景</button>
                 <button type="button" class="ai-mode-tab" data-imgmode="yarnsim">🧶 配色模擬</button>
+                <button type="button" class="ai-mode-tab" data-imgmode="craft">🧸 手燈／娃娃設計</button>
               </div>
 
               <!-- 模式 A：依產品照美化背景、光線與多風格客製化 -->
@@ -1702,6 +1703,82 @@
                   </select>
                 </div>
                 <div id="yarnSimStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; color:var(--main); border:1px solid #ebd9c8;"></div>
+              </div>
+
+              <!-- 模式 C：🧸 手燈／娃娃設計與製作建議 -->
+              <div id="aiImgModeCraftPane" style="display:none;">
+                <!-- 上傳槽位：手燈或娃娃照片 -->
+                <div class="yarn-slot-card" id="craftPhotoSlot" style="margin-bottom:8px;">
+                  <div class="yarn-slot-header" style="gap:4px;">
+                    <span style="font-weight:700; color:var(--main); font-size:11.5px; white-space:nowrap;">🧸 1. 手燈／娃娃／原物照 (1張)</span>
+                    <div style="display:flex; gap:3px; flex-shrink:0;">
+                      <button type="button" class="btn-light" id="btnUseCurrentMainForCraft" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;" title="直接引用上方圖庫的主圖照片">📥 引用主圖</button>
+                      <button type="button" class="btn-light" id="btnUploadCraftImage" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;">＋ 選照</button>
+                      <input type="file" id="craftFileInput" accept="image/*" style="display:none;">
+                    </div>
+                  </div>
+                  <div class="yarn-drop-area" id="craftDropZone" style="min-height:85px;" title="點擊或拖曳手燈/娃娃/公仔照丟入這裡">
+                    <div id="craftEmptyPrompt" style="font-size:11px; color:var(--ink-muted); text-align:center; padding:12px 4px;">
+                      📸 點此或拖曳「手燈」或「娃娃/公仔」照片丟入<br><span style="font-size:10px; color:#8c5e3c;">（AI 將辨識其外觀輪廓、發光球體/身體比例與代表色）</span>
+                    </div>
+                    <div id="craftThumbBox" style="display:none; position:relative; width:100%; height:90px; border-radius:6px; overflow:hidden;">
+                      <img id="craftThumbImg" src="" style="width:100%; height:100%; object-fit:contain; background:#f4ede4;">
+                      <button type="button" id="btnRemoveCraftImage" class="thumb-del-btn" title="移除這張照片">×</button>
+                    </div>
+                  </div>
+                  <div style="font-size:10px; color:var(--ink-muted); margin-top:3px; text-align:right;">
+                    支援各偶像團體應援手燈、動漫公仔、毛絨娃娃或寵物照
+                  </div>
+                </div>
+
+                <!-- 2. 改造目標模式選鈕 -->
+                <div style="background:#faf4ed; border:1px solid #ebd9c8; border-radius:6px; padding:6px 8px; margin-bottom:8px;">
+                  <div style="font-size:11px; font-weight:700; color:var(--main); margin-bottom:4px;">🎯 改造與設計目標：</div>
+                  <div class="craft-goal-pills" id="craftGoalPills" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                    <button type="button" class="preset-pill active" data-goal="lightstick_cover">🔦 手燈毛線頭套／裝飾</button>
+                    <button type="button" class="preset-pill" data-goal="doll_amigurumi">🧶 立體鉤針娃娃化 (Amigurumi)</button>
+                    <button type="button" class="preset-pill" data-goal="doll_outfit">👗 娃娃穿搭／毛線配件</button>
+                    <button type="button" class="preset-pill" data-goal="lightstick_bag">👜 手燈專屬針織保護提袋</button>
+                  </div>
+                  <div style="font-size:11px; font-weight:700; color:var(--main); margin-bottom:4px;">✨ 造型元素（可複選）：</div>
+                  <div class="craft-elem-pills" id="craftElemPills" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
+                    <button type="button" class="preset-pill active" data-elem="ears">🐻 熊耳／兔耳動物造型</button>
+                    <button type="button" class="preset-pill active" data-elem="puff_flowers">🌸 經典立體泡芙花</button>
+                    <button type="button" class="preset-pill active" data-elem="bow_lace">🎀 蝴蝶結／蕾絲滾邊</button>
+                    <button type="button" class="preset-pill" data-elem="sweets">🍓 甜點水果小裝飾</button>
+                    <button type="button" class="preset-pill" data-elem="wings">👼 天使小翅膀／皇冠</button>
+                    <button type="button" class="preset-pill" data-elem="match_colors">🎨 嚴格對齊原物代表色</button>
+                  </div>
+                  <div>
+                    <input type="text" id="craftCustomNote" placeholder="選填補充指示（例：白貓耳朵、預留開關按鈕孔位、淺粉配色）..." style="width:100%; font-size:11.5px; padding:5px 8px; border:1px solid var(--line); border-radius:5px; background:#fff;">
+                  </div>
+                </div>
+
+                <!-- 3. 操作按鈕與張數 -->
+                <div class="ai-img-row" style="display:flex; gap:6px; align-items:center;">
+                  <button type="button" class="btn-primary" id="btnGenerateCraftAdvice" style="flex:1.5; justify-content:center; padding:8px 8px; font-size:12.5px; font-weight:700; background:linear-gradient(135deg, #7c5a43 0%, #ad5a33 100%);">
+                    🪄 生成製作建議＋設計參考圖
+                  </button>
+                  <select id="craftCountSelect" style="width:86px; flex-shrink:0; font-size:12px;" title="設計參考圖張數（支援多圖輪播）">
+                    <option value="1">1 張</option>
+                    <option value="2" selected>2 張輪播</option>
+                    <option value="3">3 張輪播</option>
+                  </select>
+                </div>
+                <div id="craftStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; color:var(--main); border:1px solid #ebd9c8;"></div>
+
+                <!-- 4. 📋 職人手作鉤針製作建議書卡片（AI 生成後展開） -->
+                <div id="craftAdviceBox" style="display:none; margin-top:8px; background:#fffcf8; border:1px solid #ebd9c8; border-radius:8px; padding:10px 12px; box-shadow:0 1px 4px rgba(140,94,60,0.08);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px dashed #ebd9c8; padding-bottom:5px;">
+                    <div style="font-size:12px; font-weight:700; color:var(--main); display:flex; align-items:center; gap:4px;">
+                      <span>📋 職人鉤針製作建議書</span>
+                    </div>
+                    <button type="button" class="btn-light" id="btnCopyCraftAdvice" style="padding:2px 7px; font-size:11px; border:1px solid var(--line); border-radius:4px;" title="複製建議文字至剪貼簿">📋 複製建議</button>
+                  </div>
+                  <div id="craftAdviceContent" style="font-size:11.5px; color:#4a3220; line-height:1.6; white-space:pre-wrap; max-height:220px; overflow-y:auto;">
+                    <!-- JS 動態填入 AI 製作建議 -->
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -3231,6 +3308,7 @@
       updateBeautifyScheduleBar();
       renderYarnColorSlot();
       renderYarnPatternSlot();
+      renderCraftPhotoSlot();
       const btnTour = document.getElementById("btnAutoTour");
       if (btnTour) {
         btnTour.addEventListener("click", startAutoGuidedTour);
@@ -4748,12 +4826,20 @@
 
     let currentAiImgMode = "beautify";
     function switchAiImgMode(modeKey) {
-      currentAiImgMode = modeKey === "yarnsim" ? "yarnsim" : "beautify";
+      if (modeKey === "yarnsim") {
+        currentAiImgMode = "yarnsim";
+      } else if (modeKey === "craft") {
+        currentAiImgMode = "craft";
+      } else {
+        currentAiImgMode = "beautify";
+      }
       const paneBeautify = document.getElementById("aiImgModeBeautifyPane");
       const paneYarnSim = document.getElementById("aiImgModeYarnSimPane");
+      const paneCraft = document.getElementById("aiImgModeCraftPane");
 
       if (paneBeautify) paneBeautify.style.display = (currentAiImgMode === "beautify") ? "block" : "none";
       if (paneYarnSim) paneYarnSim.style.display = (currentAiImgMode === "yarnsim") ? "block" : "none";
+      if (paneCraft) paneCraft.style.display = (currentAiImgMode === "craft") ? "block" : "none";
 
       document.querySelectorAll("#aiImgModeTabs .ai-mode-tab").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.imgmode === currentAiImgMode);
@@ -5235,17 +5321,16 @@
         if (!selectedBeautifyStyles || selectedBeautifyStyles.length === 0) {
           selectedBeautifyStyles = ["warm_window"];
         }
-        const lightKey = document.getElementById("beautifyLightSelect")?.value || "warm_window";
-        const lightInfo = BEAUTIFY_LIGHTS[lightKey] || BEAUTIFY_LIGHTS.warm_window;
+        const lightKey = document.getElementById("beautifyLightSelect")?.value || "auto";
+        const lightDesc = (lightKey !== "auto" && BEAUTIFY_LIGHTS[lightKey]) ? BEAUTIFY_LIGHTS[lightKey] : "";
         const angleKey = document.getElementById("beautifyAngleSelect")?.value || "multi_auto";
-        const angleInfo = BEAUTIFY_ANGLES[angleKey] || BEAUTIFY_ANGLES.multi_auto;
 
-        const propNames = (selectedBeautifyProps || [])
+        const propItems = (selectedBeautifyProps || [])
           .filter(p => p !== "none" && BEAUTIFY_PROPS[p])
-          .map(p => BEAUTIFY_PROPS[p].label);
-        const propsDesc = (selectedBeautifyProps.includes("none") || propNames.length === 0)
+          .map(p => BEAUTIFY_PROPS[p]);
+        const propsDesc = (selectedBeautifyProps.includes("none") || propItems.length === 0)
           ? "桌面極簡乾淨，無多餘道具雜物"
-          : "周圍自然優雅點綴道具：" + propNames.join("、");
+          : "周圍自然優雅點綴道具：" + propItems.join("、");
 
         const customNote = (document.getElementById("beautifyCustomNote")?.value || "").trim();
 
@@ -5287,7 +5372,7 @@
 
           let curAngleDesc = "";
           if (angleKey === "multi_auto") {
-            const seq = angleInfo.sequence || [
+            const seq = Array.isArray(BEAUTIFY_ANGLES.multi_auto) ? BEAUTIFY_ANGLES.multi_auto : [
               "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白",
               "【45度立體俯拍】45度斜角俯拍，突顯手作織物的厚度、手提把/邊緣細節與編織層次感",
               "【微距毛線特寫】極近距離焦距對準精緻針目紋理，側光照耀突顯純棉毛線親膚柔軟絨毛",
@@ -5296,12 +5381,12 @@
             ];
             curAngleDesc = seq[i % seq.length];
           } else {
-            curAngleDesc = angleInfo.desc || "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白";
+            curAngleDesc = BEAUTIFY_ANGLES[angleKey] || "【正面主角視角】主體置於中央微偏下方，正面展示作品完整外觀與立體針目，上方留白";
           }
 
           const prompt = "以參考圖中的【" + productDescription + "】為核心主角。嚴格保持參考圖中產品本體的外觀造型、顏色、針法與毛線紋理。" +
             "場景風格：" + curStyle.desc + "。" +
-            "光線氛圍：" + lightInfo.desc + "。" +
+            (lightDesc ? ("光線氛圍：" + lightDesc + "。") : "") +
             "鏡頭角度：" + curAngleDesc + "。" +
             "道具擺設：" + propsDesc + "。" +
             (customNote ? ("特別指定要求：" + customNote + "。") : "") +
@@ -5528,6 +5613,319 @@
       const btnSim = document.getElementById("btnSimulateYarnPattern");
       if (btnSim) {
         btnSim.addEventListener("click", handleSimulateYarnPattern);
+      }
+    }
+
+    /* ==========================================================
+       6-1B-3. 🧸 手燈／娃娃設計與職人製作建議（方案 A）
+       ========================================================== */
+    let craftImage = null; // { id, dataUrl, name }
+    let selectedCraftGoal = "lightstick_cover";
+    let selectedCraftElements = ["ears", "puff_flowers"];
+    let lastCraftAdviceText = "";
+
+    const CRAFT_GOAL_MAP = {
+      lightstick_cover: {
+        title: "應援手燈毛線頭套與棒身裝飾",
+        desc: "為應援手燈量身客製可拆卸式的立體毛線頭套與握把套，保護發光球體、保留光線透出感，並預留開關孔位與防滑固定設計。"
+      },
+      doll_amigurumi: {
+        title: "立體鉤針玩偶娃娃化（Amigurumi）",
+        desc: "將原物外觀、角色神韻與代表色，100% 轉化為純手工短針立體鉤織玩偶（Amigurumi），針目緊實工整，飽滿立體且親膚溫暖。"
+      },
+      doll_outfit: {
+        title: "娃娃穿搭與精緻毛線配件",
+        desc: "為現有娃娃或公仔設計專屬毛線服飾穿搭，包含量身貝雷帽、小斗篷、吊帶褲或迷你斜背小提包，提升生活陪伴質感。"
+      },
+      lightstick_bag: {
+        title: "手燈專屬針織保護提袋",
+        desc: "加厚純棉線材與立體花紋（如泡芙花/麻花織紋），具備防撞保護力、提手把與束口扣環，兼具隨身應援與精緻展示功能。"
+      }
+    };
+
+    const CRAFT_ELEM_MAP = {
+      ears: "立體動物耳朵造型（如萌系熊耳、立耳兔、垂耳兔或貓耳）",
+      puff_flowers: "經典立體泡芙花朵（立體飽滿花瓣與雙色花蕊點綴）",
+      bow_lace: "優雅緞帶蝴蝶結或細緻波浪蕾絲滾邊",
+      sweets: "甜點水果小裝飾（如手作毛線草莓、櫻桃小果實）",
+      wings: "夢幻天使小翅膀或立體星冠羽翼裝飾",
+      match_colors: "嚴格對齊手燈/娃娃原物之應援色、代表色與色彩比例"
+    };
+
+    function renderCraftPhotoSlot() {
+      const emptyPrompt = document.getElementById("craftEmptyPrompt");
+      const thumbBox = document.getElementById("craftThumbBox");
+      const thumbImg = document.getElementById("craftThumbImg");
+
+      if (craftImage && craftImage.dataUrl) {
+        if (emptyPrompt) emptyPrompt.style.display = "none";
+        if (thumbBox) thumbBox.style.display = "block";
+        if (thumbImg) thumbImg.src = craftImage.dataUrl;
+      } else {
+        if (emptyPrompt) emptyPrompt.style.display = "block";
+        if (thumbBox) thumbBox.style.display = "none";
+        if (thumbImg) thumbImg.src = "";
+      }
+    }
+
+    async function setCraftFile(file) {
+      if (!file || !file.type.startsWith("image/")) return;
+      const dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => resolve(ev.target.result);
+        reader.readAsDataURL(file);
+      });
+      craftImage = { id: uid(), dataUrl, name: file.name };
+      renderCraftPhotoSlot();
+    }
+
+    function useCurrentMainForCraft() {
+      const mainItem = postImages.find(x => x.id === mainImageId) || postImages[0];
+      if (!mainItem || !mainItem.dataUrl) {
+        alert("上方圖庫目前沒有主圖，請先上傳或選擇一張照片！");
+        return;
+      }
+      craftImage = { id: uid(), dataUrl: mainItem.dataUrl, name: "主圖引用" };
+      renderCraftPhotoSlot();
+    }
+
+    // 核心流程：生成製作建議 ＋ 設計參考圖
+    async function handleCraftAdvisorGenerate() {
+      if (!craftImage || !craftImage.dataUrl) {
+        alert("請先放入「手燈」或「娃娃/公仔」照片（可點擊「＋選照」、「📥 引用主圖」或直接拖曳圖片丟入）！");
+        return;
+      }
+
+      const btnGen = document.getElementById("btnGenerateCraftAdvice");
+      const statusEl = document.getElementById("craftStatus");
+      const adviceBox = document.getElementById("craftAdviceBox");
+      const adviceContent = document.getElementById("craftAdviceContent");
+      const countSel = document.getElementById("craftCountSelect");
+      const count = parseInt(countSel?.value || "2", 10) || 1;
+
+      const goalInfo = CRAFT_GOAL_MAP[selectedCraftGoal] || CRAFT_GOAL_MAP.lightstick_cover;
+      const elemTexts = (selectedCraftElements || []).map(k => CRAFT_ELEM_MAP[k]).filter(Boolean);
+      const elementsDesc = elemTexts.length > 0 ? elemTexts.join("、") : "經典日系手作極簡風格";
+      const customNote = (document.getElementById("craftCustomNote")?.value || "").trim();
+
+      if (btnGen) {
+        btnGen.disabled = true;
+        btnGen.style.opacity = "0.6";
+        btnGen.textContent = "🪄 職人規劃中…";
+      }
+      if (statusEl) {
+        statusEl.style.display = "block";
+        statusEl.style.color = "#8c5e3c";
+        statusEl.textContent = "🔍 第一階段：AI 視覺正在細緻解析手燈／娃娃的輪廓特徵、尺寸比例與代表色…";
+      }
+
+      try {
+        // 1. Multimodal Vision 生成「職人手作鉤針製作建議書」
+        const visionPrompt = [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `你是台灣手作鉤針編織品牌「Momobear_crochet」的首席手作職人。
+請觀察這張手燈／娃娃／原物照片，用沉靜、溫柔、極致專業的繁體中文，為其規劃手作鉤針製作建議書。
+
+【改造與設計目標】：${goalInfo.title}（${goalInfo.desc}）
+【融入造型元素】：${elementsDesc}
+${customNote ? `【特別指定需求】：${customNote}` : ''}
+
+請務必條理分明地列出以下三大段落，每段給出具體可執行的手作數值與建議：
+一、🎨【線材與色號搭配建議】：
+  - 推薦使用的毛線種類（如 5股精梳純棉線、親膚牛奶棉、馬海毛或雪尼爾），並說明原因。
+  - 建議鉤針針號（如 2.5mm~3.5mm）。
+  - 配色方案（主色、副色與小配件點綴色，精準呼應原物特徵）。
+
+二、🪡【各部位結構與針法拆解】：
+  1. 主體起針與結構（環狀起針 6X、各圈加減針邏輯 V/A、立體成形方式）。
+  2. 耳朵／花朵／裝飾小物件的織片鉤法與縫合位置。
+  3. 收口、包邊與換線處理技巧。
+
+三、💡【貼心機能與固定防滑巧思】：
+  - 針對原物（如手燈發光孔/按鈕避讓、防滑脫落內圈加固、活動式可拆卸扣件等）的職人實務提醒。
+
+請不要使用浮誇口吻，字數約 300~500 字，呈現一人一針手工勾勒的專業與生活溫度。`
+              },
+              {
+                type: "image_url",
+                image_url: { url: craftImage.dataUrl }
+              }
+            ]
+          }
+        ];
+
+        const visionRes = await askAi(visionPrompt, 2500);
+        lastCraftAdviceText = visionRes.text.trim();
+        recordDailyUsage(visionRes.provider, visionRes.tokens, visionRes.cost);
+
+        if (adviceContent) adviceContent.textContent = lastCraftAdviceText;
+        if (adviceBox) adviceBox.style.display = "block";
+
+        if (statusEl) {
+          statusEl.textContent = `🎨 第二階段：製作建議已完成！正在為您繪製 ${count} 張【${goalInfo.title}】實體成品設計參考圖…`;
+        }
+
+        // 2. 構建 1~count 張設計參考圖提示詞並獨立生圖
+        const shotVariations = [
+          "【經典成品視角】作品完整套在手燈/娃娃上，正面平視特寫，端正展示立體造型與針法，周圍為乾淨日系實木桌面與柔和午後斜陽",
+          "【45度立體特寫】45度斜角俯拍，近距離清晰突顯立體耳朵、手工泡芙花縫合細節與純棉毛線纖維蓬鬆絨毛感",
+          "【外出隨身情境】手工作品靜置於純棉麻提袋旁，搭配一把櫸木鉤針與線球，展現生活陪伴與應援日常"
+        ];
+
+        let successCount = 0;
+        let totalCost = 0;
+
+        for (let i = 0; i < count; i++) {
+          if (statusEl) {
+            statusEl.textContent = `📸 正在繪製第 ${i + 1} / ${count} 張鉤針設計參考圖…（帶入原物細節進行編織實體化）`;
+          }
+
+          const angleText = shotVariations[i % shotVariations.length];
+          const imagePrompt = `以參考圖中的手燈/娃娃為基底，進行手工鉤針編織實體化設計：【${goalInfo.title}】。
+結合造型元素：${elementsDesc}。${customNote ? `特別要求：${customNote}。` : ''}
+真實商業攝影照片：呈現 100% 真實手工毛線編織質感，清晰可見的立體鉤針針目（短針X、立體泡芙花瓣、緊實純棉線材紋理），手作職人溫暖色調。
+${angleText}。
+安全區與構圖規範：核心手作主體必須完整置於畫面中央 75% 正方形安全區內，四周預留 20%~25% 桌面與留白緩衝空間（確保 4:5 直式與 1:1 正方形切換時絕不切邊）。純單一鏡頭特寫滿版商業攝影照片，背景自然柔焦，絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割、無文字浮水印。`;
+
+          try {
+            const res = await callOpenRouterImageSingle(imagePrompt, craftImage.dataUrl);
+            successCount++;
+            totalCost += (res.cost || 0);
+          } catch (err) {
+            console.error("手燈/娃娃參考圖生成錯誤:", err);
+            if (statusEl) {
+              statusEl.textContent = `⚠️ 第 ${i + 1} 張繪製未成：${err.message}，繼續繪製其餘參考圖…`;
+            }
+          }
+        }
+
+        if (statusEl) {
+          if (successCount > 0) {
+            statusEl.style.color = "#2e7d32";
+            statusEl.textContent = `✅ 成功完成製作建議書與 ${successCount} 張設計參考圖（花費約 $${totalCost.toFixed(4)}）！已自動加入圖庫與手機預覽。`;
+          } else {
+            statusEl.style.color = "#8c5e3c";
+            statusEl.textContent = `📋 製作建議書已成功產出於下方！生圖部分請檢查金鑰或稍後再試。`;
+          }
+        }
+
+        if (window.innerWidth <= 900) {
+          switchMobileTab("preview");
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.style.color = "#d9534f";
+          statusEl.textContent = "生成過程發生錯誤：" + err.message;
+        }
+      } finally {
+        if (btnGen) {
+          btnGen.disabled = false;
+          btnGen.style.opacity = "";
+          btnGen.textContent = "🪄 生成製作建議＋設計參考圖";
+        }
+      }
+    }
+
+    // 事件綁定
+    function initCraftAdvisorEvents() {
+      const fileInput = document.getElementById("craftFileInput");
+      const btnUpload = document.getElementById("btnUploadCraftImage");
+      const dropZone = document.getElementById("craftDropZone");
+      const btnUseMain = document.getElementById("btnUseCurrentMainForCraft");
+      const btnRemove = document.getElementById("btnRemoveCraftImage");
+      const btnGen = document.getElementById("btnGenerateCraftAdvice");
+      const btnCopy = document.getElementById("btnCopyCraftAdvice");
+
+      if (btnUpload && fileInput) {
+        btnUpload.addEventListener("click", () => fileInput.click());
+      }
+      if (dropZone && fileInput) {
+        dropZone.addEventListener("click", (e) => {
+          if (e.target.closest("#btnRemoveCraftImage")) return;
+          if (!craftImage) fileInput.click();
+        });
+      }
+      if (fileInput) {
+        fileInput.addEventListener("change", async (e) => {
+          const file = e.target.files?.[0];
+          if (file) await setCraftFile(file);
+          fileInput.value = "";
+        });
+      }
+      if (btnUseMain) {
+        btnUseMain.addEventListener("click", useCurrentMainForCraft);
+      }
+      if (btnRemove) {
+        btnRemove.addEventListener("click", (e) => {
+          e.stopPropagation();
+          craftImage = null;
+          renderCraftPhotoSlot();
+        });
+      }
+
+      if (dropZone) {
+        ["dragenter", "dragover"].forEach(evtName => {
+          dropZone.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add("dragover");
+          });
+        });
+        ["dragleave", "drop"].forEach(evtName => {
+          dropZone.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove("dragover");
+          });
+        });
+        dropZone.addEventListener("drop", async (e) => {
+          const file = Array.from(e.dataTransfer?.files || []).find(f => f.type.startsWith("image/"));
+          if (file) await setCraftFile(file);
+        });
+      }
+
+      // 改造目標選鈕（單選）
+      document.querySelectorAll("#craftGoalPills .preset-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+          document.querySelectorAll("#craftGoalPills .preset-pill").forEach(p => p.classList.remove("active"));
+          pill.classList.add("active");
+          selectedCraftGoal = pill.dataset.goal || "lightstick_cover";
+        });
+      });
+
+      // 造型元素選鈕（複選）
+      document.querySelectorAll("#craftElemPills .preset-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+          const elem = pill.dataset.elem;
+          const idx = selectedCraftElements.indexOf(elem);
+          if (idx !== -1) {
+            if (selectedCraftElements.length > 1) selectedCraftElements.splice(idx, 1);
+          } else {
+            selectedCraftElements.push(elem);
+          }
+          document.querySelectorAll("#craftElemPills .preset-pill").forEach(p => {
+            p.classList.toggle("active", selectedCraftElements.includes(p.dataset.elem));
+          });
+        });
+      });
+
+      if (btnGen) {
+        btnGen.addEventListener("click", handleCraftAdvisorGenerate);
+      }
+
+      if (btnCopy) {
+        btnCopy.addEventListener("click", () => {
+          if (lastCraftAdviceText) {
+            navigator.clipboard.writeText(lastCraftAdviceText).then(() => {
+              alert("✅ 職人製作建議書已複製到剪貼簿！");
+            });
+          }
+        });
       }
     }
 
@@ -6262,6 +6660,24 @@
         renderYarnColorSlot();
         renderYarnPatternSlot();
 
+        craftImage = null;
+        selectedCraftGoal = "lightstick_cover";
+        selectedCraftElements = ["ears", "puff_flowers"];
+        lastCraftAdviceText = "";
+        const craftNoteEl = document.getElementById("craftCustomNote");
+        if (craftNoteEl) craftNoteEl.value = "";
+        const craftStatusEl = document.getElementById("craftStatus");
+        if (craftStatusEl) { craftStatusEl.style.display = "none"; craftStatusEl.innerHTML = ""; }
+        const craftAdviceBox = document.getElementById("craftAdviceBox");
+        if (craftAdviceBox) craftAdviceBox.style.display = "none";
+        document.querySelectorAll("#craftGoalPills .preset-pill").forEach(p => {
+          p.classList.toggle("active", p.dataset.goal === "lightstick_cover");
+        });
+        document.querySelectorAll("#craftElemPills .preset-pill").forEach(p => {
+          p.classList.toggle("active", selectedCraftElements.includes(p.dataset.elem));
+        });
+        renderCraftPhotoSlot();
+
         document.getElementById("postEditor").value = "";
         updateCharCount();
         renderPostThumbnails();
@@ -6759,9 +7175,10 @@
       initBeautifyEvents();
       renderBeautifyStylePills();
 
-      // 初始化拖曳丟入區域與毛線配色模擬
+      // 初始化拖曳丟入區域與毛線配色模擬、手燈娃娃設計
       initDragAndDropZone();
       initYarnSimulationEvents();
+      initCraftAdvisorEvents();
 
       const onOverlayChange = async () => {
         overlayConfig.text = document.getElementById("overlayTextInput")?.value || "";

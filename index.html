@@ -959,6 +959,7 @@
       <span class="badge">專屬職人發文系統</span>
     </div>
     <div class="top-actions">
+      <button class="btn-primary" id="btnAutoTour" style="background:#2b6cb0; color:#ffffff; font-weight:600; padding:5px 12px; box-shadow:0 2px 4px rgba(43,108,176,0.25);" title="點一下，AI 自動帶你看今日所有操作">🎬 自動帶我操作</button>
       <button class="btn-outline" id="btnOpenPosts">📁 我的貼文</button>
       <button class="btn-outline" id="btnOpenSettings">⚙ 設定</button>
       <button class="btn-light" id="btnNewPost">＋ 新的一篇</button>
@@ -2213,6 +2214,107 @@
        ========================================================== */
     let currentMobileTab = "preview";
 
+    
+    // 🎬 自動導覽 / 帶看模式（Auto Guided Tour）
+    async function startAutoGuidedTour() {
+      let banner = document.getElementById("autoTourBanner");
+      if (!banner) {
+        banner = document.createElement("div");
+        banner.id = "autoTourBanner";
+        banner.style.cssText = `
+          position: fixed;
+          top: 70px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(26, 44, 60, 0.95);
+          color: #ffffff;
+          padding: 10px 20px;
+          border-radius: 30px;
+          font-size: 14px;
+          font-weight: 500;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+          z-index: 99999;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(255,255,255,0.2);
+          transition: all 0.3s ease;
+        `;
+        document.body.appendChild(banner);
+      }
+
+      function updateStep(text) {
+        banner.style.display = "flex";
+        banner.innerHTML = `<span style="display:inline-block; animation:spin 1.5s linear infinite;">⏳</span> ${text}`;
+      }
+
+      const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+      try {
+        // 第一步：載入練習圖
+        updateStep("【第 1 步】正在為您點擊「📂 載入練習圖」...");
+        await sleep(1000);
+        await loadSamplePracticeImages();
+        updateStep("【第 1 步完成】已成功載入 3 張咖啡照片！");
+        await sleep(1800);
+
+        // 第二步：切換 IG
+        updateStep("【第 2 步】正在切換至 Instagram（IG）直式 4:5 預覽...");
+        await sleep(1000);
+        const igBtn = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes("IG"));
+        if (igBtn) igBtn.click();
+        await sleep(1800);
+
+        // 第三步：模擬滑動 IG 輪播
+        updateStep("【第 3 步】正在為您示範 IG 多圖輪播滑動（第 2 張）...");
+        const carouselEl = document.getElementById("igSnapCarousel");
+        if (carouselEl) {
+          carouselEl.scrollTo({ left: carouselEl.clientWidth, behavior: "smooth" });
+        }
+        await sleep(1800);
+
+        updateStep("【第 3 步】正在示範 IG 輪播滑動（第 3 張）...");
+        if (carouselEl) {
+          carouselEl.scrollTo({ left: carouselEl.clientWidth * 2, behavior: "smooth" });
+        }
+        await sleep(1800);
+
+        if (carouselEl) {
+          carouselEl.scrollTo({ left: 0, behavior: "smooth" });
+        }
+
+        // 第四步：切換 LINE
+        updateStep("【第 4 步】正在切換至 LINE 預覽（獨立照片氣泡＋文字氣泡）...");
+        await sleep(1000);
+        const lineBtn = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes("LINE"));
+        if (lineBtn) lineBtn.click();
+        await sleep(2000);
+
+        // 第五步：示範壓字
+        updateStep("【第 5 步】正在示範在照片上壓字（輸入「衣索比亞 耶加雪菲」）...");
+        await sleep(1000);
+        const textInput = document.getElementById("canvasOverlayText");
+        if (textInput) {
+          textInput.value = "衣索比亞 耶加雪菲";
+          textInput.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        // 切回 IG 看看壓字效果
+        if (igBtn) igBtn.click();
+        await sleep(2000);
+
+        banner.innerHTML = "🎉 <b>自動操作演示完成！</b> 練習圖已載入，字已壓上，您可以自由切換平台或下載圖片囉！";
+        setTimeout(() => {
+          banner.style.opacity = "0";
+          setTimeout(() => { banner.style.display = "none"; banner.style.opacity = "1"; }, 500);
+        }, 4000);
+      } catch (err) {
+        console.error("Tour error", err);
+        banner.innerHTML = "演示暫停：" + err.message;
+        setTimeout(() => { banner.style.display = "none"; }, 3000);
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
       initMobileNav();
       initScenarios();
@@ -2222,6 +2324,16 @@
       initSettings();
       await loadDraftOrDefaults();
       bindEvents();
+      const btnTour = document.getElementById("btnAutoTour");
+      if (btnTour) {
+        btnTour.addEventListener("click", startAutoGuidedTour);
+      }
+      // 網址若有 ?demo=1 或 ?action=practice 自動啟動導覽
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("demo") === "1" || urlParams.get("action") === "practice" || window.location.hash.includes("demo")) {
+        setTimeout(startAutoGuidedTour, 600);
+      }
+
       await updateRenderedMainImage();
       renderPreview();
       await updateStorageUsageInfo();

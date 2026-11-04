@@ -411,6 +411,101 @@
       border-color: #8c5e3c;
       font-weight: 600;
     }
+    /* 🧶 毛線配色與織物模擬工坊專屬樣式 */
+    .yarn-sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .yarn-slot-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .yarn-slot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .yarn-drop-area {
+      border: 1.5px dashed #c4a48c;
+      border-radius: 6px;
+      background: #fffdf9;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      overflow: hidden;
+      position: relative;
+    }
+    .yarn-drop-area:hover {
+      background: #fdf7ef;
+      border-color: #8c5e3c;
+    }
+    .yarn-drop-area.dragover {
+      background: #faefe4 !important;
+      border-color: #8c5e3c !important;
+      transform: scale(1.01);
+    }
+    .yarn-thumb-list {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      padding: 4px;
+      width: 100%;
+    }
+    .yarn-thumb-item {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #eee;
+    }
+    .yarn-thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .yarn-swatches-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding-top: 4px;
+      border-top: 1px dashed #ebd9c8;
+      flex-wrap: wrap;
+    }
+    .color-swatch-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      background: #f7f2ea;
+      border: 1px solid #d8c4ae;
+      padding: 1px 6px;
+      border-radius: 10px;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .color-swatch-dot::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--swatch-color, #999);
+      border: 1px solid rgba(0,0,0,0.2);
+    }
     .post-images-card {
       background: #fdfaf5;
       border: 1px solid var(--line);
@@ -1382,25 +1477,25 @@
               </select>
             </div>
 
-            <!-- ✨ 二合一 AI 影像工作坊（整合「產品照美化背景」與「AI 從零生圖」，消除重複按鈕） -->
+            <!-- ✨ 三合一 AI 影像工作坊（整合「產品照美化背景」、「毛線配色模擬」與「AI 想圖生圖」） -->
             <div class="sub-section-box" id="productBeautifyBox" style="background:#fffcf9; border:1px solid #ebd9c8;">
               <div class="ai-mode-tabs" id="aiImgModeTabs">
-                <button type="button" class="ai-mode-tab active" data-imgmode="beautify">✨ 產品照美化背景</button>
-                <button type="button" class="ai-mode-tab" data-imgmode="scratch">🎨 AI 描述／想圖生圖</button>
-              </div>
-
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-                <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink); cursor:pointer; user-select:none;">
-                  <input type="checkbox" id="chkUseMainImgRef" checked>
-                  <span style="font-weight:600;">鎖定主圖作品外觀（保留毛線紋理、換背景光影）</span>
-                </label>
-                <span id="beautifyRefBadge" style="font-size:10px; padding:2px 6px; border-radius:4px; background:#f4ede4; color:var(--main); font-weight:600; white-space:nowrap;">
-                  📸 待載入照片
-                </span>
+                <button type="button" class="ai-mode-tab active" data-imgmode="beautify">✨ 美化背景</button>
+                <button type="button" class="ai-mode-tab" data-imgmode="yarnsim">🧶 配色模擬</button>
+                <button type="button" class="ai-mode-tab" data-imgmode="scratch">🎨 想圖生圖</button>
               </div>
 
               <!-- 模式 A：依產品照美化背景與光線 -->
               <div id="aiImgModeBeautifyPane">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink); cursor:pointer; user-select:none;">
+                    <input type="checkbox" id="chkUseMainImgRef" checked>
+                    <span style="font-weight:600;">鎖定主圖作品外觀（保留毛線紋理、換背景光影）</span>
+                  </label>
+                  <span id="beautifyRefBadge" style="font-size:10px; padding:2px 6px; border-radius:4px; background:#f4ede4; color:var(--main); font-weight:600; white-space:nowrap;">
+                    📸 待載入照片
+                  </span>
+                </div>
                 <div style="font-size:11.5px; color:var(--ink-muted); margin-bottom:5px;">選擇美化場景氛圍：</div>
                 <div class="beautify-preset-pills" id="beautifyStylePills" style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px;">
                   <button type="button" class="preset-pill active" data-style="warm_window">🌿 日系午後自然窗光</button>
@@ -1424,7 +1519,84 @@
                 <div id="beautifyStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; color:var(--main); border:1px solid #ebd9c8;"></div>
               </div>
 
-              <!-- 模式 B：自訂描述生圖 ＋ 🪄 AI 想圖再畫 -->
+              <!-- 模式 B：🧶 毛線選色與織物模擬 -->
+              <div id="aiImgModeYarnSimPane" style="display:none;">
+                <div class="yarn-sim-grid">
+                  <!-- 左槽：毛線顏色參考 -->
+                  <div class="yarn-slot-card" id="yarnColorSlot">
+                    <div class="yarn-slot-header">
+                      <span style="font-weight:700; color:var(--main); font-size:11.5px;">🧶 1. 毛線色卡 (1~3張)</span>
+                      <button type="button" class="btn-light" id="btnUploadYarnColor" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;">＋ 選照片</button>
+                      <input type="file" id="yarnColorFileInput" accept="image/*" multiple style="display:none;">
+                    </div>
+                    <div class="yarn-drop-area" id="yarnColorDropZone" title="點擊或拖曳毛線球照丟入這裡">
+                      <div id="yarnColorEmptyPrompt" style="font-size:11px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
+                        📸 點此或拖曳毛線照<br><span style="font-size:10px; color:#8c5e3c;">（自動辨識色號與纖維）</span>
+                      </div>
+                      <div id="yarnColorThumbList" class="yarn-thumb-list" style="display:none;"></div>
+                    </div>
+                    <!-- 自動取色色票條 -->
+                    <div id="yarnColorSwatchesBar" class="yarn-swatches-bar" style="display:none;">
+                      <span style="font-size:10.5px; color:var(--ink-muted); font-weight:600;">已辨識色票：</span>
+                      <div id="yarnColorSwatchesContainer" style="display:inline-flex; gap:4px; align-items:center; flex-wrap:wrap;"></div>
+                    </div>
+                  </div>
+
+                  <!-- 右槽：想要編成的款式模樣 -->
+                  <div class="yarn-slot-card" id="yarnPatternSlot">
+                    <div class="yarn-slot-header">
+                      <span style="font-weight:700; color:var(--main); font-size:11.5px;">👜 2. 想編的模樣 (1張)</span>
+                      <div style="display:flex; gap:3px;">
+                        <button type="button" class="btn-light" id="btnUseCurrentMainForPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="直接引用上方圖庫的主圖作品">📥 帶入主圖</button>
+                        <button type="button" class="btn-light" id="btnUploadYarnPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;">＋ 選照</button>
+                        <input type="file" id="yarnPatternFileInput" accept="image/*" style="display:none;">
+                      </div>
+                    </div>
+                    <div class="yarn-drop-area" id="yarnPatternDropZone" title="點擊或拖曳目標作品款式照丟入這裡">
+                      <div id="yarnPatternEmptyPrompt" style="font-size:11px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
+                        📸 點此或拖曳款式照<br><span style="font-size:10px; color:#8c5e3c;">（鎖定外型針目換顏色）</span>
+                      </div>
+                      <div id="yarnPatternThumbBox" style="display:none; position:relative; width:100%; height:80px; border-radius:6px; overflow:hidden;">
+                        <img id="yarnPatternThumbImg" src="" style="width:100%; height:100%; object-fit:contain; background:#f4ede4;">
+                        <button type="button" id="btnRemoveYarnPattern" class="thumb-del-btn" title="移除這張款式圖">×</button>
+                      </div>
+                    </div>
+                    <div id="yarnPatternNotice" style="font-size:10px; color:var(--ink-muted); margin-top:3px; text-align:right;">
+                      鎖定針目結構與造型比例
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 配色部位指示與選填微調 -->
+                <div style="margin-top:8px; background:#faf4ed; border:1px dashed #e4d3c2; border-radius:6px; padding:6px 8px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span style="font-size:11px; font-weight:700; color:var(--main);">🎯 配色部位配置：</span>
+                  </div>
+                  <div class="yarn-role-pills" id="yarnRolePills" style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:6px;">
+                    <button type="button" class="preset-pill active" data-role="auto">✨ 智慧主副配色</button>
+                    <button type="button" class="preset-pill" data-role="body_accent">🌸 色1主體＋色2花朵/滾邊</button>
+                    <button type="button" class="preset-pill" data-role="striped">🧣 雙色等比交錯/條紋</button>
+                  </div>
+                  <div>
+                    <input type="text" id="yarnSimCustomNote" placeholder="選填補充指示（例：包身用米白、花朵與滾邊用粉色）..." style="width:100%; font-size:11.5px; padding:5px 8px; border:1px solid var(--line); border-radius:5px; background:#fff;">
+                  </div>
+                </div>
+
+                <!-- 模擬操作按鈕與張數 -->
+                <div class="ai-img-row" style="display:flex; gap:6px; align-items:center; margin-top:8px;">
+                  <button type="button" class="btn-primary" id="btnSimulateYarnPattern" style="flex:1.5; justify-content:center; padding:8px 8px; font-size:12.5px; font-weight:700; background:linear-gradient(135deg, #7c5a43 0%, #b86230 100%);">
+                    🧶 判斷顏色並模擬編織成品
+                  </button>
+                  <select id="yarnSimCountSelect" style="width:86px; flex-shrink:0; font-size:12px;" title="模擬生成張數（支援多圖輪播）">
+                    <option value="1">1 張</option>
+                    <option value="2">2 張輪播</option>
+                    <option value="3" selected>3 張輪播</option>
+                  </select>
+                </div>
+                <div id="yarnSimStatus" style="display:none; font-size:11.5px; line-height:1.45; padding:6px 8px; border-radius:6px; margin-top:6px; background:#fbf7f2; color:var(--main); border:1px solid #ebd9c8;"></div>
+              </div>
+
+              <!-- 模式 C：自訂描述生圖 ＋ 🪄 AI 想圖再畫 -->
               <div id="aiImgModeScratchPane" style="display:none;">
                 <div style="margin-bottom:6px;">
                   <label class="form-label" style="font-size:11.5px; margin-bottom:3px;">
@@ -2962,6 +3134,8 @@
       initSettings();
       await loadDraftOrDefaults();
       bindEvents();
+      renderYarnColorSlot();
+      renderYarnPatternSlot();
       const btnTour = document.getElementById("btnAutoTour");
       if (btnTour) {
         btnTour.addEventListener("click", startAutoGuidedTour);
@@ -2970,6 +3144,9 @@
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("lefttab") === "images") {
         switchLeftFormTab("images");
+      }
+      if (urlParams.get("imgmode")) {
+        switchAiImgMode(urlParams.get("imgmode"));
       }
       if (urlParams.get("mobiletab")) {
         switchMobileTab(urlParams.get("mobiletab"));
@@ -4078,7 +4255,7 @@
     /* ==========================================================
        6-1B. 🎨 OpenRouter AI 生圖與 🪄 AI 想圖再畫（Day 8 第 3、4 節）
        ========================================================== */
-    async function callOpenRouterImageSingle(promptText) {
+    async function callOpenRouterImageSingle(promptText, explicitRefDataUrl = null) {
       const settings = getSettings();
       const apiKey = (settings.apiKey || "").trim();
       if (!apiKey) {
@@ -4096,21 +4273,30 @@
         n: 1
       };
 
-      // 產品照作為基底參考（換背景、光線與構圖美化）
-      const useRef = document.getElementById("chkUseMainImgRef")?.checked;
-      if (useRef) {
-        let refDataUrl = "";
-        if (postImages.length > 0) {
-          const mainItem = postImages.find(x => x.id === mainImageId) || postImages[0];
-          refDataUrl = mainItem ? mainItem.dataUrl : "";
-        }
-        if (refDataUrl) {
-          body.input_references = [
-            {
-              type: "image_url",
-              image_url: { url: refDataUrl }
-            }
-          ];
+      // 產品照或款式照作為基底參考（鎖定外觀造型與編織針目結構）
+      if (explicitRefDataUrl) {
+        body.input_references = [
+          {
+            type: "image_url",
+            image_url: { url: explicitRefDataUrl }
+          }
+        ];
+      } else {
+        const useRef = document.getElementById("chkUseMainImgRef")?.checked;
+        if (useRef) {
+          let refDataUrl = "";
+          if (postImages.length > 0) {
+            const mainItem = postImages.find(x => x.id === mainImageId) || postImages[0];
+            refDataUrl = mainItem ? mainItem.dataUrl : "";
+          }
+          if (refDataUrl) {
+            body.input_references = [
+              {
+                type: "image_url",
+                image_url: { url: refDataUrl }
+              }
+            ];
+          }
         }
       }
 
@@ -4213,16 +4399,434 @@
       if (colBody) colBody.scrollTop = 0;
     }
 
+    let currentAiImgMode = "beautify";
     function switchAiImgMode(modeKey) {
-      const isScratch = modeKey === "scratch";
+      currentAiImgMode = modeKey || "beautify";
       const paneBeautify = document.getElementById("aiImgModeBeautifyPane");
+      const paneYarnSim = document.getElementById("aiImgModeYarnSimPane");
       const paneScratch = document.getElementById("aiImgModeScratchPane");
-      if (paneBeautify) paneBeautify.style.display = isScratch ? "none" : "block";
-      if (paneScratch) paneScratch.style.display = isScratch ? "block" : "none";
+
+      if (paneBeautify) paneBeautify.style.display = (currentAiImgMode === "beautify") ? "block" : "none";
+      if (paneYarnSim) paneYarnSim.style.display = (currentAiImgMode === "yarnsim") ? "block" : "none";
+      if (paneScratch) paneScratch.style.display = (currentAiImgMode === "scratch") ? "block" : "none";
 
       document.querySelectorAll("#aiImgModeTabs .ai-mode-tab").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.imgmode === (isScratch ? "scratch" : "beautify"));
+        btn.classList.toggle("active", btn.dataset.imgmode === currentAiImgMode);
       });
+    }
+
+    /* ==========================================================
+       6-1B-2. 🧶 毛線配色與織物模擬專用色彩辨識與流程（方案 A）
+       ========================================================== */
+    let yarnColorImages = []; // 存放 1~3 張毛線資料: { id, dataUrl, dominantColors: [{ hex, name, r, g, b }] }
+    let yarnPatternImage = null; // 存放 1 張款式模樣: { dataUrl, dominantColors: [...] }
+    let selectedYarnRolePreset = "auto"; // "auto" | "body_accent" | "striped"
+
+    function rgbToHex(r, g, b) {
+      return "#" + [r, g, b].map(x => {
+        const hex = Math.max(0, Math.min(255, Math.round(x))).toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      }).join("");
+    }
+
+    function getColorNameFromRgb(r, g, b) {
+      const rf = r / 255, gf = g / 255, bf = b / 255;
+      const max = Math.max(rf, gf, bf), min = Math.min(rf, gf, bf);
+      let h = 0, s = 0, l = (max + min) / 2;
+
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case rf: h = (gf - bf) / d + (gf < bf ? 6 : 0); break;
+          case gf: h = (bf - rf) / d + 2; break;
+          case bf: h = (rf - gf) / d + 4; break;
+        }
+        h /= 6;
+      }
+      const hueDeg = Math.round(h * 360);
+
+      // 低飽和度／中性色
+      if (s < 0.16) {
+        if (l >= 0.88) return "米白色";
+        if (l >= 0.72) return "燕麥奶白";
+        if (l >= 0.52) return "淺灰駝色";
+        if (l >= 0.32) return "霧灰色";
+        return "炭灰色";
+      }
+
+      // 依色相環分類
+      if (hueDeg >= 345 || hueDeg < 25) {
+        if (l >= 0.75) return "櫻花柔粉";
+        if (l >= 0.55) return (s > 0.55) ? "暖珊瑚紅" : "乾燥玫瑰粉";
+        return (s > 0.45) ? "復古酒紅" : "深豆沙紅";
+      } else if (hueDeg >= 25 && hueDeg < 55) {
+        if (l >= 0.75) return "奶杏色";
+        if (l >= 0.5) return (s > 0.5) ? "暖焦糖色" : "溫潤駝色";
+        return "深栗棕色";
+      } else if (hueDeg >= 55 && hueDeg < 80) {
+        if (l >= 0.75) return "鵝黃色";
+        if (l >= 0.5) return "薑黃色";
+        return "芥末黃色";
+      } else if (hueDeg >= 80 && hueDeg < 165) {
+        if (l >= 0.7) return "薄荷綠";
+        if (l >= 0.45) return (s > 0.4) ? "抹茶綠" : "鼠尾草綠";
+        return "橄欖深綠";
+      } else if (hueDeg >= 165 && hueDeg < 260) {
+        if (l >= 0.75) return "冰川淺藍";
+        if (l >= 0.5) return (s > 0.45) ? "牛仔藍" : "霧灰藍";
+        return "海軍深藍";
+      } else {
+        if (l >= 0.7) return "香芋淺紫";
+        if (l >= 0.45) return "莫蘭迪紫";
+        return "深葡萄紫";
+      }
+    }
+
+    function extractDominantColorsFromImage(dataUrl) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const size = 48;
+            canvas.width = size;
+            canvas.height = size;
+            ctx.drawImage(img, 0, 0, size, size);
+            const imgData = ctx.getImageData(0, 0, size, size).data;
+
+            let rSum = 0, gSum = 0, bSum = 0, validPixelCount = 0;
+            for (let i = 0; i < imgData.length; i += 16) {
+              const a = imgData[i + 3];
+              if (a < 128) continue;
+              const r = imgData[i];
+              const g = imgData[i + 1];
+              const b = imgData[i + 2];
+              rSum += r;
+              gSum += g;
+              bSum += b;
+              validPixelCount++;
+            }
+
+            if (validPixelCount === 0) {
+              resolve([{ hex: "#c4a48c", name: "燕麥米白", r: 196, g: 164, b: 140 }]);
+              return;
+            }
+
+            const avgR = Math.round(rSum / validPixelCount);
+            const avgG = Math.round(gSum / validPixelCount);
+            const avgB = Math.round(bSum / validPixelCount);
+            const hex = rgbToHex(avgR, avgG, avgB);
+            const name = getColorNameFromRgb(avgR, avgG, avgB);
+            resolve([{ hex, name, r: avgR, g: avgG, b: avgB }]);
+          } catch (e) {
+            resolve([{ hex: "#d8c4ae", name: "溫潤米色", r: 216, g: 196, b: 174 }]);
+          }
+        };
+        img.onerror = () => {
+          resolve([{ hex: "#d8c4ae", name: "溫潤米色", r: 216, g: 196, b: 174 }]);
+        };
+        img.src = dataUrl;
+      });
+    }
+
+    function renderYarnColorSlot() {
+      const countLabel = document.getElementById("yarnColorCountLabel");
+      const emptyPrompt = document.getElementById("yarnColorEmptyPrompt");
+      const thumbList = document.getElementById("yarnColorThumbList");
+      const swatchesBar = document.getElementById("yarnColorSwatches");
+      const btnUpload = document.getElementById("btnUploadYarnColor");
+
+      const count = yarnColorImages.length;
+      if (countLabel) {
+        countLabel.textContent = `(已選 ${count}/3 張)`;
+      }
+
+      if (btnUpload) {
+        btnUpload.style.display = count >= 3 ? "none" : "inline-block";
+      }
+
+      if (count === 0) {
+        if (emptyPrompt) emptyPrompt.style.display = "block";
+        if (thumbList) thumbList.innerHTML = "";
+        if (swatchesBar) {
+          swatchesBar.innerHTML = `<span style="font-size:10.5px; color:var(--ink-muted);">尚未上傳毛線照</span>`;
+        }
+        return;
+      }
+
+      if (emptyPrompt) emptyPrompt.style.display = "none";
+
+      if (thumbList) {
+        thumbList.innerHTML = yarnColorImages.map((item, idx) => `
+          <div class="yarn-thumb-item" title="毛線色 ${idx + 1}">
+            <img src="${item.dataUrl}">
+            <button type="button" class="thumb-del-btn" data-del-yarn-idx="${idx}" title="刪除此毛線圖">×</button>
+          </div>
+        `).join("");
+
+        thumbList.querySelectorAll("[data-del-yarn-idx]").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const idx = parseInt(btn.dataset.delYarnIdx, 10);
+            yarnColorImages.splice(idx, 1);
+            renderYarnColorSlot();
+          });
+        });
+      }
+
+      if (swatchesBar) {
+        const dots = [];
+        yarnColorImages.forEach((item, idx) => {
+          const colors = item.dominantColors || [];
+          colors.forEach(c => {
+            dots.push(`
+              <span class="color-swatch-dot" style="--swatch-color:${c.hex};" title="色${idx + 1}：${c.name} (${c.hex})">
+                色${idx + 1} ${c.name}
+              </span>
+            `);
+          });
+        });
+        if (dots.length > 0) {
+          swatchesBar.innerHTML = `<span style="font-size:10px; color:var(--ink-muted); margin-right:2px;">🎨 判讀顏色：</span>` + dots.join("");
+        } else {
+          swatchesBar.innerHTML = `<span style="font-size:10.5px; color:var(--ink-muted);">毛線分析中…</span>`;
+        }
+      }
+    }
+
+    function renderYarnPatternSlot() {
+      const emptyPrompt = document.getElementById("yarnPatternEmptyPrompt");
+      const thumbBox = document.getElementById("yarnPatternThumbBox");
+      const thumbImg = document.getElementById("yarnPatternThumbImg");
+      const notice = document.getElementById("yarnPatternNotice");
+
+      if (!yarnPatternImage) {
+        if (emptyPrompt) emptyPrompt.style.display = "block";
+        if (thumbBox) thumbBox.style.display = "none";
+        if (thumbImg) thumbImg.src = "";
+        if (notice) notice.textContent = "鎖定針目結構與造型比例";
+      } else {
+        if (emptyPrompt) emptyPrompt.style.display = "none";
+        if (thumbBox) thumbBox.style.display = "block";
+        if (thumbImg) thumbImg.src = yarnPatternImage.dataUrl;
+        if (notice) notice.textContent = "✅ 款式已就緒，將鎖定此外型";
+      }
+    }
+
+    async function addYarnColorFile(file) {
+      if (!file || !file.type.startsWith("image/")) return;
+      if (yarnColorImages.length >= 3) {
+        alert("毛線顏色參考圖最多上傳 3 張！若要替換請先點右上角「×」刪除既有毛線圖。");
+        return;
+      }
+      const dataUrl = await new Promise(res => {
+        const reader = new FileReader();
+        reader.onload = ev => res(ev.target.result);
+        reader.readAsDataURL(file);
+      });
+      const colors = await extractDominantColorsFromImage(dataUrl);
+      yarnColorImages.push({
+        id: "yarn_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+        dataUrl,
+        dominantColors: colors
+      });
+      renderYarnColorSlot();
+    }
+
+    async function setYarnPatternFile(file) {
+      if (!file || !file.type.startsWith("image/")) return;
+      const dataUrl = await new Promise(res => {
+        const reader = new FileReader();
+        reader.onload = ev => res(ev.target.result);
+        reader.readAsDataURL(file);
+      });
+      yarnPatternImage = {
+        dataUrl,
+        dominantColors: await extractDominantColorsFromImage(dataUrl)
+      };
+      renderYarnPatternSlot();
+    }
+
+    function useCurrentMainForPattern() {
+      if (!postImages || postImages.length === 0) {
+        alert("目前相片庫尚未有圖片！請先在上方「拖曳照片」上傳作品，或直接點「選照」上傳款式圖。");
+        return;
+      }
+      const mainItem = postImages.find(x => x.id === mainImageId) || postImages[0];
+      if (!mainItem || !mainItem.dataUrl) {
+        alert("找不到有效的主圖照片！");
+        return;
+      }
+      yarnPatternImage = {
+        dataUrl: mainItem.dataUrl,
+        dominantColors: []
+      };
+      extractDominantColorsFromImage(mainItem.dataUrl).then(cols => {
+        if (yarnPatternImage && yarnPatternImage.dataUrl === mainItem.dataUrl) {
+          yarnPatternImage.dominantColors = cols;
+        }
+      });
+      renderYarnPatternSlot();
+    }
+
+    // 🧶 執行毛線配色判讀與織物模擬生圖核心流程
+    async function handleSimulateYarnPattern() {
+      if (yarnColorImages.length === 0) {
+        alert("請先在左邊「1. 毛線顏色」上傳 1~3 張毛線照片，AI 才能讀取毛線色！");
+        return;
+      }
+      if (!yarnPatternImage || !yarnPatternImage.dataUrl) {
+        alert("請在右邊「2. 想編的模樣」上傳 1 張款式參考圖，或按「📥 帶入主圖」，鎖定造型！");
+        return;
+      }
+
+      const countSel = document.getElementById("yarnSimCountSelect");
+      const count = parseInt(countSel?.value || "3", 10) || 1;
+
+      const btnSim = document.getElementById("btnSimulateYarnPattern");
+      const statusEl = document.getElementById("yarnSimStatus");
+      const customNote = (document.getElementById("yarnSimCustomNote")?.value || "").trim();
+
+      if (btnSim) {
+        btnSim.disabled = true;
+        btnSim.style.opacity = "0.6";
+        btnSim.textContent = "🧶 正在分析配色並模擬中…";
+      }
+      if (statusEl) {
+        statusEl.style.display = "block";
+        statusEl.style.color = "#8c5e3c";
+        statusEl.textContent = "🔍 第一步：AI 正在觀察款式針織結構與 " + yarnColorImages.length + " 色毛線色譜…";
+      }
+
+      try {
+        const colorSummaryList = yarnColorImages.map((item, idx) => {
+          const colName = (item.dominantColors && item.dominantColors[0]) ? item.dominantColors[0].name : `色號${idx+1}`;
+          const colHex = (item.dominantColors && item.dominantColors[0]) ? item.dominantColors[0].hex : "";
+          return `色${idx+1}：${colName}${colHex ? '(' + colHex + ')' : ''}`;
+        }).join("、");
+
+        let roleInstruction = "";
+        if (selectedYarnRolePreset === "body_accent") {
+          roleInstruction = "色1作為主體包身/主體衣身，色2作為花朵/滾邊/提把局部點綴";
+        } else if (selectedYarnRolePreset === "striped") {
+          roleInstruction = "雙色等比交錯或雙色條紋編織";
+        } else {
+          roleInstruction = "智慧主副配色：將主色用於大面積織物，副色作為邊飾或提花點綴";
+        }
+        if (customNote) {
+          roleInstruction += `；使用者特別補充指定：${customNote}`;
+        }
+
+        // 1. Multimodal Vision Stage
+        let recoloredPrompt = "";
+        try {
+          const visionMessages = [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: `你是手作針織品牌 Momobear_crochet 的資深編織設計師與色彩總監。
+請觀察所附的幾張照片：
+- 第一張是【想編成的款式模樣參考圖】。
+- 後續 ${yarnColorImages.length} 張是【毛線顏色參考圖】。
+
+配色分配要求：${roleInstruction}。
+
+任務：
+1. 請仔細辨識【款式圖】是什麼編織物品（例如泡芙花立體手提包、雙色毛線貝雷帽、粗針織杯墊等）與其標誌性的針法紋理（立體泡芙針、菱格麻花、短針密織等）。
+2. 請仔細辨識【毛線圖】中真實毛線的色彩（色譜判讀：${colorSummaryList}）。
+3. 嚴格鎖定【款式圖】的形狀外觀與編織結構，將【毛線圖】的顏色精確置換進去。
+4. 請生成一段 100~150 字的專業商品攝影 Prompt（繁體中文），用於 AI 生圖模型生成編織後的成品效果圖。
+要求：
+- 必須保留款式參考圖的完整外觀輪廓、針目紋理與工藝細節。
+- 顏色嚴格套用毛線顏色，呈現手工毛線純羊毛/棉線微毛絨細膩質感。
+- 攝影構圖：日系自然溫暖光影，置於乾淨木質桌面或燕麥色棉麻布上，主體置中且四邊預留 20% 安全留白，單一特寫視角，絕對嚴禁拼貼或多格畫面。
+- 請只輸出最終的生圖 Prompt，不要有任何前言或結語。`
+                },
+                {
+                  type: "image_url",
+                  image_url: { url: yarnPatternImage.dataUrl }
+                },
+                ...yarnColorImages.map(item => ({
+                  type: "image_url",
+                  image_url: { url: item.dataUrl }
+                }))
+              ]
+            }
+          ];
+
+          const visionRes = await askAi(visionMessages, 1000);
+          recoloredPrompt = visionRes.text.trim();
+        } catch (visionErr) {
+          console.warn("Vision API 辨識配色失敗，使用本地色卡提示詞備案:", visionErr);
+          const topic = document.getElementById("field_topic")?.value.trim() || "手作針織作品";
+          recoloredPrompt = `以款式參考圖中的【${topic}】為完全相同的造型與針織紋理結構。將整體毛線顏色置換為【${colorSummaryList}】。配色安排：${roleInstruction}。純手工編織質感，純天然毛線親膚柔軟微絨感，針目立體工整。日系日照自然窗光，淺木桌背景，四周預留 25% 空間，主體居中。單一特寫鏡頭，絕對嚴禁拼貼。`;
+        }
+
+        if (statusEl) {
+          statusEl.textContent = `🎨 第二步：配色已規劃完成，正在為【${currentPlatformId}】繪製 ${count} 張成品模擬圖…`;
+        }
+
+        // 2. Image Generation Stage（鎖定款式參考圖外觀結構，更換配色）
+        const cameraAngles = [
+          "【正面主角視角】主體置於中央，正面完整展示毛線新配色與立體花紋",
+          "【45度立體俯拍】突顯毛線配色交錯層次、厚度與手作精緻度",
+          "【微距毛線特寫】極近距離焦距對準精緻針目紋理，展現新配色毛線親膚柔軟絨毛"
+        ];
+
+        let successCount = 0;
+        let totalCost = 0;
+
+        for (let i = 0; i < count; i++) {
+          if (statusEl) {
+            statusEl.textContent = `🧶 第三步：正在繪製第 ${i + 1} / ${count} 張編織成品模擬照（鎖定外觀結構更換毛線色）…`;
+          }
+
+          const angle = cameraAngles[i] || cameraAngles[0];
+          const fullPrompt = `${recoloredPrompt} 拍攝視角與構圖：${angle}。作品主體完整置於畫面中央 75% 正方形安全區內，四周預留留白緩衝空間。純單一鏡頭特寫，嚴禁九宮格與拼貼。`;
+
+          try {
+            const res = await callOpenRouterImageSingle(fullPrompt, yarnPatternImage.dataUrl);
+            successCount++;
+            totalCost += (res.cost || 0);
+          } catch (imgErr) {
+            console.error("毛線模擬單張生成失敗:", imgErr);
+            if (statusEl) {
+              statusEl.textContent = `⚠️ 第 ${i + 1} 張生成失敗：${imgErr.message}，繼續繪製其餘模擬照片…`;
+            }
+          }
+        }
+
+        if (statusEl) {
+          if (successCount > 0) {
+            statusEl.style.color = "#2e7d32";
+            statusEl.textContent = `✅ 成功模擬生成 ${successCount} 張編織成品照（花費約 $${totalCost.toFixed(4)}）！已自動載入預覽並加入輪播。`;
+          } else {
+            statusEl.style.color = "#d9534f";
+            statusEl.textContent = "❌ 模擬生圖失敗，請檢查 OpenRouter 金鑰或稍後再試。";
+          }
+        }
+
+        if (window.innerWidth <= 900) {
+          switchMobileTab("preview");
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.style.color = "#d9534f";
+          statusEl.textContent = "模擬過程發生錯誤：" + err.message;
+        }
+      } finally {
+        if (btnSim) {
+          btnSim.disabled = false;
+          btnSim.style.opacity = "";
+          btnSim.textContent = "🧶 判斷顏色並模擬編織成品";
+        }
+      }
     }
 
     function updateBeautifyRefBadge() {
@@ -4432,6 +5036,126 @@
           }
         });
       });
+    }
+
+    // 🧶 毛線配色與織物模擬專屬事件綁定
+    function initYarnSimulationEvents() {
+      // 1. 毛線顏色上傳與拖曳
+      const yarnColorFileInput = document.getElementById("yarnColorFileInput");
+      const btnUploadYarnColor = document.getElementById("btnUploadYarnColor");
+      const yarnColorDropZone = document.getElementById("yarnColorDropZone");
+
+      if (btnUploadYarnColor && yarnColorFileInput) {
+        btnUploadYarnColor.addEventListener("click", () => yarnColorFileInput.click());
+      }
+      if (yarnColorDropZone && yarnColorFileInput) {
+        yarnColorDropZone.addEventListener("click", (e) => {
+          if (e.target.closest(".thumb-del-btn") || e.target.closest(".yarn-thumb-item")) return;
+          yarnColorFileInput.click();
+        });
+      }
+      if (yarnColorFileInput) {
+        yarnColorFileInput.addEventListener("change", async (e) => {
+          const files = Array.from(e.target.files || []);
+          for (const file of files) {
+            await addYarnColorFile(file);
+          }
+          yarnColorFileInput.value = "";
+        });
+      }
+      if (yarnColorDropZone) {
+        ["dragenter", "dragover"].forEach(evtName => {
+          yarnColorDropZone.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            yarnColorDropZone.classList.add("dragover");
+          });
+        });
+        ["dragleave", "drop"].forEach(evtName => {
+          yarnColorDropZone.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            yarnColorDropZone.classList.remove("dragover");
+          });
+        });
+        yarnColorDropZone.addEventListener("drop", async (e) => {
+          const files = Array.from(e.dataTransfer?.files || []).filter(f => f.type.startsWith("image/"));
+          for (const file of files) {
+            await addYarnColorFile(file);
+          }
+        });
+      }
+
+      // 2. 款式模樣上傳、拖曳與帶入主圖
+      const yarnPatternFileInput = document.getElementById("yarnPatternFileInput");
+      const btnUploadYarnPattern = document.getElementById("btnUploadYarnPattern");
+      const yarnPatternDropZone = document.getElementById("yarnPatternDropZone");
+      const btnUseMain = document.getElementById("btnUseCurrentMainForPattern");
+      const btnRemovePattern = document.getElementById("btnRemoveYarnPattern");
+
+      if (btnUploadYarnPattern && yarnPatternFileInput) {
+        btnUploadYarnPattern.addEventListener("click", () => yarnPatternFileInput.click());
+      }
+      if (yarnPatternDropZone && yarnPatternFileInput) {
+        yarnPatternDropZone.addEventListener("click", (e) => {
+          if (e.target.closest("#btnRemoveYarnPattern")) return;
+          if (!yarnPatternImage) {
+            yarnPatternFileInput.click();
+          }
+        });
+      }
+      if (yarnPatternFileInput) {
+        yarnPatternFileInput.addEventListener("change", async (e) => {
+          const file = e.target.files?.[0];
+          if (file) await setYarnPatternFile(file);
+          yarnPatternFileInput.value = "";
+        });
+      }
+      if (btnUseMain) {
+        btnUseMain.addEventListener("click", useCurrentMainForPattern);
+      }
+      if (btnRemovePattern) {
+        btnRemovePattern.addEventListener("click", (e) => {
+          e.stopPropagation();
+          yarnPatternImage = null;
+          renderYarnPatternSlot();
+        });
+      }
+      if (yarnPatternDropZone) {
+        ["dragenter", "dragover"].forEach(evtName => {
+          yarnPatternDropZone.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            yarnPatternDropZone.classList.add("dragover");
+          });
+        });
+        ["dragleave", "drop"].forEach(evtName => {
+          yarnPatternDropZone.addEventListener(evtName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            yarnPatternDropZone.classList.remove("dragover");
+          });
+        });
+        yarnPatternDropZone.addEventListener("drop", async (e) => {
+          const file = Array.from(e.dataTransfer?.files || []).find(f => f.type.startsWith("image/"));
+          if (file) await setYarnPatternFile(file);
+        });
+      }
+
+      // 3. 配色部位選鈕
+      document.querySelectorAll("#yarnRolePills .preset-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+          document.querySelectorAll("#yarnRolePills .preset-pill").forEach(p => p.classList.remove("active"));
+          pill.classList.add("active");
+          selectedYarnRolePreset = pill.dataset.role || "auto";
+        });
+      });
+
+      // 4. 模擬按鈕
+      const btnSim = document.getElementById("btnSimulateYarnPattern");
+      if (btnSim) {
+        btnSim.addEventListener("click", handleSimulateYarnPattern);
+      }
     }
 
     // 🎨 生圖按鈕觸發（支援 1~3 張數下拉）
@@ -5397,6 +6121,19 @@
         syncOverlayInputsFromState();
         syncActivePlatformPointers();
 
+        yarnColorImages = [];
+        yarnPatternImage = null;
+        selectedYarnRolePreset = "auto";
+        const customNoteEl = document.getElementById("yarnSimCustomNote");
+        if (customNoteEl) customNoteEl.value = "";
+        const simStatusEl = document.getElementById("yarnSimStatus");
+        if (simStatusEl) { simStatusEl.style.display = "none"; simStatusEl.innerHTML = ""; }
+        document.querySelectorAll("#yarnRolePills .preset-pill").forEach(p => {
+          p.classList.toggle("active", p.dataset.role === "auto");
+        });
+        renderYarnColorSlot();
+        renderYarnPatternSlot();
+
         document.getElementById("postEditor").value = "";
         updateCharCount();
         renderPostThumbnails();
@@ -5776,6 +6513,7 @@
 
       // 初始化拖曳丟入區域
       initDragAndDropZone();
+      initYarnSimulationEvents();
 
       const btnGenAiImg = document.getElementById("btnGenerateAiImage");
       if (btnGenAiImg) {

@@ -1781,11 +1781,23 @@
     let postContents = { FB: "", IG: "", LINE: "" };
     let currentPostId = null;
 
-    // 這篇的圖：[{ id, dataUrl }]
+    // 三平台各自專屬圖庫（FB: 1:1 方形、IG: 4:5 直式、LINE: 1:1 正方形）
+    let platformImages = { FB: [], IG: [], LINE: [] };
+    let platformMainImageId = { FB: null, IG: null, LINE: null };
+    let platformCarouselActiveIdx = { FB: 0, IG: 0, LINE: 0 };
+
+    // 當前平台的圖片指標（相容既有代碼）
     let postImages = [];
     let mainImageId = null;
     let renderedMainDataUrl = "";
     let igCarouselActiveIdx = 0;
+
+    function syncActivePlatformPointers() {
+      if (!platformImages[currentPlatformId]) platformImages[currentPlatformId] = [];
+      postImages = platformImages[currentPlatformId];
+      mainImageId = platformMainImageId[currentPlatformId] || (postImages[0] ? postImages[0].id : null);
+      igCarouselActiveIdx = platformCarouselActiveIdx[currentPlatformId] || 0;
+    }
 
     // 加字設定（跟著這一篇存）
     let overlayConfig = {
@@ -1962,13 +1974,29 @@
       });
     }
 
-    async function addImageToCurrentPost(rawDataUrl) {
-      const compressed = await compressImageToJpegDataUrl(rawDataUrl, 1080, 0.85);
+    async function addImageToCurrentPost(rawDataUrl, targetPlatform = null, syncOtherPlatformsIfEmpty = true) {
+      const pid = targetPlatform || currentPlatformId;
+      const picCfg = PIC_SIZE[pid] || PIC_SIZE.FB;
+      const compressed = await compressImageToJpegDataUrl(rawDataUrl, Math.max(picCfg.width, picCfg.height, 1080), 0.85);
       const id = "img_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
       await idbSaveImage(id, compressed);
-      postImages.push({ id, dataUrl: compressed });
-      mainImageId = id;
-      igCarouselActiveIdx = 0;
+
+      if (!platformImages[pid]) platformImages[pid] = [];
+      platformImages[pid].push({ id, dataUrl: compressed });
+      if (!platformMainImageId[pid]) platformMainImageId[pid] = id;
+
+      // 若其他平台目前是空的，自動同步套用給其他兩平台（依各平台比例顯示）
+      if (syncOtherPlatformsIfEmpty) {
+        ["FB", "IG", "LINE"].forEach(p => {
+          if (p !== pid && (!platformImages[p] || platformImages[p].length === 0)) {
+            if (!platformImages[p]) platformImages[p] = [];
+            platformImages[p].push({ id, dataUrl: compressed });
+            if (!platformMainImageId[p]) platformMainImageId[p] = id;
+          }
+        });
+      }
+
+      syncActivePlatformPointers();
       renderPostThumbnails();
       await updateRenderedMainImage();
       saveDraft();
@@ -2570,13 +2598,24 @@
         btn.classList.toggle("active", btn.dataset.pid === pid);
       });
 
+      // 同步切換該平台專屬的圖庫與主圖
+      syncActivePlatformPointers();
+
       const pInfo = PLATFORMS.find(p => p.id === pid);
-      document.getElementById("platformTipText").textContent = pInfo.tip;
-      document.getElementById("previewPlatformLabel").textContent = pInfo.name;
+      if (document.getElementById("platformTipText")) document.getElementById("platformTipText").textContent = pInfo.tip;
+      if (document.getElementById("previewPlatformLabel")) document.getElementById("previewPlatformLabel").textContent = pInfo.name;
+
+      // 更新素材卡表單中圖庫標題
+      const picCfg = PIC_SIZE[pid] || PIC_SIZE.FB;
+      const titleSpan = document.querySelector("#postImagesSection .post-images-header span");
+      if (titleSpan) {
+        titleSpan.textContent = "🖼 " + pInfo.name + " 專屬圖庫（" + (picCfg.ratio || '1:1') + "）";
+      }
 
       const editor = document.getElementById("postEditor");
-      editor.value = postContents[pid] || "";
+      if (editor) editor.value = postContents[pid] || "";
       updateCharCount();
+      renderPostThumbnails();
       await updateRenderedMainImage();
       renderPreview();
       renderAssistantChat();
@@ -2734,43 +2773,53 @@
 
     function generateCarouselHtml(platform, topic) {
       const picCfg = PIC_SIZE[platform] || PIC_SIZE.FB;
-      const aspectRatioStyle = `aspect-ratio: ${picCfg.cssRatio}; width: 100%; height: auto;`;
+      const aspectRatioStyle = "aspect-ratio: " + picCfg.cssRatio + "; width: 100%; height: auto;";
 
-      // 若「這篇的圖」有圖片：優先顯示這篇的主圖（以及 IG 多圖輪播）
-      if (postImages.length > 0) {
-        const ordered = getOrderedPostImages();
-        const mainDisplayUrl = renderedMainDataUrl || ordered[0].dataUrl;
+      // 取得該平台專屬的圖片列表
+      const targetList = (platformImages[platform] && platformImages[platform].length > 0)
+        ? platformImages[platform]
+        : (postImages.length > 0 ? postImages : []);
 
-        // 延伸挑戰 ⭐⭐：IG 支援多張圖左右滑動（scroll-snap），主圖放第一張
-        if (platform === "IG" && ordered.length > 1) {
+      if (targetList.length > 0) {
+        const targetMainId = platformMainImageId[platform] || targetList[0].id;
+        const main = targetList.find(x => x.id === targetMainId) || targetList[0];
+        const rest = targetList.filter(x => x.id !== main.id);
+        const ordered = [main, ...rest];
+        const mainDisplayUrl = (platform === currentPlatformId && renderedMainDataUrl) ? renderedMainDataUrl : ordered[0].dataUrl;
+
+        // 三平台（FB、IG、LINE）多圖皆支援左右輪播與翻頁箭頭
+        if (ordered.length > 1) {
+          const activeIdx = platformCarouselActiveIdx[platform] || 0;
           const slidesHtml = ordered.map((imgItem, idx) => {
             const url = idx === 0 ? mainDisplayUrl : imgItem.dataUrl;
             return `
               <div class="ig-snap-slide" style="${aspectRatioStyle}">
-                <img src="${url}" class="carousel-custom-img" alt="IG圖片${idx + 1}">
-                <div class="carousel-badge">${idx + 1}/${ordered.length}</div>
+                <img src="${url}" class="carousel-custom-img" alt="${platform}圖片${idx + 1}">
+                <div class="carousel-badge" style="background:rgba(0,0,0,0.65);">${idx + 1}/${ordered.length}</div>
               </div>
             `;
           }).join("");
+
           const dotsHtml = ordered.map((_, i) => `
-            <span class="carousel-dot ${i === igCarouselActiveIdx ? 'active' : ''}" data-iggoto="${i}"></span>
+            <span class="carousel-dot ${i === activeIdx ? 'active' : ''}" data-platgoto="${platform}:${i}"></span>
           `).join("");
+
           return `
             <div class="carousel-container" style="position:relative; margin-bottom:${platform === 'LINE' ? '0' : '10px'};">
-              <div class="ig-snap-carousel" id="igSnapCarousel">
+              <div class="ig-snap-carousel" id="carouselSnap_${platform}" data-platform="${platform}">
                 ${slidesHtml}
               </div>
-              <button type="button" class="carousel-arrow prev" id="btnIgSnapPrev" title="上一張" style="display:flex;">‹</button>
-              <button type="button" class="carousel-arrow next" id="btnIgSnapNext" title="下一張" style="display:flex;">›</button>
-              <div class="carousel-dots" id="igOverlayDots">${dotsHtml}</div>
+              <button type="button" class="carousel-arrow prev" data-platprev="${platform}" title="上一張" style="display:flex;">‹</button>
+              <button type="button" class="carousel-arrow next" data-platnext="${platform}" title="下一張" style="display:flex;">›</button>
+              <div class="carousel-dots" id="carouselDots_${platform}">${dotsHtml}</div>
             </div>
           `;
         }
 
-        // 單張主圖（FB 1:1、IG 4:5、LINE 1:1）
+        // 單張主圖
         return `
           <div class="carousel-container" style="${aspectRatioStyle} margin-bottom:${platform === 'LINE' ? '0' : '10px'};">
-            <img src="${mainDisplayUrl}" class="carousel-custom-img" alt="這篇的主圖">
+            <img src="${mainDisplayUrl}" class="carousel-custom-img" alt="${platform}主圖">
           </div>
         `;
       }
@@ -2834,8 +2883,50 @@
     }
 
     function bindCarouselEvents() {
-      // IG 多圖 scroll-snap 圓點同步與左右箭頭按鈕
-      const igSnap = document.getElementById("igSnapCarousel");
+      // 三平台多圖輪播箭頭與圓點事件綁定
+      document.querySelectorAll("[data-platprev]").forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const plat = btn.dataset.platprev;
+          const snapEl = document.getElementById("carouselSnap_" + plat);
+          if (snapEl) snapEl.scrollBy({ left: -(snapEl.clientWidth || 300), behavior: "smooth" });
+        };
+      });
+
+      document.querySelectorAll("[data-platnext]").forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const plat = btn.dataset.platnext;
+          const snapEl = document.getElementById("carouselSnap_" + plat);
+          if (snapEl) snapEl.scrollBy({ left: (snapEl.clientWidth || 300), behavior: "smooth" });
+        };
+      });
+
+      document.querySelectorAll("[data-platgoto]").forEach(dot => {
+        dot.onclick = (e) => {
+          e.stopPropagation();
+          const [plat, idxStr] = dot.dataset.platgoto.split(":");
+          const idx = parseInt(idxStr, 10) || 0;
+          const snapEl = document.getElementById("carouselSnap_" + plat);
+          if (snapEl) snapEl.scrollTo({ left: idx * (snapEl.clientWidth || 300), behavior: "smooth" });
+        };
+      });
+
+      ["FB", "IG", "LINE"].forEach(plat => {
+        const snapEl = document.getElementById("carouselSnap_" + plat);
+        if (snapEl) {
+          snapEl.addEventListener("scroll", () => {
+            const w = snapEl.clientWidth || 1;
+            const idx = Math.round(snapEl.scrollLeft / w);
+            platformCarouselActiveIdx[plat] = idx;
+            document.querySelectorAll("#carouselDots_" + plat + " .carousel-dot").forEach((d, i) => {
+              d.classList.toggle("active", i === idx);
+            });
+          }, { passive: true });
+        }
+      });
+
+      const igSnap = document.getElementById("igSnapCarousel") || document.getElementById("carouselSnap_" + currentPlatformId);
       if (igSnap) {
         const igPrev = document.getElementById("btnIgSnapPrev");
         const igNext = document.getElementById("btnIgSnapNext");
@@ -2960,7 +3051,7 @@
         btn.style.color = "var(--main)";
       } else {
         autoSlideInterval = setInterval(() => {
-          const igSnap = document.getElementById("igSnapCarousel");
+          const igSnap = document.getElementById("carouselSnap_" + currentPlatformId) || document.getElementById("igSnapCarousel");
           if (igSnap) {
             const w = igSnap.clientWidth || 300;
             const maxScroll = igSnap.scrollWidth - w;
@@ -3620,11 +3711,11 @@
       }
     }
 
-    // 🪄 AI 想圖再畫（兩步法：先請語言模型依圖片規格寫描述，再自動送去生圖；若張數>1則規劃多圖輪播故事）
+    // 🪄 AI 想圖再畫：依所選張數（1～5張）分別生成獨立照片，並自動套用至三平台專屬比例
     async function handleThinkAndDraw() {
       const currentPostText = (postContents[currentPlatformId] || document.getElementById("postEditor")?.value || "").trim();
       if (!currentPostText) {
-        alert("先讓 AI 寫貼文");
+        alert("請先讓 AI 寫貼文或輸入貼文內容！");
         return;
       }
 
@@ -3639,7 +3730,7 @@
       if (btnThink) {
         btnThink.disabled = true;
         btnThink.style.opacity = "0.6";
-        btnThink.textContent = "🪄 想圖中…";
+        btnThink.textContent = "🪄 構思中…";
       }
       if (btnGen) {
         btnGen.disabled = true;
@@ -3649,8 +3740,8 @@
         statusEl.style.display = "block";
         statusEl.style.color = "var(--main)";
         statusEl.textContent = count > 1
-          ? "🪄 第一步：AI 美術指導正在為 IG 輪播規劃 " + count + " 張不同視角的連續畫面…"
-          : "🪄 第一步：AI 美術指導正在根據貼文與圖片規格構思畫面…";
+          ? "🪄 第一步：AI 美術指導正在為【" + currentPlatformId + "】規劃 " + count + " 張【獨立單幅照片】（絕非拼貼九宮格）…"
+          : "🪄 第一步：AI 美術指導正在構思單幅獨立照片畫面…";
       }
 
       try {
@@ -3664,88 +3755,104 @@
         const story = document.getElementById("field_story")?.value.trim() || "（未填）";
         const price = document.getElementById("field_price")?.value.trim() || "（未填）";
 
-        let systemPrompt = "";
-        let userContent = "";
+        // 明確定義輪播鏡頭主題（確保 5 張各自獨立、視角完全不同）
+        const shotThemes = [
+          "【鏡頭1・主角特寫】手沖咖啡注入粗陶馬克杯，清澈琥珀色液體冒著細緻熱氣，焦距集中在咖啡杯，背景木桌自然窗光",
+          "【鏡頭2・原料細節】剛烘好的飽滿淺焙咖啡豆置於實木托盤，表面微細紋理，自然柔和光線，純單一鏡頭特寫",
+          "【鏡頭3・手沖工藝】黑色細口壺注水於濾杯，咖啡粉層均勻膨脹悶蒸的細密氣泡，專業純粹，純單一畫面",
+          "【鏡頭4・門市空間】台中西區小島巷午後陽光灑在靠窗實木吧台，陶杯旁放置一盆小綠植，溫暖安靜生活感",
+          "【鏡頭5・品嚐餘韻】實木桌上的一杯黑咖啡與一本手寫筆記本，極簡大面積留白，自然窗光，純單一畫面"
+        ];
+
+        let prompts = [];
 
         if (count === 1) {
-          systemPrompt = "你是" + BRAND.name + "的美術指導。使用者會給你一篇社群貼文，請你寫一段給 AI 畫圖用的畫面描述。只描述畫面：主角、場景、構圖、光線、顏色、氣氛，要具體到看得到。照圖片規格寫。畫面裡不要有任何文字、字母、數字、標誌。不要畫名人，不要畫別的品牌的 logo。素材卡和貼文裡沒有的東西，不要自己加進畫面。一律用台灣的繁體中文。只回一段 80～150 字的畫面描述，不要標題、不要解釋。";
-          userContent = "【圖片規格】\n" + imageSpec + "\n\n【素材卡】\n・日期：" + formattedDate + "\n・主題：" + topic + "\n・故事：" + story + "\n・價格／行動：" + price + "\n\n【目前平台（" + currentPlatformId + "）的貼文】\n" + currentPostText + "\n\n【圖的比例】\n" + picCfg.ratio + "（" + picCfg.width + "×" + picCfg.height + "）";
+          const systemPrompt = "你是" + BRAND.name + "的美術指導。請為這篇貼文寫一段給生圖模型用的【單幅獨立照片描述】。只描述單一畫面：主角、場景、光線、顏色、氣氛。絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格分割。純單一鏡頭特寫。一律繁體中文，80～120字。";
+          const userContent = "【圖片規格】\n" + imageSpec + "\n\n【貼文】\n" + currentPostText + "\n\n【比例】\n" + picCfg.ratio + "（" + picCfg.width + "×" + picCfg.height + "）";
+          const thinkRes = await askAi([
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userContent }
+          ], 2000);
+          recordDailyUsage(thinkRes.provider, thinkRes.tokens, thinkRes.cost);
+          prompts.push(thinkRes.text.trim());
         } else {
-          systemPrompt = "你是" + BRAND.name + "的美術指導。使用者會給你一篇社群貼文，請你為這篇貼文規劃一套共 " + count + " 張的 Instagram（IG）輪播圖畫面描述，說一個有層次的咖啡故事（例如：第 1 張封面主角特寫、第 2 張沖煮與器具細節、第 3 張木桌空間與光影生活感）。每張畫面必須符合品牌圖片規格，彼此視角互補。畫面中絕對不要出現任何文字、字母、數字或標誌。一律繁體中文。請嚴格使用以下格式輸出，不要其他多餘廢話：\n【第1張】（60～100字畫面描述）\n【第2張】（60～100字畫面描述）";
-          userContent = "【圖片規格】\n" + imageSpec + "\n\n【素材卡】\n・日期：" + formattedDate + "\n・主題：" + topic + "\n・故事：" + story + "\n・價格／行動：" + price + "\n\n【目前貼文】\n" + currentPostText + "\n\n【圖的比例】\n" + picCfg.ratio + "（" + picCfg.width + "×" + picCfg.height + "）";
-        }
+          // 多張輪播：為每張照片個別生成獨特描述
+          const systemPrompt = "你是" + BRAND.name + "的美術指導。使用者需要為【" + currentPlatformId + "】貼文規劃一套共 " + count + " 張【各自獨立的單幅照片】來做輪播。每一張都必須是單獨一張照片，嚴禁一張圖畫多格或拼貼！請嚴格輸出 JSON 陣列格式，內含 " + count + " 個字串，例如：[\"第1張描述...\", \"第2張描述...\"]。不要其他任何 markdown 或解釋。";
+          const userContent = "【圖片規格】\n" + imageSpec + "\n\n【貼文】\n" + currentPostText + "\n\n【參考鏡頭主題】\n" + shotThemes.slice(0, count).join("\n");
+          
+          let thinkText = "";
+          try {
+            const thinkRes = await askAi([
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userContent }
+            ], 3000);
+            recordDailyUsage(thinkRes.provider, thinkRes.tokens, thinkRes.cost);
+            thinkText = thinkRes.text.trim();
+          } catch (e) {}
 
-        const thinkRes = await askAi([
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userContent }
-        ], 4000);
-
-        recordDailyUsage(thinkRes.provider, thinkRes.tokens, thinkRes.cost);
-        let descText = thinkRes.text.trim();
-        if (!descText) {
-          throw new Error("AI 沒有回傳畫面描述");
-        }
-
-        const thinkCostStr = thinkRes.cost > 0 ? ("$" + thinkRes.cost.toFixed(4)) : "$0";
-        const thinkSummary = "想圖：這次用 " + thinkRes.provider + " 約 " + thinkCostStr;
-
-        if (count === 1) {
-          if (promptInput) promptInput.value = descText;
-          saveDraft();
-          const finalDrawPrompt = descText + "（畫面中不要出現任何文字、字母、數字或標誌。）";
-          await handleGenerateAiImage(finalDrawPrompt, thinkSummary, 1);
-        } else {
-          // 解析多張輪播描述
-          const regex = /【第(d+)張】([sS]*?)(?=【第d+張】|$)/g;
-          const multiPrompts = [];
-          let m;
-          while ((m = regex.exec(descText)) !== null) {
-            const promptContent = m[2].trim();
-            if (promptContent) multiPrompts.push(promptContent);
-          }
-          if (multiPrompts.length === 0) {
-            multiPrompts.push(descText);
-          }
-          if (promptInput) {
-            promptInput.value = multiPrompts.map((p, idx) => "【第" + (idx + 1) + "張】" + p).join("\n\n");
-          }
-          saveDraft();
-
-          // 連續生成這 N 張輪播圖
-          let totalCost = 0;
-          let success = 0;
-          for (let i = 0; i < multiPrompts.length; i++) {
-            if (statusEl) {
-              statusEl.style.display = "block";
-              statusEl.style.color = "var(--main)";
-              statusEl.textContent = "🎨 正在繪製輪播第 " + (i + 1) + " / " + multiPrompts.length + " 張…";
+          // 解析 JSON 陣列
+          try {
+            const jsonMatch = thinkText.match(/\[[\s\S]*\]/);
+            if (jsonMatch) {
+              const parsed = JSON.parse(jsonMatch[0]);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                prompts = parsed.slice(0, count).map(p => String(p).trim());
+              }
             }
-            const singlePrompt = multiPrompts[i] + "（畫面中不要出現任何文字、字母、數字或標誌。）";
-            const res = await callOpenRouterImageSingle(singlePrompt);
-            totalCost += res.cost;
-            success++;
+          } catch (e) {}
+
+          // 若解析未達張數，用預備的高質感職人鏡頭主題補足
+          while (prompts.length < count) {
+            const idx = prompts.length;
+            prompts.push(shotThemes[idx] + "，風格符合小島咖啡日常，溫暖底片質感，上方留白");
           }
+        }
 
-          const stats = recordDailyImageUsage(success, totalCost);
-          const costStr = "$" + totalCost.toFixed(3);
-          const dayCostStr = "$" + stats.imageCost.toFixed(3);
+        if (promptInput) {
+          promptInput.value = prompts.map((p, idx) => "【第 " + (idx + 1) + " 張獨立照片】\n" + p).join("\n\n");
+        }
+        saveDraft();
 
+        // 第二步：嚴格分次獨立呼叫 API，分別繪製出 count 張獨立單張滿版照片！
+        let totalCost = 0;
+        let successCount = 0;
+
+        for (let i = 0; i < prompts.length; i++) {
           if (statusEl) {
             statusEl.style.display = "block";
-            statusEl.style.color = "var(--success)";
-            statusEl.innerHTML = "<div>" + escapeHtml(thinkSummary) + "</div><div style=\"font-weight:700;\">✅ 成功繪製 " + success + " 張 IG 輪播圖（約 " + costStr + "）！已自動加入輪播。</div>";
+            statusEl.style.color = "var(--main)";
+            statusEl.textContent = "🎨 正在分別繪製第 " + (i + 1) + " / " + prompts.length + " 張獨立照片…（約需 10～30 秒）";
           }
 
-          // 自動切換到 IG 預覽，讓使用者馬上看輪播
-          const igTabBtn = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.textContent.includes("IG"));
-          if (igTabBtn) igTabBtn.click();
+          // 核心紅線保護：嚴格強制單一特寫鏡頭，絕對不畫拼貼九宮格！
+          const strictSingleShotPrompt = prompts[i] + "（單一鏡頭、滿版單幅照片。絕對嚴禁拼貼、嚴禁九宮格、嚴禁多格照片分割、嚴禁一張圖內出現多個視窗。畫面中不要出現任何文字、字母、數字或標誌。）";
+          
+          const res = await callOpenRouterImageSingle(strictSingleShotPrompt);
+          totalCost += res.cost;
+          successCount++;
         }
+
+        const stats = recordDailyImageUsage(successCount, totalCost);
+        const costStr = "$" + totalCost.toFixed(3);
+        const dayCostStr = "$" + stats.imageCost.toFixed(3);
+
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.style.color = "var(--success)";
+          statusEl.innerHTML = "<div style=\"font-weight:700; font-size:13px;\">🎉 成功分別生成 " + successCount + " 張獨立單幅照片！</div><div style=\"font-size:11.5px; margin-top:2px;\">已完整套用至 FB (1:1)、IG (4:5)、LINE (1:1) 三平台專屬輪播。這組約 " + costStr + "。</div>";
+        }
+
+        // 自動切換至 IG 模式展示輪播
+        await switchPlatform(currentPlatformId);
+
       } catch (err) {
+        console.error("生圖失敗", err);
         if (statusEl) {
           statusEl.style.display = "block";
           statusEl.style.color = "#d9534f";
           statusEl.innerHTML = "<span style=\"font-weight:700;\">" + escapeHtml(err.message) + "</span>";
         }
+      } finally {
         if (btnGen) {
           btnGen.disabled = false;
           btnGen.style.opacity = "";
@@ -4302,6 +4409,12 @@
         lastPostSnapshot: lastPostSnapshot,
         imageIds: postImages.map(x => x.id),
         mainImageId: mainImageId,
+        platformImages: {
+          FB: (platformImages.FB || []).map(x => x.id),
+          IG: (platformImages.IG || []).map(x => x.id),
+          LINE: (platformImages.LINE || []).map(x => x.id)
+        },
+        platformMainImageId: { ...platformMainImageId },
         imagePrompt: document.getElementById("imagePromptInput")?.value || "",
         overlayConfig: { ...overlayConfig }
       };

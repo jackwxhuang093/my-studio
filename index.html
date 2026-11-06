@@ -1669,6 +1669,9 @@
       <button class="btn-outline" id="btnOpenPosts" style="border-radius:20px;">
         <span class="top-actions-full">📁 我的貼文</span><span class="top-actions-short">📁 貼文庫</span>
       </button>
+      <button class="btn-outline" id="btnOpenRichMenu" style="border-radius:20px;" title="製作 LINE 聊天室底部的大按鈕圖文選單">
+        <span class="top-actions-full">📋 圖文選單</span><span class="top-actions-short">📋 選單</span>
+      </button>
       <button class="btn-outline" id="btnOpenSettings" style="border-radius:20px;">⚙ 設定</button>
       <button class="btn-light" id="btnNewPost" style="border-radius:20px;">
         <span class="top-actions-full">＋ 新的一篇</span><span class="top-actions-short">＋ 新篇</span>
@@ -2318,6 +2321,15 @@
             <div class="phone-feed" id="phoneFeed">
               <!-- JS 動態渲染手機內容 -->
             </div>
+            <!-- LINE 底部圖文選單預覽條 -->
+            <div id="phoneLineRichMenuArea" style="display:none; flex-shrink:0; border-top:1.5px solid #dcd3c7; background:#fff;">
+              <div id="phoneLineRichMenuToggle" style="background:#fcfaf7; padding:5px 8px; font-size:11.5px; text-align:center; color:#5c4331; cursor:pointer; font-weight:700; border-bottom:1px solid #ede3d7; display:flex; align-items:center; justify-content:center; gap:4px;">
+                <span id="phoneLineRichMenuToggleText">選單 ▾</span>
+              </div>
+              <div id="phoneLineRichMenuImgWrap" style="width:100%; overflow:hidden;">
+                <canvas id="phoneLineRichMenuCanvas" style="width:100%; display:block;"></canvas>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -2566,6 +2578,59 @@
     </div>
   </div>
 
+  <!-- Modal 6：📋 圖文選單產生器視窗 -->
+  <div class="modal-overlay" id="richMenuModal">
+    <div class="modal-box" style="max-width:840px; width:95%; max-height:92vh; display:flex; flex-direction:column;">
+      <div class="modal-header">
+        <h3>📋 圖文選單｜LINE 聊天室底部按鈕圖產生器</h3>
+        <button class="modal-close" data-close="richMenuModal">&times;</button>
+      </div>
+      <div class="modal-body" style="overflow-y:auto; flex:1; padding:18px;">
+        <div style="display:grid; grid-template-columns:1.2fr 1.1fr 1.2fr; gap:12px; margin-bottom:14px;">
+          <div>
+            <label class="form-label" style="font-weight:700; color:var(--main);">📐 版型選擇：</label>
+            <select id="richMenuLayoutSelect" class="form-input" style="width:100%;"></select>
+          </div>
+          <div>
+            <label class="form-label" style="font-weight:700; color:var(--main);">🎨 底色風格：</label>
+            <select id="richMenuBgSelect" class="form-input" style="width:100%;">
+              <option value="white" selected>米白燕麥色（#fcfaf7）</option>
+              <option value="brand">品牌主色（暖木色）</option>
+              <option value="post_dark">這篇主圖加深一點</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" style="font-weight:700; color:var(--main);">🏷 選單列的字（最多14字）：</label>
+            <input type="text" id="richMenuTitleBarInput" class="form-input" maxlength="14" value="手作選單" placeholder="預設：選單">
+          </div>
+        </div>
+
+        <!-- 每一格設定清單 -->
+        <div style="margin-bottom:14px;">
+          <div style="font-weight:700; color:var(--main); margin-bottom:8px; font-size:13.5px;">⚙ 每一格設定（圖示 emoji、格子上的字、按了做什麼）：</div>
+          <div id="richMenuGridConfigs" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
+
+        <!-- 錯誤警告提醒紅字 -->
+        <div id="richMenuErrorAlert" style="color:var(--danger); font-size:13px; font-weight:700; display:none; margin-bottom:10px; padding:8px 12px; background:#fff1f0; border-radius:8px; border-left:4px solid var(--danger);"></div>
+
+        <!-- 縮小即時預覽圖 -->
+        <div style="text-align:center; background:#f5f0e8; padding:14px; border-radius:10px; margin-bottom:10px; border:1px solid var(--line);">
+          <div style="font-size:12px; color:var(--ink-muted); margin-bottom:6px; font-weight:600;">即時縮小預覽（改動即時刷新）：</div>
+          <canvas id="richMenuPreviewCanvas" style="max-width:100%; height:auto; box-shadow:0 3px 12px rgba(95,68,48,0.18); border-radius:6px;"></canvas>
+          <div id="richMenuSizeNotice" style="font-size:12px; color:var(--ink); margin-top:8px; font-weight:600;"></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <button class="btn-light" data-close="richMenuModal">關閉</button>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-accent" id="btnCopyRichMenuTable">📋 複製設定表</button>
+          <button class="btn-primary" id="btnDownloadRichMenu">⬇ 下載選單圖 (JPEG)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 邏輯核心腳本 -->
   <script>
     /* ==========================================================
@@ -2591,6 +2656,16 @@
       { id: "story", label: "限動 1080×1920", name: "限動", width: 1080, height: 1920 },
       { id: "line_avatar", label: "LINE 大頭貼 640×640", name: "LINE大頭貼", width: 640, height: 640 },
       { id: "line_broadcast", label: "LINE 群發圖 1040×1040", name: "LINE群發圖", width: 1040, height: 1040 }
+    ];
+
+    // LINE 圖文選單版型清單（第 4 節 MENUS）
+    const MENUS = [
+      { id: "large_6", name: "大型 6 格（上 3 下 3）2500×1686", w: 2500, h: 1686, cols: 3, rows: 2 },
+      { id: "large_4", name: "大型 4 格（上 2 下 2）2500×1686", w: 2500, h: 1686, cols: 2, rows: 2 },
+      { id: "large_1", name: "大型 1 格 2500×1686", w: 2500, h: 1686, cols: 1, rows: 1 },
+      { id: "small_3", name: "小型 3 格（左中右）2500×843", w: 2500, h: 843, cols: 3, rows: 1 },
+      { id: "small_2", name: "小型 2 格（左右）2500×843", w: 2500, h: 843, cols: 2, rows: 1 },
+      { id: "small_1", name: "小型 1 格 2500×843", w: 2500, h: 843, cols: 1, rows: 1 }
     ];
 
     const IMAGE_MODEL_PRICES = {
@@ -3923,6 +3998,17 @@
       }
 
       bindCarouselEvents();
+
+      // LINE 底部圖文選單預覽條同步顯示
+      const richMenuArea = document.getElementById("phoneLineRichMenuArea");
+      if (richMenuArea) {
+        if (currentPlatformId === "LINE") {
+          richMenuArea.style.display = "block";
+          renderRichMenuPreviewOnPhone();
+        } else {
+          richMenuArea.style.display = "none";
+        }
+      }
     }
 
     function renderSlideMediaHtml(url, altText, fitMode, isPreRenderedCanvas = false) {
@@ -8181,11 +8267,452 @@ ${angleText}。
         });
       }
 
+      // 📋 圖文選單模組事件綁定
+      const btnRichMenu = document.getElementById("btnOpenRichMenu");
+      if (btnRichMenu) {
+        btnRichMenu.addEventListener("click", () => {
+          initRichMenuModal();
+          openModal("richMenuModal");
+        });
+      }
+
+      const layoutSel = document.getElementById("richMenuLayoutSelect");
+      if (layoutSel) {
+        layoutSel.addEventListener("change", (e) => {
+          richMenuState.layoutId = e.target.value;
+          saveRichMenuConfig();
+          renderRichMenuGridRows();
+          renderRichMenuPreview();
+        });
+      }
+
+      const bgSel = document.getElementById("richMenuBgSelect");
+      if (bgSel) {
+        bgSel.addEventListener("change", (e) => {
+          richMenuState.bgColor = e.target.value;
+          saveRichMenuConfig();
+          renderRichMenuPreview();
+        });
+      }
+
+      const titleInput = document.getElementById("richMenuTitleBarInput");
+      if (titleInput) {
+        titleInput.addEventListener("input", (e) => {
+          richMenuState.menuBarText = e.target.value.trim();
+          saveRichMenuConfig();
+          renderRichMenuPreview();
+        });
+      }
+
+      const btnDlRich = document.getElementById("btnDownloadRichMenu");
+      if (btnDlRich) btnDlRich.addEventListener("click", downloadRichMenuJpeg);
+
+      const btnCpRich = document.getElementById("btnCopyRichMenuTable");
+      if (btnCpRich) btnCpRich.addEventListener("click", copyRichMenuSettingTable);
+
+      const phoneToggle = document.getElementById("phoneLineRichMenuToggle");
+      if (phoneToggle) {
+        phoneToggle.addEventListener("click", () => {
+          const wrap = document.getElementById("phoneLineRichMenuImgWrap");
+          const textEl = document.getElementById("phoneLineRichMenuToggleText");
+          if (!wrap) return;
+          const isCollapsed = wrap.style.display === "none";
+          wrap.style.display = isCollapsed ? "block" : "none";
+          if (textEl) {
+            const base = richMenuState.menuBarText || "選單";
+            textEl.textContent = isCollapsed ? `${base} ▾` : `${base} ▴`;
+          }
+        });
+      }
+
       // 通用 Modal 關閉
       document.querySelectorAll("[data-close]").forEach(btn => {
         btn.addEventListener("click", () => closeModal(btn.dataset.close));
       });
     }
+
+    /* ==========================================================
+       📋 圖文選單產生器模組（Day 9 第 4 節）
+       ========================================================== */
+    const RICH_MENU_STORAGE_KEY = "day9-richmenu-config";
+
+    const DEFAULT_RICH_MENU_DATA = {
+      layoutId: "large_6",
+      bgColor: "white",
+      menuBarText: "手作選單",
+      cells: [
+        { icon: "🧶", text: "看作品集", actionType: "text", content: "作品集" },
+        { icon: "🕘", text: "營業時間", actionType: "text", content: "營業時間" },
+        { icon: "📍", text: "地點位置", actionType: "text", content: "地點" },
+        { icon: "🌸", text: "泡芙花包包", actionType: "text", content: "泡芙花手提包" },
+        { icon: "🎨", text: "客製排單", actionType: "text", content: "客製排單" },
+        { icon: "💬", text: "真人諮詢", actionType: "text", content: "真人諮詢" }
+      ]
+    };
+
+    function loadRichMenuConfig() {
+      try {
+        const stored = localStorage.getItem(RICH_MENU_STORAGE_KEY);
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(DEFAULT_RICH_MENU_DATA));
+    }
+
+    let richMenuState = loadRichMenuConfig();
+
+    function saveRichMenuConfig() {
+      try {
+        localStorage.setItem(RICH_MENU_STORAGE_KEY, JSON.stringify(richMenuState));
+      } catch (e) {}
+    }
+
+    function getGridPositions(cols, rows) {
+      if (cols === 3 && rows === 2) return ["左上", "中上", "右上", "左下", "中下", "右下"];
+      if (cols === 2 && rows === 2) return ["左上", "右上", "左下", "右下"];
+      if (cols === 3 && rows === 1) return ["左", "中", "右"];
+      if (cols === 2 && rows === 1) return ["左", "右"];
+      return ["整版"];
+    }
+
+    function initRichMenuModal() {
+      const layoutSel = document.getElementById("richMenuLayoutSelect");
+      if (layoutSel && layoutSel.options.length === 0) {
+        MENUS.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m.id;
+          opt.textContent = m.name;
+          layoutSel.appendChild(opt);
+        });
+      }
+      if (layoutSel) layoutSel.value = richMenuState.layoutId || "large_6";
+
+      const bgSel = document.getElementById("richMenuBgSelect");
+      if (bgSel) bgSel.value = richMenuState.bgColor || "white";
+
+      const titleInput = document.getElementById("richMenuTitleBarInput");
+      if (titleInput) titleInput.value = richMenuState.menuBarText || "選單";
+
+      renderRichMenuGridRows();
+      renderRichMenuPreview();
+    }
+
+    function renderRichMenuGridRows() {
+      const container = document.getElementById("richMenuGridConfigs");
+      if (!container) return;
+
+      const layout = MENUS.find(m => m.id === richMenuState.layoutId) || MENUS[0];
+      const totalCells = layout.cols * layout.rows;
+      const positions = getGridPositions(layout.cols, layout.rows);
+
+      if (!richMenuState.cells) richMenuState.cells = [];
+      while (richMenuState.cells.length < totalCells) {
+        richMenuState.cells.push({ icon: "", text: "", actionType: "text", content: "" });
+      }
+
+      container.innerHTML = "";
+      for (let i = 0; i < totalCells; i++) {
+        const code = String.fromCharCode(65 + i);
+        const pos = positions[i] || `格 ${i+1}`;
+        const cell = richMenuState.cells[i];
+
+        const row = document.createElement("div");
+        row.style.cssText = "display:grid; grid-template-columns:85px 65px 140px 110px 1fr; gap:8px; align-items:center; background:#fff; border:1px solid var(--line); border-radius:8px; padding:6px 10px;";
+        row.innerHTML = `
+          <div style="font-weight:700; color:var(--main); font-size:12.5px;">${code}（${pos}）</div>
+          <div>
+            <input type="text" class="form-input cell-icon" data-idx="${i}" maxlength="4" value="${escapeHtml(cell.icon || '')}" placeholder="emoji" style="padding:4px; text-align:center; font-size:16px;">
+          </div>
+          <div>
+            <input type="text" class="form-input cell-text" data-idx="${i}" maxlength="12" value="${escapeHtml(cell.text || '')}" placeholder="格上字(12字內)" style="padding:4px 6px; font-size:12px;">
+          </div>
+          <div>
+            <select class="form-input cell-action" data-idx="${i}" style="padding:4px 6px; font-size:12px;">
+              <option value="text" ${cell.actionType === 'text' ? 'selected' : ''}>送出文字</option>
+              <option value="link" ${cell.actionType === 'link' ? 'selected' : ''}>開網址</option>
+              <option value="none" ${cell.actionType === 'none' ? 'selected' : ''}>不設定</option>
+            </select>
+          </div>
+          <div>
+            <input type="text" class="form-input cell-content" data-idx="${i}" value="${escapeHtml(cell.content || '')}" placeholder="送出的字或網址（沒填送出格上字）" style="padding:4px 6px; font-size:12px;">
+          </div>
+        `;
+        container.appendChild(row);
+      }
+
+      container.querySelectorAll(".cell-icon").forEach(input => {
+        input.addEventListener("input", (e) => {
+          const idx = parseInt(e.target.dataset.idx, 10);
+          richMenuState.cells[idx].icon = e.target.value.trim();
+          saveRichMenuConfig();
+          renderRichMenuPreview();
+        });
+      });
+      container.querySelectorAll(".cell-text").forEach(input => {
+        input.addEventListener("input", (e) => {
+          const idx = parseInt(e.target.dataset.idx, 10);
+          richMenuState.cells[idx].text = e.target.value.trim();
+          saveRichMenuConfig();
+          renderRichMenuPreview();
+        });
+      });
+      container.querySelectorAll(".cell-action").forEach(sel => {
+        sel.addEventListener("change", (e) => {
+          const idx = parseInt(e.target.dataset.idx, 10);
+          richMenuState.cells[idx].actionType = e.target.value;
+          saveRichMenuConfig();
+          renderRichMenuPreview();
+        });
+      });
+      container.querySelectorAll(".cell-content").forEach(input => {
+        input.addEventListener("input", (e) => {
+          const idx = parseInt(e.target.dataset.idx, 10);
+          richMenuState.cells[idx].content = e.target.value.trim();
+          saveRichMenuConfig();
+          renderRichMenuPreview();
+        });
+      });
+    }
+
+    function validateRichMenu() {
+      const layout = MENUS.find(m => m.id === richMenuState.layoutId) || MENUS[0];
+      const totalCells = layout.cols * layout.rows;
+      const errors = [];
+
+      let allNone = true;
+      for (let i = 0; i < totalCells; i++) {
+        const cell = richMenuState.cells[i];
+        if (!cell) continue;
+        if (cell.actionType !== "none") allNone = false;
+
+        const hasIcon = Boolean(cell.icon && cell.icon.trim());
+        const hasText = Boolean(cell.text && cell.text.trim());
+        if (!hasIcon && !hasText) {
+          errors.push(`第 ${String.fromCharCode(65 + i)} 格：沒有文字也沒有圖示，請至少填寫一項。`);
+        }
+
+        if (cell.actionType === "link") {
+          const link = (cell.content || "").trim();
+          if (!link.startsWith("https://")) {
+            errors.push(`第 ${String.fromCharCode(65 + i)} 格：選擇了「開網址」，網址必須以 https:// 開頭。`);
+          }
+        }
+      }
+
+      if (allNone) {
+        errors.unshift("LINE 規定不能每一格都「不設定」，請至少為一格設定文字或網址動作。");
+      }
+
+      const alertBox = document.getElementById("richMenuErrorAlert");
+      if (alertBox) {
+        if (errors.length > 0) {
+          alertBox.style.display = "block";
+          alertBox.innerHTML = "⚠️ " + errors.join("<br>⚠️ ");
+        } else {
+          alertBox.style.display = "none";
+          alertBox.innerHTML = "";
+        }
+      }
+      return errors.length === 0;
+    }
+
+    function drawRichMenuToCanvas(canvas, targetWidth, targetHeight) {
+      const layout = MENUS.find(m => m.id === richMenuState.layoutId) || MENUS[0];
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext("2d");
+
+      // 1. 底色
+      const bgStyle = richMenuState.bgColor || "white";
+      let isDarkBg = false;
+      if (bgStyle === "brand") {
+        ctx.fillStyle = "#7c563d";
+        isDarkBg = true;
+      } else if (bgStyle === "post_dark") {
+        ctx.fillStyle = "#4a3525";
+        isDarkBg = true;
+      } else {
+        ctx.fillStyle = "#fdfbf7";
+        isDarkBg = false;
+      }
+      ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+      // 2. 格線
+      const cols = layout.cols;
+      const rows = layout.rows;
+      const cw = targetWidth / cols;
+      const ch = targetHeight / rows;
+
+      ctx.lineWidth = Math.max(2, Math.round(targetWidth / 550));
+      ctx.strokeStyle = isDarkBg ? "rgba(255,255,255,0.2)" : "rgba(140,94,60,0.18)";
+
+      for (let c = 1; c < cols; c++) {
+        ctx.beginPath();
+        ctx.moveTo(c * cw, 0);
+        ctx.lineTo(c * cw, targetHeight);
+        ctx.stroke();
+      }
+      for (let r = 1; r < rows; r++) {
+        ctx.beginPath();
+        ctx.moveTo(0, r * ch);
+        ctx.lineTo(targetWidth, r * ch);
+        ctx.stroke();
+      }
+
+      // 3. 圖示與文字
+      const totalCells = cols * rows;
+      const scale = targetWidth / 2500;
+      const iconFontSize = Math.round(120 * scale);
+      const textFontSize = Math.round(62 * scale);
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i < totalCells; i++) {
+        const c = i % cols;
+        const r = Math.floor(i / cols);
+        const cellX = c * cw;
+        const cellY = r * ch;
+        const centerX = cellX + cw / 2;
+        const centerY = cellY + ch / 2;
+
+        const cell = richMenuState.cells[i] || { icon: "", text: "" };
+        const icon = (cell.icon || "").trim();
+        const text = (cell.text || "").trim();
+        const textColor = isDarkBg ? "#fff9f5" : "#684832";
+
+        if (icon && text) {
+          ctx.font = `${iconFontSize}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+          ctx.fillStyle = textColor;
+          ctx.fillText(icon, centerX, centerY - ch * 0.16);
+
+          ctx.font = `bold ${textFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif`;
+          ctx.fillStyle = textColor;
+          if (text.length > 6) {
+            const line1 = text.slice(0, Math.ceil(text.length / 2));
+            const line2 = text.slice(Math.ceil(text.length / 2));
+            ctx.fillText(line1, centerX, centerY + ch * 0.16);
+            ctx.fillText(line2, centerX, centerY + ch * 0.30);
+          } else {
+            ctx.fillText(text, centerX, centerY + ch * 0.22);
+          }
+        } else if (icon) {
+          ctx.font = `${Math.round(iconFontSize * 1.35)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+          ctx.fillStyle = textColor;
+          ctx.fillText(icon, centerX, centerY);
+        } else if (text) {
+          ctx.font = `bold ${Math.round(textFontSize * 1.15)}px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif`;
+          ctx.fillStyle = textColor;
+          if (text.length > 6) {
+            const line1 = text.slice(0, Math.ceil(text.length / 2));
+            const line2 = text.slice(Math.ceil(text.length / 2));
+            ctx.fillText(line1, centerX, centerY - ch * 0.08);
+            ctx.fillText(line2, centerX, centerY + ch * 0.08);
+          } else {
+            ctx.fillText(text, centerX, centerY);
+          }
+        }
+      }
+    }
+
+    function renderRichMenuPreview() {
+      validateRichMenu();
+      const layout = MENUS.find(m => m.id === richMenuState.layoutId) || MENUS[0];
+      const previewCanvas = document.getElementById("richMenuPreviewCanvas");
+      if (previewCanvas) {
+        const previewWidth = 720;
+        const previewHeight = Math.round(720 * (layout.h / layout.w));
+        drawRichMenuToCanvas(previewCanvas, previewWidth, previewHeight);
+      }
+      renderRichMenuPreviewOnPhone();
+    }
+
+    function renderRichMenuPreviewOnPhone() {
+      const phoneCanvas = document.getElementById("phoneLineRichMenuCanvas");
+      if (!phoneCanvas) return;
+      const layout = MENUS.find(m => m.id === richMenuState.layoutId) || MENUS[0];
+      const phoneWidth = 360;
+      const phoneHeight = Math.round(360 * (layout.h / layout.w));
+      drawRichMenuToCanvas(phoneCanvas, phoneWidth, phoneHeight);
+
+      const titleEl = document.getElementById("phoneLineRichMenuToggleText");
+      if (titleEl) {
+        titleEl.textContent = (richMenuState.menuBarText || "選單") + " ▾";
+      }
+    }
+
+    function downloadRichMenuJpeg() {
+      if (!validateRichMenu()) {
+        alert("⚠️ 選單設定有不符合 LINE 規範的地方（請見紅字提示），請修正後再下載！");
+        return;
+      }
+      const layout = MENUS.find(m => m.id === richMenuState.layoutId) || MENUS[0];
+      const exportCanvas = document.createElement("canvas");
+      drawRichMenuToCanvas(exportCanvas, layout.w, layout.h);
+
+      const qualities = [0.92, 0.85, 0.78, 0.70, 0.60, 0.50];
+      function attemptCompress(index) {
+        const q = qualities[index];
+        exportCanvas.toBlob(blob => {
+          if (!blob) return;
+          if (blob.size <= 1000000 || index === qualities.length - 1) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            const sizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+            const fileName = `${BRAND.name}_圖文選單_${layout.w}x${layout.h}.jpg`;
+            a.download = fileName;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+            const msg = `下載好了：${layout.w}×${layout.h}，${sizeMB} MB`;
+            const noticeEl = document.getElementById("richMenuSizeNotice");
+            if (noticeEl) noticeEl.textContent = `✅ ${msg}（已存為 ${fileName}）`;
+            alert(`✅ ${msg}\n符合 LINE 小於 1 MB 規範！`);
+          } else {
+            attemptCompress(index + 1);
+          }
+        }, "image/jpeg", q);
+      }
+      attemptCompress(0);
+    }
+
+    function copyRichMenuSettingTable() {
+      const layout = MENUS.find(m => m.id === richMenuState.layoutId) || MENUS[0];
+      const positions = getGridPositions(layout.cols, layout.rows);
+      const totalCells = layout.cols * layout.rows;
+
+      const lines = [
+        `【${BRAND.name}｜圖文選單設定表】`,
+        `版型：${layout.name}，圖 ${layout.w}×${layout.h}`,
+        `選單列的字：${richMenuState.menuBarText || "選單"}`
+      ];
+
+      for (let i = 0; i < totalCells; i++) {
+        const code = String.fromCharCode(65 + i);
+        const pos = positions[i] || `格 ${i+1}`;
+        const cell = richMenuState.cells[i] || {};
+        const icon = (cell.icon || "").trim();
+        const text = (cell.text || "").trim();
+        const actionType = cell.actionType || "text";
+        const content = (cell.content || text || "").trim();
+
+        let actionDesc = "不設定";
+        if (actionType === "text") actionDesc = `文字「${content}」`;
+        else if (actionType === "link") actionDesc = `網址「${content}」`;
+
+        lines.push(`${code}（${pos}）${icon ? icon + ' ' : ''}${text || '未命名字樣'} → ${actionDesc}`);
+      }
+
+      const tableText = lines.join("\n");
+      navigator.clipboard.writeText(tableText).then(() => {
+        alert("✅ 設定表已成功複製！\n可直接在 LINE 後台對照設定，並貼至任務單紀錄。");
+      });
+    }
+
+    // 頁面載入時初始化手機 LINE 底部選單
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(renderRichMenuPreviewOnPhone, 300);
+    });
 
     function openModal(id) { document.getElementById(id).classList.add("active"); }
     function closeModal(id) { document.getElementById(id).classList.remove("active"); }

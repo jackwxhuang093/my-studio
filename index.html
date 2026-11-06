@@ -8536,33 +8536,24 @@ ${angleText}。
       }
       ctx.fillRect(0, 0, targetWidth, targetHeight);
 
-      // 2. 格線
+      // 2. 底色
+      ctx.fillRect(0, 0, targetWidth, targetHeight);
+
       const cols = layout.cols;
       const rows = layout.rows;
       const cw = targetWidth / cols;
       const ch = targetHeight / rows;
 
-      ctx.lineWidth = Math.max(2, Math.round(targetWidth / 550));
-      ctx.strokeStyle = isDarkBg ? "rgba(255,255,255,0.2)" : "rgba(140,94,60,0.18)";
-
-      for (let c = 1; c < cols; c++) {
-        ctx.beginPath();
-        ctx.moveTo(c * cw, 0);
-        ctx.lineTo(c * cw, targetHeight);
-        ctx.stroke();
-      }
-      for (let r = 1; r < rows; r++) {
-        ctx.beginPath();
-        ctx.moveTo(0, r * ch);
-        ctx.lineTo(targetWidth, r * ch);
-        ctx.stroke();
-      }
-
-      // 3. 圖示與文字
+      // 3. 繪製精緻大卡片與高清晰圖示文字
       const totalCells = cols * rows;
       const scale = targetWidth / 2500;
-      const iconFontSize = Math.round(120 * scale);
-      const textFontSize = Math.round(62 * scale);
+      const margin = 24 * scale;
+      const cardW = cw - margin * 2;
+      const cardH = ch - margin * 2;
+      const radius = 32 * scale;
+
+      const iconFontSize = Math.round(180 * scale);
+      const textFontSize = Math.round(82 * scale);
 
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -8572,28 +8563,43 @@ ${angleText}。
         const r = Math.floor(i / cols);
         const cellX = c * cw;
         const cellY = r * ch;
-        const centerX = cellX + cw / 2;
-        const centerY = cellY + ch / 2;
+        const cardX = cellX + margin;
+        const cardY = cellY + margin;
+        const centerX = cardX + cardW / 2;
+        const centerY = cardY + cardH / 2;
+
+        // 繪製獨立卡片（讓手機視覺對比更強烈）
+        ctx.fillStyle = isDarkBg ? "rgba(255,255,255,0.12)" : "#ffffff";
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(cardX, cardY, cardW, cardH, radius);
+        } else {
+          ctx.rect(cardX, cardY, cardW, cardH);
+        }
+        ctx.fill();
+        ctx.strokeStyle = isDarkBg ? "rgba(255,255,255,0.28)" : "#dfcfbf";
+        ctx.lineWidth = Math.max(2, Math.round(4 * scale));
+        ctx.stroke();
 
         const cell = richMenuState.cells[i] || { icon: "", text: "" };
         const icon = (cell.icon || "").trim();
         const text = (cell.text || "").trim();
-        const textColor = isDarkBg ? "#fff9f5" : "#684832";
+        const textColor = isDarkBg ? "#fff9f5" : "#543825";
 
         if (icon && text) {
           ctx.font = `${iconFontSize}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
           ctx.fillStyle = textColor;
-          ctx.fillText(icon, centerX, centerY - ch * 0.16);
+          ctx.fillText(icon, centerX, centerY - cardH * 0.16);
 
           ctx.font = `bold ${textFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif`;
           ctx.fillStyle = textColor;
-          if (text.length > 6) {
+          if (text.length > 5) {
             const line1 = text.slice(0, Math.ceil(text.length / 2));
             const line2 = text.slice(Math.ceil(text.length / 2));
-            ctx.fillText(line1, centerX, centerY + ch * 0.16);
-            ctx.fillText(line2, centerX, centerY + ch * 0.30);
+            ctx.fillText(line1, centerX, centerY + cardH * 0.16);
+            ctx.fillText(line2, centerX, centerY + cardH * 0.30);
           } else {
-            ctx.fillText(text, centerX, centerY + ch * 0.22);
+            ctx.fillText(text, centerX, centerY + cardH * 0.22);
           }
         } else if (icon) {
           ctx.font = `${Math.round(iconFontSize * 1.35)}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
@@ -8602,11 +8608,11 @@ ${angleText}。
         } else if (text) {
           ctx.font = `bold ${Math.round(textFontSize * 1.15)}px -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif`;
           ctx.fillStyle = textColor;
-          if (text.length > 6) {
+          if (text.length > 5) {
             const line1 = text.slice(0, Math.ceil(text.length / 2));
             const line2 = text.slice(Math.ceil(text.length / 2));
-            ctx.fillText(line1, centerX, centerY - ch * 0.08);
-            ctx.fillText(line2, centerX, centerY + ch * 0.08);
+            ctx.fillText(line1, centerX, centerY - cardH * 0.08);
+            ctx.fillText(line2, centerX, centerY + cardH * 0.08);
           } else {
             ctx.fillText(text, centerX, centerY);
           }

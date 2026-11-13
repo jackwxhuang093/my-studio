@@ -3271,8 +3271,17 @@
       await updateStorageUsageInfo();
     }
 
-    // 將舊版含有 dataUrl 的陣列自動搬遷至 IndexedDB，並回傳載入後的 [{ id, dataUrl }]
-    async function hydrateAndMigrateImages(imageIds, legacyImages) {
+    function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error("讀取圖片失敗"));
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // 將舊版含有 dataUrl 的陣列自動搬遷至 IndexedDB，並回傳載入後的 [{ id, dataUrl, url }]
+    async function hydrateAndMigrateImages(imageIds, legacyImages, imageUrls = {}) {
       const loaded = [];
       let migrated = false;
 
@@ -3281,11 +3290,11 @@
           if (typeof item === "string" && item.startsWith("data:")) {
             const id = "img_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7);
             await idbSaveImage(id, item);
-            loaded.push({ id, dataUrl: item });
+            loaded.push({ id, dataUrl: item, url: imageUrls?.[id] || "" });
             migrated = true;
           } else if (item && item.id && item.dataUrl) {
             await idbSaveImage(item.id, item.dataUrl);
-            loaded.push({ id: item.id, dataUrl: item.dataUrl });
+            loaded.push({ id: item.id, dataUrl: item.dataUrl, url: item.url || imageUrls?.[item.id] || "" });
             migrated = true;
           }
         }
@@ -3294,9 +3303,27 @@
       if (Array.isArray(imageIds) && imageIds.length > 0) {
         for (const id of imageIds) {
           if (loaded.some(x => x.id === id)) continue;
-          const dataUrl = await idbGetImage(id);
+          const remoteUrl = (imageUrls && imageUrls[id]) || "";
+          let dataUrl = await idbGetImage(id);
+          if (!dataUrl && remoteUrl) {
+            try {
+              const res = await fetch(remoteUrl);
+              if (res.ok) {
+                const blob = await res.blob();
+                dataUrl = await blobToDataUrl(blob);
+                if (dataUrl) {
+                  await idbSaveImage(id, dataUrl);
+                }
+              }
+            } catch (e) {
+              console.warn("從雲端下載圖片失敗，先改用網址顯示：", e);
+            }
+            if (!dataUrl) {
+              dataUrl = remoteUrl;
+            }
+          }
           if (dataUrl) {
-            loaded.push({ id, dataUrl });
+            loaded.push({ id, dataUrl, url: remoteUrl });
           }
         }
       }
@@ -7383,6 +7410,104 @@ ${angleText}。
       return msg || "雲端存檔失敗";
     }
 
+    function translateStorageUploadError(err) {
+      const msg = (err && (err.message || err.error || String(err))) || "";
+      const lower = msg.toLowerCase();
+      if (lower.includes("bucket not found")) {
+        return "雲端還沒有 images 桶子，到 SQL Editor 貼圖片那段按 Run";
+      }
+      if (lower.includes("row-level security") || String(err?.statusCode || err?.status || "") === "403" || err?.code === "42501") {
+        return "雲端不讓你傳圖，SQL 的圖片權限那段沒跑到";
+      }
+      return msg || "圖片上傳失敗";
+    }
+
+    function getExtFromMimeType(mime) {
+      const lower = (mime || "").toLowerCase();
+      if (lower.includes("png")) return "png";
+      if (lower.includes("webp")) return "webp";
+      if (lower.includes("gif")) return "gif";
+      return "jpg";
+    }
+
+    async function uploadPostImagesToCloud(postData) {
+      if (!sb || !me || !postData) return 0;
+      const allIds = Array.from(new Set([
+        ...(postData.imageIds || []),
+        ...(postData.platformImages?.FB || []),
+        ...(postData.platformImages?.IG || []),
+        ...(postData.platformImages?.LINE || [])
+      ]));
+      if (allIds.length === 0) return 0;
+
+      const imageUrls = { ...(postData.imageUrls || {}) };
+      if (postData.id === currentPostId && Array.isArray(postImages)) {
+        for (const item of postImages) {
+          if (item && item.id && item.url && !imageUrls[item.id]) {
+            imageUrls[item.id] = item.url;
+          }
+        }
+      }
+
+      let uploadedCount = 0;
+      for (const imgId of allIds) {
+        if (imageUrls[imgId]) continue;
+        let dataUrl = "";
+        const memItem = Array.isArray(postImages) ? postImages.find(x => x.id === imgId) : null;
+        if (memItem && memItem.dataUrl) {
+          dataUrl = memItem.dataUrl;
+        } else {
+          dataUrl = await idbGetImage(imgId);
+        }
+        if (!dataUrl) continue;
+        if (!String(dataUrl).startsWith("data:")) {
+          if (String(dataUrl).startsWith("http")) {
+            imageUrls[imgId] = dataUrl;
+          }
+          continue;
+        }
+
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const contentType = blob.type || "image/jpeg";
+        const ext = getExtFromMimeType(contentType);
+        const path = `${me.id}/${imgId}.${ext}`;
+
+        const { error } = await sb.storage.from("images").upload(path, blob, {
+          upsert: true,
+          contentType
+        });
+        if (error) {
+          throw new Error(translateStorageUploadError(error));
+        }
+
+        const { data: pubData } = sb.storage.from("images").getPublicUrl(path);
+        const publicUrl = pubData?.publicUrl || "";
+        if (publicUrl) {
+          imageUrls[imgId] = publicUrl;
+          if (memItem) memItem.url = publicUrl;
+          uploadedCount++;
+        }
+      }
+
+      postData.imageUrls = imageUrls;
+      if (uploadedCount > 0) {
+        postData.savedAt = Date.now();
+        try {
+          const allLocal = getSavedPosts();
+          const idx = allLocal.findIndex(p => String(p.id) === String(postData.id));
+          if (idx >= 0) {
+            allLocal[idx] = postData;
+            localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(allLocal));
+          }
+        } catch (e) {}
+        if (postData.id === currentPostId) {
+          saveDraft();
+        }
+      }
+      return uploadedCount;
+    }
+
     async function upsertPostToCloud(postData) {
       const { error } = await sb.from("posts").upsert({
         id: String(postData.id),
@@ -7435,8 +7560,18 @@ ${angleText}。
         return;
       }
       setPostsCloudSyncStatus(`☁ 正在上傳 0 / ${posts.length} 篇...`, false);
+      let totalImgs = 0;
       for (let i = 0; i < posts.length; i++) {
         const p = posts[i];
+        let uploadedImgs = 0;
+        try {
+          uploadedImgs = await uploadPostImagesToCloud(p);
+          totalImgs += uploadedImgs;
+        } catch (imgErr) {
+          setPostsCloudSyncStatus(`第 ${i + 1} 篇失敗：${imgErr.message || "圖片上傳失敗"}`, true);
+          renderSavedPostsList();
+          return;
+        }
         const error = await upsertPostToCloud(p);
         if (error) {
           setPostsCloudSyncStatus(`第 ${i + 1} 篇失敗：${translatePostSaveError(error)}`, true);
@@ -7445,7 +7580,7 @@ ${angleText}。
         }
         setPostsCloudSyncStatus(`☁ 正在上傳 ${i + 1} / ${posts.length} 篇...`, false);
       }
-      setPostsCloudSyncStatus(`上傳好了：${posts.length} 篇`, false);
+      setPostsCloudSyncStatus(`上傳好了：${posts.length} 篇（傳了 ${totalImgs} 張圖）`, false);
       renderSavedPostsList();
     }
 
@@ -7511,6 +7646,14 @@ ${angleText}。
       const title = `${formattedDate} [${sc.name}] ${topic || '未命名日常'}`;
       const publishDate = document.getElementById("field_publishDate")?.value || "";
 
+      const existingSaved = getSavedPosts().find(p => String(p.id) === String(currentPostId));
+      const imageUrlsMap = { ...(existingSaved?.imageUrls || {}) };
+      for (const imgItem of postImages) {
+        if (imgItem && imgItem.id && imgItem.url) {
+          imageUrlsMap[imgItem.id] = imgItem.url;
+        }
+      }
+
       const postData = {
         id: currentPostId || "post_" + Date.now(),
         title: title,
@@ -7529,6 +7672,7 @@ ${angleText}。
         assistantChatHistory: { ...assistantChatHistory },
         lastPostSnapshot: lastPostSnapshot,
         imageIds: postImages.map(x => x.id),
+        imageUrls: imageUrlsMap,
         mainImageId: mainImageId,
         platformImages: {
           FB: (platformImages.FB || []).map(x => x.id),
@@ -7558,12 +7702,20 @@ ${angleText}。
         setTimeout(() => { hint.textContent = ""; }, 3000);
 
         if (sb && me) {
-          setSaveCloudStatus("☁ 正在存到雲端...", false);
+          setSaveCloudStatus("☁ 正在上傳圖片並存到雲端...", false);
+          let uploadedImgs = 0;
+          try {
+            uploadedImgs = await uploadPostImagesToCloud(postData);
+          } catch (imgErr) {
+            setSaveCloudStatus(`${imgErr.message || "圖片上傳失敗"}｜這台電腦有存到，不會不見`, true);
+            alert(`「${title}」已成功儲存在這台電腦！`);
+            return;
+          }
           const error = await upsertPostToCloud(postData);
           if (error) {
             setSaveCloudStatus(`${translatePostSaveError(error)}｜這台電腦有存到，不會不見`, true);
           } else {
-            setSaveCloudStatus(`☁ 雲端也存了：${postData.title}`, false);
+            setSaveCloudStatus(`☁ 雲端也存了：${postData.title}（傳了 ${uploadedImgs} 張圖）`, false);
           }
         } else {
           setSaveCloudStatus("只存在這台電腦。🔐 登入以後，會同時存到雲端", false);
@@ -7642,7 +7794,7 @@ ${angleText}。
           ...(p.platformImages?.FB || []),
           ...(p.platformImages?.LINE || [])
         ]));
-        const { loaded, migrated } = await hydrateAndMigrateImages(mergedSavedIds, p.images);
+        const { loaded, migrated } = await hydrateAndMigrateImages(mergedSavedIds, p.images, p.imageUrls || {});
         postImages = loaded;
         mainImageId = p.mainImageId && postImages.some(x => x.id === p.mainImageId)
           ? p.mainImageId
@@ -7825,6 +7977,7 @@ ${angleText}。
         assistantChatHistory: { ...assistantChatHistory },
         lastPostSnapshot: lastPostSnapshot,
         imageIds: postImages.map(x => x.id),
+        imageUrls: Object.fromEntries(postImages.filter(x => x && x.id && x.url).map(x => [x.id, x.url])),
         mainImageId: mainImageId,
         imagePrompt: document.getElementById("imagePromptInput")?.value || "",
         overlayConfig: { ...overlayConfig }
@@ -7916,7 +8069,7 @@ ${angleText}。
               }
             } catch (e) {}
           }
-          const { loaded, migrated } = await hydrateAndMigrateImages(mergedDraftIds, saved.images);
+          const { loaded, migrated } = await hydrateAndMigrateImages(mergedDraftIds, saved.images, saved.imageUrls || {});
           postImages = loaded;
           mainImageId = saved.mainImageId && postImages.some(x => x.id === saved.mainImageId)
             ? saved.mainImageId

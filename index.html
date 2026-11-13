@@ -592,19 +592,32 @@
     }
 
     /* 左欄：素材卡表單 */
-    .form-group { margin-bottom: 13px; }
+    .form-group { margin-bottom: 11px; }
     .form-label {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      gap: 6px;
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.005em;
       margin-bottom: 6px;
       color: var(--ink);
     }
-    .req-tag { color: var(--danger); font-size: var(--text-meta); font-weight: 600; }
-    .opt-tag { color: var(--ink-muted); font-size: var(--text-meta); font-weight: 500; }
+    .form-label-main {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 2px 6px;
+      min-width: 0;
+    }
+    .label-note {
+      font-size: 11.5px;
+      font-weight: 400;
+      color: var(--ink-muted);
+    }
+    .req-tag { color: var(--danger); font-size: var(--text-meta); font-weight: 600; flex-shrink: 0; }
+    .opt-tag { color: var(--ink-muted); font-size: var(--text-meta); font-weight: 500; flex-shrink: 0; }
     input[type="text"], input[type="date"], input[type="email"], input[type="password"], textarea {
       width: 100%;
       font: inherit;
@@ -2014,6 +2027,9 @@
       .form-label {
         font-size: 14px;
       }
+      .label-note {
+        font-size: 12.5px;
+      }
       .form-hint {
         font-size: 12.5px;
         line-height: 1.5;
@@ -2174,7 +2190,7 @@
           <!-- 6 大情境語氣選擇器 -->
           <div class="scenario-selector-card">
             <div class="form-label" style="margin-bottom:6px;">
-              <span>🎭 發文情境與語氣（6 種可選）</span>
+              <span>🎭 發文情境與語氣</span>
               <span class="req-tag" id="currentScenarioBadge">一針一線手作隨筆</span>
             </div>
             <div class="scenario-pill-list" id="scenarioList">
@@ -2188,15 +2204,14 @@
 
           <div class="form-group">
             <div class="form-label">
-              <span>📅 預計發佈日</span>
+              <span class="form-label-main"><span>📅 預計發佈日</span><span class="label-note">(貼文日曆・同步存檔)</span></span>
               <span class="opt-tag">選填</span>
             </div>
             <input type="date" id="field_publishDate">
-            <div class="form-hint">安排貼文日曆用（💾 存檔會同步存到雲端）</div>
           </div>
 
           <button type="button" class="btn-light" id="btnGoToImagesTab" style="width:100%; justify-content:center; padding:9px 12px; font-size:12.5px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:999px; margin-top:4px;">
-            👉 下一步：去「② 🖼 配圖片」上傳作品照或 AI 美化
+            👉 下一步：前往「② 🖼 配圖片」
           </button>
         </div>
 
@@ -2219,26 +2234,25 @@
             <!-- 📸 產品照拖曳與點擊上傳區 -->
             <div id="productPhotoDropZone" class="product-dropzone">
               <div style="font-size:22px; margin-bottom:2px;">📸</div>
-              <div style="font-size:13px; font-weight:700; color:var(--main);">把手作產品照拖曳丟入這裡，或點此選取</div>
-              <div style="font-size:11.5px; color:var(--ink-muted); margin-top:2px;">支援手機拍照 JPG / PNG，可直接在下方一鍵美化背景與光影</div>
+              <div style="font-size:13px; font-weight:700; color:var(--main);">拖曳或點此上傳作品照</div>
+              <div style="font-size:11.5px; color:var(--ink-muted); margin-top:2px;">支援 JPG / PNG</div>
             </div>
 
             <!-- 縮圖列表（點一下選主圖、右上角 × 刪除） -->
             <div class="thumb-list" id="postThumbList">
-              <div class="thumb-empty">尚無專屬照片（目前顯示預設輪播卡，可點上方拖曳區上傳）</div>
+              <div class="thumb-empty">尚無專屬照片（目前顯示預設輪播圖）</div>
             </div>
 
             <!-- 📐 跨平台比例適配模式（FB 1:1 ⇄ IG 4:5 ⇄ LINE 1:1 切換不切邊） -->
             <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:9px 10px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; gap:4px;">
-                <span style="font-size:11.5px; font-weight:700; color:var(--ink); white-space:nowrap;">📐 三平台比例適配</span>
-                <span style="font-size:11.5px; color:var(--ink-muted); white-space:nowrap;">FB/LINE 1:1・IG 4:5・輪播同步</span>
+                <span style="font-size:11.5px; font-weight:700; color:var(--ink); white-space:nowrap;">📐 比例適配 <span class="label-note">(FB／IG／LINE)</span></span>
               </div>
               <select id="overlayFitSelect" style="width:100%; font-size:12px; padding:6px 8px; border:1px solid #E2E5DC; border-radius:8px; background:#FFFFFF; color:var(--ink); font-weight:600;">
-                <option value="contain_blur" selected>✨ 完整不裁切・柔焦光影延伸底（推薦預設・作品100%完整不卡邊）</option>
-                <option value="contain_frame">🖼️ 完整不裁切・溫暖燕麥相框底（日系畫報風）</option>
+                <option value="contain_blur" selected>✨ 完整不裁切・柔焦光影延伸底（推薦）</option>
+                <option value="contain_frame">🖼️ 完整不裁切・溫暖燕麥相框底</option>
                 <option value="cover_center">📐 滿版裁切・置中對齊</option>
-                <option value="cover_bottom">📐 滿版裁切・偏下對齊（保護桌面作品）</option>
+                <option value="cover_bottom">📐 滿版裁切・偏下對齊（保留桌面作品）</option>
                 <option value="cover_top">📐 滿版裁切・偏上對齊</option>
               </select>
             </div>
@@ -2253,10 +2267,10 @@
 
               <!-- 模式 A：依產品照美化背景、光線與多風格客製化 -->
               <div id="aiImgModeBeautifyPane">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                  <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink); cursor:pointer; user-select:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:6px;">
+                  <label style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink); cursor:pointer; user-select:none;" title="保留毛線紋理、僅更換背景與光影">
                     <input type="checkbox" id="chkUseMainImgRef" checked>
-                    <span style="font-weight:600;">鎖定主圖作品外觀（保留毛線紋理、換背景光影）</span>
+                    <span style="font-weight:600;">鎖定主圖作品外觀</span>
                   </label>
                   <span id="beautifyRefBadge" style="font-size:11.5px; padding:2px 8px; border-radius:999px; background:#EFF2EA; color:var(--ink); font-weight:600; white-space:nowrap;">
                     📸 待載入照片
@@ -2408,7 +2422,7 @@
                     </div>
                     <div class="yarn-drop-area" id="yarnColorDropZone" title="點擊或拖曳毛線球照丟入這裡">
                       <div id="yarnColorEmptyPrompt" style="font-size:11.5px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
-                        📸 點此或拖曳毛線照<br><span style="font-size:11.5px; color:#8c5e3c;">（自動辨識色號與纖維）</span>
+                        📸 點此或拖曳毛線照<br><span style="font-size:11.5px; color:#8c5e3c;">(自動辨識色號)</span>
                       </div>
                       <div id="yarnColorThumbList" class="yarn-thumb-list"></div>
                     </div>
@@ -2430,16 +2444,14 @@
                     </div>
                     <div class="yarn-drop-area" id="yarnPatternDropZone" title="點擊或拖曳目標作品款式照丟入這裡">
                       <div id="yarnPatternEmptyPrompt" style="font-size:11.5px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
-                        📸 點此或拖曳款式照<br><span style="font-size:11.5px; color:#8c5e3c;">（鎖定外型針目換顏色）</span>
+                        📸 點此或拖曳款式照<br><span style="font-size:11.5px; color:#8c5e3c;">(鎖定針目換色)</span>
                       </div>
                       <div id="yarnPatternThumbBox" style="display:none; position:relative; width:100%; height:80px; border-radius:6px; overflow:hidden;">
                         <img id="yarnPatternThumbImg" src="" style="width:100%; height:100%; object-fit:contain; background:#f4ede4;">
                         <button type="button" id="btnRemoveYarnPattern" class="thumb-del-btn" title="移除這張款式圖">×</button>
                       </div>
                     </div>
-                    <div id="yarnPatternNotice" style="font-size:11.5px; color:var(--ink-muted); margin-top:3px; text-align:right;">
-                      鎖定針目結構與造型比例
-                    </div>
+                    <div id="yarnPatternNotice" style="font-size:11.5px; color:var(--ink-muted); margin-top:3px; text-align:right;"></div>
                   </div>
                 </div>
 
@@ -2485,18 +2497,15 @@
                     </div>
                   </div>
                   <div class="yarn-drop-area" id="craftDropZone" style="min-height:85px;" title="點擊或拖曳手燈/娃娃/公仔照丟入這裡">
-                    <div id="craftEmptyPrompt" style="font-size:11.5px; color:var(--ink-muted); text-align:center; padding:12px 4px;">
-                      📸 點此或拖曳「手燈」或「娃娃/公仔」照片丟入<br><span style="font-size:11.5px; color:#8c5e3c;">（AI 將辨識其外觀輪廓、發光球體/身體比例與代表色）</span>
-                    </div>
-                    <div id="craftThumbBox" style="display:none; position:relative; width:100%; height:90px; border-radius:6px; overflow:hidden;">
-                      <img id="craftThumbImg" src="" style="width:100%; height:100%; object-fit:contain; background:#f4ede4;">
-                      <button type="button" id="btnRemoveCraftImage" class="thumb-del-btn" title="移除這張照片">×</button>
+                      <div id="craftEmptyPrompt" style="font-size:11.5px; color:var(--ink-muted); text-align:center; padding:12px 4px;">
+                        📸 點此或拖曳手燈／娃娃照<br><span style="font-size:11.5px; color:#8c5e3c;">(含應援手燈、公仔、毛絨娃娃或寵物照)</span>
+                      </div>
+                      <div id="craftThumbBox" style="display:none; position:relative; width:100%; height:90px; border-radius:6px; overflow:hidden;">
+                        <img id="craftThumbImg" src="" style="width:100%; height:100%; object-fit:contain; background:#f4ede4;">
+                        <button type="button" id="btnRemoveCraftImage" class="thumb-del-btn" title="移除這張照片">×</button>
+                      </div>
                     </div>
                   </div>
-                  <div style="font-size:11.5px; color:var(--ink-muted); margin-top:3px; text-align:right;">
-                    支援各偶像團體應援手燈、動漫公仔、毛絨娃娃或寵物照
-                  </div>
-                </div>
 
                 <!-- 2. 改造目標模式選鈕 -->
                 <div style="background:#FFFFFF; border:1px solid var(--line); border-radius:12px; padding:8px; margin-bottom:8px;">
@@ -2552,8 +2561,7 @@
             <!-- ✏️ 加字 ＋ ⬇ 下載 ＋ 即時大圖檢視（折疊式手風琴） -->
             <details class="accordion-card" id="overlayAccordion">
               <summary>
-                <span>✏️ 圖上加字（Canvas 即時疊字）</span>
-                <span style="font-size:11.5px; font-weight:normal; color:var(--ink-muted); margin-right:6px;">右方手機同步預覽</span>
+                <span>✏️ 圖上加字 <span class="label-note">(即時同步預覽)</span></span>
               </summary>
               <div class="accordion-content">
                 <div>
@@ -2615,7 +2623,7 @@
                   <div id="formPreviewContainer" style="position:relative; width:100%; border-radius:10px; overflow:hidden; background:#FFFFFF; display:flex; align-items:center; justify-content:center; min-height:80px; border:1px solid var(--line); cursor:pointer;" title="點擊放大查看">
                     <img id="formPreviewImg" src="" alt="預覽圖" style="display:none; width:100%; height:auto; max-height:160px; object-fit:contain;">
                     <div id="formPreviewEmpty" style="padding:10px; text-align:center; color:var(--ink-muted); font-size:11.5px; line-height:1.4;">
-                      🖼️ 選擇照片或輸入壓字後，可點此放大檢視（右方手機預覽亦同步顯示）
+                      點擊可放大檢視（右方同步預覽）
                     </div>
                   </div>
                 </div>
@@ -2624,14 +2632,14 @@
           </div>
           <!-- 底部引導返回填素材寫貼文按鈕 -->
           <button type="button" class="btn-light" id="btnBackToMaterialTab" style="width:100%; justify-content:center; padding:9px 12px; font-size:12.5px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:999px; margin-top:8px;">
-            👈 配好圖了，回「① 📝 填素材」生成貼文
+            👈 回「① 📝 填素材」生成貼文
           </button>
         </div>
       </div>
       <div class="col-footer" id="colFormFooter">
         <!-- 一鍵套版按鈕（免開 AI 立即生成貼文） -->
-        <button class="btn-light" id="btnAutoGenerateTemplate" style="width:100%; justify-content:center; font-weight:600; font-size:13.5px; padding:9px 14px; border-radius:999px; background:#F2F4EE; border-color:#E2E5DC;">
-          ⚡ 一鍵套版生成（免問 AI 立即出文）
+        <button class="btn-light" id="btnAutoGenerateTemplate" style="width:100%; justify-content:center; font-weight:600; font-size:13.5px; padding:9px 14px; border-radius:999px; background:#F2F4EE; border-color:#E2E5DC;" title="免呼叫 AI，直接依品牌模板立即生成貼文">
+          ⚡ 一鍵套版生成
         </button>
 
         <!-- ✨ 讓 AI 寫（呼叫 OpenRouter API） -->
@@ -2695,7 +2703,7 @@
               載入此平台範例
             </button>
           </div>
-          <textarea class="post-editor" id="postEditor" placeholder="請在此輸入貼文內容，右方手機框會即時連動預覽..."></textarea>
+          <textarea class="post-editor" id="postEditor" placeholder="在此輸入或微調貼文內容..."></textarea>
           <div class="editor-status-bar">
             <span id="charCountDisplay" class="char-count">0 字</span>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
@@ -2836,13 +2844,14 @@
 
         <!-- 先用哪一組 -->
         <div class="form-group" style="background:#faf3eb; padding:10px 12px; border-radius:8px; border:1px solid #e3d2c2; margin-bottom:14px;">
-          <label class="form-label" style="font-weight:700; color:var(--main); margin-bottom:6px;">🎯 先用哪一組：</label>
+          <label class="form-label" style="font-weight:700; color:var(--main); margin-bottom:6px;">
+            <span class="form-label-main"><span>🎯 先用哪一組</span><span class="label-note">(失敗自動切換備胎)</span></span>
+          </label>
           <select id="settingAiProviderPriority" style="font-size:13px; font-weight:600; width:100%; padding:6px 8px; border-radius:6px; border:1px solid var(--line);">
-            <option value="auto_openrouter_gemini" selected>先用 OpenRouter 失敗了自動換 Gemini（預設）</option>
+            <option value="auto_openrouter_gemini" selected>先用 OpenRouter，失敗自動改用 Gemini（預設）</option>
             <option value="gemini_only">只用 Gemini</option>
             <option value="openrouter_only">只用 OpenRouter</option>
           </select>
-          <div class="form-hint" style="margin-top:4px;">第一組遇到額度不足、斷線或連不上時，系統將自動無縫換成備胎繼續完成發文。</div>
         </div>
 
         <!-- 第一組：OpenRouter -->
@@ -2851,9 +2860,10 @@
             <span>🌐 第一組：OpenRouter</span>
           </div>
           <div class="form-group">
-            <label class="form-label">OpenRouter 金鑰：</label>
+            <label class="form-label">
+              <span class="form-label-main"><span>OpenRouter 金鑰</span><span class="label-note">(僅存於本機瀏覽器)</span></span>
+            </label>
             <input type="password" id="settingApiKey" placeholder="sk-or-v1-..." style="font-size:13px; font-family:var(--font-mono);">
-            <div class="form-hint">金鑰僅存於瀏覽器 localStorage，絕對不會寫進 index.html。</div>
           </div>
           <div class="form-group">
             <label class="form-label">模型選擇：</label>
@@ -2876,9 +2886,10 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">或自己打模型名稱：</label>
-            <input type="text" id="settingOpenRouterCustomModel" placeholder="例如：openai/gpt-4o 或其他模型代號" style="font-size:13px;">
-            <div class="form-hint">有填就用這個。</div>
+            <label class="form-label">
+              <span class="form-label-main"><span>自訂模型名稱</span><span class="label-note">(有填優先使用)</span></span>
+            </label>
+            <input type="text" id="settingOpenRouterCustomModel" placeholder="例：openai/gpt-4o" style="font-size:13px;">
           </div>
           <div class="form-group">
             <label class="form-label">思考程度：</label>
@@ -2896,9 +2907,10 @@
             <span>✨ 第二組：Gemini（備胎）</span>
           </div>
           <div class="form-group">
-            <label class="form-label">Gemini 金鑰：</label>
+            <label class="form-label">
+              <span class="form-label-main"><span>Gemini 金鑰</span><span class="label-note">(僅存於本機瀏覽器)</span></span>
+            </label>
             <input type="password" id="settingGeminiApiKey" placeholder="AIzaSy..." style="font-size:13px; font-family:var(--font-mono);">
-            <div class="form-hint">金鑰僅存於瀏覽器 localStorage，絕對不會寫進 index.html。</div>
           </div>
           <div class="form-group">
             <label class="form-label">Gemini 模型：</label>
@@ -2914,7 +2926,7 @@
         <!-- 🎨 生圖設定（共用第一組 OpenRouter 金鑰） -->
         <div style="border:1px solid var(--line); border-radius:8px; padding:12px; margin-bottom:14px; background:#fffdf9;">
           <div style="font-size:13.5px; font-weight:700; color:var(--accent); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-            <span>🎨 生圖（共用第一組 OpenRouter 金鑰）</span>
+            <span>🎨 生圖設定 <span class="label-note">(共用第一組 OpenRouter 金鑰)</span></span>
           </div>
           <div class="form-group">
             <label class="form-label">生圖模型：</label>
@@ -2925,17 +2937,19 @@
               <option value="bytedance-seed/seedream-5-0-pro">bytedance-seed/seedream-5-0-pro（最細緻・約 $0.045）</option>
               <option value="google/gemini-3.1-flash-lite-image">google/gemini-3.1-flash-lite-image（約 $0.034）</option>
             </select>
-            <div class="form-hint">金鑰共用上方第一組 OpenRouter 金鑰，不用另外填寫。</div>
           </div>
           <div class="form-group" style="margin-bottom:0;">
-            <label class="form-label">或自己打生圖模型名稱：</label>
-            <input type="text" id="settingImageCustomModel" placeholder="例如：bytedance-seed/seedream-5-0-flash" style="font-size:13px;">
-            <div class="form-hint">有填就優先用這個名稱。</div>
+            <label class="form-label">
+              <span class="form-label-main"><span>自訂生圖模型名稱</span><span class="label-note">(有填優先使用)</span></span>
+            </label>
+            <input type="text" id="settingImageCustomModel" placeholder="例：bytedance-seed/seedream-5-0-flash" style="font-size:13px;">
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">🖼 圖片規格（給 🪄 AI 想圖再畫 用的固定視覺規範）：</label>
+          <label class="form-label">
+            <span class="form-label-main"><span>🖼 圖片規格</span><span class="label-note">(AI 生圖視覺規範)</span></span>
+          </label>
           <textarea id="settingImageSpec" style="min-height:130px; font-size:12.5px;" placeholder="風格：&#10;光線：&#10;顏色：&#10;常出現的東西：&#10;構圖：&#10;不要的："></textarea>
         </div>
 
@@ -3317,12 +3331,12 @@
     let currentScenarioId = "daily";
 
     const FIELDS = [
-      { id: "date", label: "日期", type: "date", required: true, hint: "發文或開賣日期，系統自動附上星期幾" },
-      { id: "topic", label: "作品名稱／活動主旨", type: "text", required: true, hint: "例：奶油燕麥色立體泡芙花手提包" },
-      { id: "story", label: "編織故事與材質工法", type: "textarea", required: true, hint: "例：日本天然透氣棉線、立體泡芙針法手鉤、觸感蓬鬆親膚" },
-      { id: "price", label: "作品尺寸／售價或訂購方式", type: "text", required: false, hint: "例：底寬20cm×高18cm、現貨$890、私訊小編訂購排單" },
-      { id: "secret", label: "先不要講的（防雷格）", type: "text", required: false, hint: "🚫 套版或 AI 絕不能在任何貼文提及的下一檔新品或驚喜" },
-      { id: "doubt", label: "❓ 還不確定的", type: "text", required: false, hint: "尚未敲定的配色或排單時間，自動排除出文" }
+      { id: "date", label: "日期", note: "自動附星期", type: "date", required: true, placeholder: "" },
+      { id: "topic", label: "作品名稱／活動主旨", note: "", type: "text", required: true, placeholder: "例：奶油燕麥色立體泡芙花手提包" },
+      { id: "story", label: "編織故事與材質工法", note: "", type: "textarea", required: true, placeholder: "例：日本天然透氣棉線、立體泡芙針法手鉤、觸感蓬鬆親膚" },
+      { id: "price", label: "作品尺寸／售價或訂購方式", note: "", type: "text", required: false, placeholder: "例：底寬20cm×高18cm、現貨$890、私訊訂購" },
+      { id: "secret", label: "先不要講的", note: "防雷・絕不寫進貼文", type: "text", required: false, placeholder: "例：下個月才要公開的聯名款" },
+      { id: "doubt", label: "還不確定的", note: "自動排除出文", type: "text", required: false, placeholder: "例：待確認的配色或排單出貨日" }
     ];
 
     // 精選 6 款鉤針毛線手作質感輪播預設主題
@@ -4363,22 +4377,23 @@
       const container = document.getElementById("fieldsContainer");
       container.innerHTML = FIELDS.map(f => {
         const reqBadge = f.required ? '<span class="req-tag">必填</span>' : '<span class="opt-tag">選填</span>';
+        const noteHtml = f.note ? `<span class="label-note">(${f.note})</span>` : "";
+        const ph = f.placeholder || `請填寫${f.label}...`;
         let inputHtml = "";
         if (f.type === "textarea") {
-          inputHtml = `<textarea id="field_${f.id}" data-fid="${f.id}" placeholder="請填寫${f.label}..."></textarea>`;
+          inputHtml = `<textarea id="field_${f.id}" data-fid="${f.id}" placeholder="${ph}"></textarea>`;
         } else if (f.type === "date") {
           inputHtml = `<input type="date" id="field_${f.id}" data-fid="${f.id}">`;
         } else {
-          inputHtml = `<input type="text" id="field_${f.id}" data-fid="${f.id}" placeholder="請填寫${f.label}...">`;
+          inputHtml = `<input type="text" id="field_${f.id}" data-fid="${f.id}" placeholder="${ph}">`;
         }
         return `
           <div class="form-group">
             <div class="form-label">
-              <span>${f.label}</span>
+              <span class="form-label-main"><span>${f.label}</span>${noteHtml}</span>
               ${reqBadge}
             </div>
             ${inputHtml}
-            <div class="form-hint">${f.hint}</div>
           </div>
         `;
       }).join("");
@@ -6456,12 +6471,12 @@
         if (emptyPrompt) emptyPrompt.style.display = "block";
         if (thumbBox) thumbBox.style.display = "none";
         if (thumbImg) thumbImg.src = "";
-        if (notice) notice.textContent = "鎖定針目結構與造型比例";
+        if (notice) notice.textContent = "";
       } else {
         if (emptyPrompt) emptyPrompt.style.display = "none";
         if (thumbBox) thumbBox.style.display = "block";
         if (thumbImg) thumbImg.src = yarnPatternImage.dataUrl;
-        if (notice) notice.textContent = "✅ 款式已就緒，將鎖定此外型";
+        if (notice) notice.textContent = "✅ 款式已就緒";
       }
     }
 

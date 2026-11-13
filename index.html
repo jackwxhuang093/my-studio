@@ -2905,17 +2905,24 @@
   <div class="modal-overlay" id="authModal">
     <div class="modal-box" style="max-width:440px;">
       <div class="modal-header">
-        <h3>🔐 雲端帳號登入（Supabase）</h3>
+        <h3 id="authModalTitle">🔐 雲端帳號登入（Supabase）</h3>
         <button class="modal-close" data-close="authModal">&times;</button>
       </div>
       <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
-        <div class="form-group" style="margin:0;">
-          <div class="form-label"><span>Email</span></div>
-          <input type="email" id="authEmailInput" placeholder="請輸入你的 Email" autocomplete="email">
+        <div id="authSignedInCard" style="display:none; background:#F4FBE3; border:1px solid #CBE485; border-radius:12px; padding:12px 14px;">
+          <div style="font-size:12px; font-weight:700; color:#3F5219; margin-bottom:2px;">☁ 目前已登入單一雲端帳號</div>
+          <div id="authSignedInEmail" style="font-size:15px; font-weight:700; color:var(--ink); word-break:break-all;"></div>
+          <div style="font-size:12px; color:var(--ink-muted); margin-top:4px; line-height:1.45;">同一時間只會登入一個帳號（不支援同時掛載多重帳號）；如需換別的帳號，請先按下方「登出」。</div>
         </div>
-        <div class="form-group" style="margin:0;">
-          <div class="form-label"><span>密碼</span><span class="opt-tag">至少 6 個字</span></div>
-          <input type="password" id="authPasswordInput" placeholder="至少 6 個字" autocomplete="current-password">
+        <div id="authLoginFields" style="display:flex; flex-direction:column; gap:12px;">
+          <div class="form-group" style="margin:0;">
+            <div class="form-label"><span>Email</span></div>
+            <input type="email" id="authEmailInput" placeholder="請輸入你的 Email" autocomplete="email">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <div class="form-label"><span>密碼</span><span class="opt-tag">至少 6 個字</span></div>
+            <input type="password" id="authPasswordInput" placeholder="至少 6 個字" autocomplete="current-password">
+          </div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
           <button type="button" class="btn-primary" id="btnAuthSignIn">登入</button>
@@ -9480,25 +9487,39 @@ ${angleText}。
       const btnOut = document.getElementById("btnAuthSignOut");
       const btnIn = document.getElementById("btnAuthSignIn");
       const btnUp = document.getElementById("btnAuthSignUp");
+      const modalTitle = document.getElementById("authModalTitle");
+      const signedInCard = document.getElementById("authSignedInCard");
+      const signedInEmail = document.getElementById("authSignedInEmail");
+      const loginFields = document.getElementById("authLoginFields");
 
       if (btnTop) {
         btnTop.textContent = me ? `☁ ${me.email}` : "🔐 登入";
       }
       if (!sb) {
+        if (modalTitle) modalTitle.textContent = "🔐 雲端帳號登入（Supabase）";
+        if (signedInCard) signedInCard.style.display = "none";
+        if (loginFields) loginFields.style.display = "flex";
         if (btnTopOut) btnTopOut.style.display = "none";
         if (btnOut) btnOut.disabled = true;
         setAuthStatus(`還沒接雲端：${sbInitErrorReason || "尚未設定"}`, true);
         return;
       }
       if (me) {
+        if (modalTitle) modalTitle.textContent = "☁ 目前雲端帳號";
+        if (signedInCard) signedInCard.style.display = "block";
+        if (signedInEmail) signedInEmail.textContent = me.email || "";
+        if (loginFields) loginFields.style.display = "none";
         if (btnTopOut) btnTopOut.style.display = "inline-flex";
         if (btnOut) { btnOut.style.display = "inline-flex"; btnOut.disabled = false; }
-        if (btnIn) btnIn.style.display = "inline-flex";
-        if (btnUp) btnUp.style.display = "inline-flex";
+        if (btnIn) btnIn.style.display = "none";
+        if (btnUp) btnUp.style.display = "none";
         setAuthStatus(`已登入：${me.email}`);
       } else {
+        if (modalTitle) modalTitle.textContent = "🔐 雲端帳號登入（Supabase）";
+        if (signedInCard) signedInCard.style.display = "none";
+        if (loginFields) loginFields.style.display = "flex";
         if (btnTopOut) btnTopOut.style.display = "none";
-        if (btnOut) { btnOut.style.display = "inline-flex"; btnOut.disabled = true; }
+        if (btnOut) { btnOut.style.display = "none"; btnOut.disabled = true; }
         if (btnIn) btnIn.style.display = "inline-flex";
         if (btnUp) btnUp.style.display = "inline-flex";
         setAuthStatus("尚未登入，請輸入 Email 與密碼（至少 6 個字）");

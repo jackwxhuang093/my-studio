@@ -43,11 +43,13 @@
 
 1. **檔案 Stage 規則**：
    - 嚴禁執行無差別 `git add .` 或 `git add -A`。
-   - 僅允許明確指定檔案：`git add <specific_file>`。
-2. **Commit 訊息格式**：
+   - 僅允許明確指定檔案：`git add <specific_file>`（保留未追蹤或無關的本機素材資料夾如 `LINE用的圖/` 不動）。
+2. **原子提交（Atomic Commits）與訊息格式**：
+   - 依功能或目的拆分為單一焦點的原子提交，不同性質的變更（例如介面排版與文件更新）分開 commit。
    - 必須遵循 Conventional Commits 格式，訊息使用 English，例如：
      - `feat(images): add dual-mode prompt studio for image beautification`
-     - `docs(agents): add project-level AGENTS.md guidelines`
-3. **推送規則**：
-   - 推送至遠端 GitHub 儲存庫：`git push origin main`。
-   - 推送前確認 `git status` 與 `git diff`，絕不將 `.env`、API Key 或任何敏感金鑰推送至 Git。
+     - `style(header): refine responsive layout to prevent toolbar wrapping`
+     - `docs(agents): enable atomic commit and auto-push workflow`
+3. **自動驗證與推送規則（免再逐次確認）**：
+   - 本專案已授權：每次完成需求且通過驗證（JS 語法、`sb_secret` 與真實金鑰為 `0`、`git status` / `git diff` 確認無誤）後，直接執行原子提交並 `git push origin main`，**不需每次停下來再詢問使用者是否推送**。
+   - 絕不將 `.env`、API Key 或任何敏感金鑰（如 OpenRouter key、Supabase Secret key）推送至 Git。

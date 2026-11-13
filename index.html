@@ -1659,23 +1659,28 @@
       <h1><span style="font-size:21px; margin-right:4px;">🧶</span>Momobear_crochet｜手作工作台</h1>
       <span class="badge">專屬手作職人發文系統</span>
     </div>
-    <div class="top-actions">
-      <button class="btn-accent" id="btnAutoTour" style="font-weight:700; padding:6px 12px; border-radius:20px;" title="點一下，AI 自動帶你看今日所有操作">
-        <span class="top-actions-full">🎬 自動導覽</span><span class="top-actions-short">🎬 導覽</span>
-      </button>
-      <button class="btn-success" id="btnSavePost" style="border-radius:20px; font-weight:700; padding:6px 14px; box-shadow:0 2px 6px rgba(45,106,79,0.2);" title="將這篇完整圖文內容保存至貼文庫">
-        <span class="top-actions-full">💾 存入貼文庫</span><span class="top-actions-short">💾 存檔</span>
-      </button>
-      <button class="btn-outline" id="btnOpenPosts" style="border-radius:20px;">
-        <span class="top-actions-full">📁 我的貼文</span><span class="top-actions-short">📁 貼文庫</span>
-      </button>
-      <button class="btn-outline" id="btnOpenRichMenu" style="border-radius:20px;" title="製作 LINE 聊天室底部的大按鈕圖文選單">
-        <span class="top-actions-full">📋 圖文選單</span><span class="top-actions-short">📋 選單</span>
-      </button>
-      <button class="btn-outline" id="btnOpenSettings" style="border-radius:20px;">⚙ 設定</button>
-      <button class="btn-light" id="btnNewPost" style="border-radius:20px;">
-        <span class="top-actions-full">＋ 新的一篇</span><span class="top-actions-short">＋ 新篇</span>
-      </button>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <div class="top-actions">
+        <button class="btn-accent" id="btnAutoTour" style="font-weight:700; padding:6px 12px; border-radius:20px;" title="點一下，AI 自動帶你看今日所有操作">
+          <span class="top-actions-full">🎬 自動導覽</span><span class="top-actions-short">🎬 導覽</span>
+        </button>
+        <button class="btn-success" id="btnSavePost" style="border-radius:20px; font-weight:700; padding:6px 14px; box-shadow:0 2px 6px rgba(45,106,79,0.2);" title="將這篇完整圖文內容保存至貼文庫">
+          <span class="top-actions-full">💾 存入貼文庫</span><span class="top-actions-short">💾 存檔</span>
+        </button>
+        <button class="btn-outline" id="btnOpenPosts" style="border-radius:20px;">
+          <span class="top-actions-full">📁 我的貼文</span><span class="top-actions-short">📁 貼文庫</span>
+        </button>
+        <button class="btn-outline" id="btnOpenRichMenu" style="border-radius:20px;" title="製作 LINE 聊天室底部的大按鈕圖文選單">
+          <span class="top-actions-full">📋 圖文選單</span><span class="top-actions-short">📋 選單</span>
+        </button>
+        <button class="btn-outline" id="btnOpenSettings" style="border-radius:20px;">⚙ 設定</button>
+        <button class="btn-outline" id="btnOpenAuth" style="border-radius:20px;" title="點擊開啟帳號登入／登出視窗">🔐 登入</button>
+        <button class="btn-light" id="btnTopSignOut" style="border-radius:20px; display:none;" title="登出目前雲端帳號">登出</button>
+        <button class="btn-light" id="btnNewPost" style="border-radius:20px;">
+          <span class="top-actions-full">＋ 新的一篇</span><span class="top-actions-short">＋ 新篇</span>
+        </button>
+      </div>
+      <div id="saveCloudStatus" style="font-size:12px; color:#fff8f0; min-height:16px; text-align:right;"></div>
     </div>
   </header>
 
@@ -1716,6 +1721,15 @@
 
           <div id="fieldsContainer">
             <!-- JS 動態生成表單欄位 -->
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">
+              <span>📅 預計發佈日</span>
+              <span class="opt-tag">選填</span>
+            </div>
+            <input type="date" id="field_publishDate">
+            <div class="form-hint">安排貼文日曆用（💾 存檔會同步存到雲端）</div>
           </div>
 
           <button type="button" class="btn-light" id="btnGoToImagesTab" style="width:100%; justify-content:center; padding:9px 12px; font-size:12.5px; border:1.5px dashed var(--line-stitch); background:#fdfaf5; color:var(--main); margin-top:4px;">
@@ -2530,6 +2544,13 @@
         <h3>📁 我的貼文（歷史存檔）</h3>
         <button class="modal-close" data-close="postsModal">&times;</button>
       </div>
+      <div style="padding:10px 18px; border-bottom:1px solid var(--line); background:#faf6f0; display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <button type="button" class="btn-primary" id="btnUploadAllPosts" style="padding:6px 12px; font-size:12.5px;">⬆ 全部上傳到雲端</button>
+          <button type="button" class="btn-outline" id="btnPullAllPosts" style="padding:6px 12px; font-size:12.5px; color:var(--main); border-color:var(--main); background:#fff;">⬇ 從雲端拿回來</button>
+        </div>
+        <div id="postsCloudSyncStatus" style="font-size:12.5px; color:var(--ink-muted); min-height:18px;"></div>
+      </div>
       <div class="modal-body" id="postsListContainer">
         <!-- JS 動態生成儲存文章列表 -->
       </div>
@@ -2631,11 +2652,44 @@
     </div>
   </div>
 
+  <!-- Modal 7：🔐 雲端登入／註冊視窗 -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">
+        <h3>🔐 雲端帳號登入（Supabase）</h3>
+        <button class="modal-close" data-close="authModal">&times;</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="form-group" style="margin:0;">
+          <div class="form-label"><span>Email</span></div>
+          <input type="email" id="authEmailInput" placeholder="請輸入你的 Email" autocomplete="email">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <div class="form-label"><span>密碼</span><span class="opt-tag">至少 6 個字</span></div>
+          <input type="password" id="authPasswordInput" placeholder="至少 6 個字" autocomplete="current-password">
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+          <button type="button" class="btn-primary" id="btnAuthSignIn">登入</button>
+          <button type="button" class="btn-success" id="btnAuthSignUp">第一次：註冊</button>
+          <button type="button" class="btn-outline" id="btnAuthSignOut" style="display:none;">登出</button>
+          <button type="button" class="btn-light" data-close="authModal">關閉</button>
+        </div>
+        <div id="authStatusText" style="font-size:13px; color:var(--ink-muted); padding:8px 10px; background:#faf6f0; border-radius:8px; border:1px solid var(--line); min-height:36px;">尚未登入</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase 雲端 SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- 邏輯核心腳本 -->
   <script>
     /* ==========================================================
        0. AI 雙引擎模型與圖片尺寸設定（最上方常數，方便隨時修改）
        ========================================================== */
+    // 這兩個可以公開，守門的是 Supabase 的 RLS；Secret key（機密金鑰）絕對不要貼
+    const SB_URL = "https://tjutqhhayfnrwkkrchta.supabase.co";
+    const SB_KEY = "sb_publishable_A0B34kMyP_JjnewKVrem1Q_87_dIof1";
+
     const OPENROUTER_MODEL = "deepseek/deepseek-v4.1-flash";
     const GEMINI_MODEL = "gemini-3.8-flash";
     const DEFAULT_IMAGE_MODEL = "bytedance-seed/seedream-5-0-flash";
@@ -3030,6 +3084,20 @@
         });
       } catch (e) {
         return [];
+      }
+    }
+
+    async function idbClearAllImages() {
+      try {
+        const db = await openImageDB();
+        return new Promise((resolve) => {
+          const tx = db.transaction(IDB_STORE, "readwrite");
+          tx.objectStore(IDB_STORE).clear();
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(false);
+        });
+      } catch (e) {
+        return false;
       }
     }
 
@@ -3666,6 +3734,7 @@
       initTabs();
       initDownloadSizeSelect();
       initSettings();
+      await initSupabaseAuth();
       await loadDraftOrDefaults();
       bindEvents();
       switchBeautifySubMode("quick");
@@ -3795,6 +3864,12 @@
           renderPreview();
         });
       });
+
+      const pubDateEl = document.getElementById("field_publishDate");
+      if (pubDateEl) {
+        pubDateEl.addEventListener("input", () => saveDraft());
+        pubDateEl.addEventListener("change", () => saveDraft());
+      }
     }
 
     function initTabs() {
@@ -7273,6 +7348,154 @@ ${angleText}。
     /* ==========================================================
        8. 本地存檔（LocalStorage）與歷史清單管理（圖片只存 id）
        ========================================================== */
+    function formatSavedAt(val) {
+      if (typeof val === "number" && Number.isFinite(val)) {
+        return new Date(val).toLocaleString("zh-TW", { hour12: false });
+      }
+      return val || "";
+    }
+
+    function setSaveCloudStatus(text, isError = false) {
+      const el = document.getElementById("saveCloudStatus");
+      if (!el) return;
+      el.textContent = text;
+      if (isError) {
+        el.style.color = "#b91c1c";
+        el.style.background = "#fff1f0";
+        el.style.padding = "2px 8px";
+        el.style.borderRadius = "6px";
+      } else {
+        el.style.color = "#fff8f0";
+        el.style.background = "transparent";
+        el.style.padding = "0";
+      }
+    }
+
+    function translatePostSaveError(err) {
+      const code = (err && err.code) || "";
+      const msg = (err && (err.message || String(err))) || "";
+      if (code === "42P01" || code === "PGRST205") {
+        return "雲端還沒有 posts 表，到 SQL Editor 貼建表那段按 Run";
+      }
+      if (code === "42501" || msg.toLowerCase().includes("row-level security")) {
+        return "雲端不讓你存，SQL 的權限那段沒跑到";
+      }
+      return msg || "雲端存檔失敗";
+    }
+
+    async function upsertPostToCloud(postData) {
+      const { error } = await sb.from("posts").upsert({
+        id: String(postData.id),
+        user_id: me.id,
+        data: postData,
+        publish_date: postData.publishDate || null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: "user_id,id" });
+      if (!error) {
+        cloudPostIds.add(String(postData.id));
+      }
+      return error;
+    }
+
+    function setPostsCloudSyncStatus(text, isError = false) {
+      const el = document.getElementById("postsCloudSyncStatus");
+      if (!el) return;
+      el.textContent = text;
+      el.style.color = isError ? "#b91c1c" : "var(--ink-muted)";
+    }
+
+    function getPostSortTime(item) {
+      if (!item) return 0;
+      if (typeof item.savedAt === "number" && Number.isFinite(item.savedAt)) return item.savedAt;
+      if (typeof item.savedAt === "string") {
+        const parsed = Date.parse(item.savedAt.replace(/\//g, "-"));
+        if (!Number.isNaN(parsed)) return parsed;
+      }
+      const idMatch = String(item.id || "").match(/(\d{10,})/);
+      if (idMatch) return Number(idMatch[1]);
+      return 0;
+    }
+
+    function sortPostsNewestFirst(posts) {
+      return posts.sort((a, b) => {
+        const diff = getPostSortTime(b) - getPostSortTime(a);
+        if (diff !== 0) return diff;
+        return String(b.id || "").localeCompare(String(a.id || ""));
+      });
+    }
+
+    async function uploadAllPostsToCloud() {
+      if (!sb || !me) {
+        setPostsCloudSyncStatus("先 🔐 登入", true);
+        return;
+      }
+      const posts = getSavedPosts();
+      if (posts.length === 0) {
+        setPostsCloudSyncStatus("這台電腦目前沒有貼文可上傳", false);
+        return;
+      }
+      setPostsCloudSyncStatus(`☁ 正在上傳 0 / ${posts.length} 篇...`, false);
+      for (let i = 0; i < posts.length; i++) {
+        const p = posts[i];
+        const error = await upsertPostToCloud(p);
+        if (error) {
+          setPostsCloudSyncStatus(`第 ${i + 1} 篇失敗：${translatePostSaveError(error)}`, true);
+          renderSavedPostsList();
+          return;
+        }
+        setPostsCloudSyncStatus(`☁ 正在上傳 ${i + 1} / ${posts.length} 篇...`, false);
+      }
+      setPostsCloudSyncStatus(`上傳好了：${posts.length} 篇`, false);
+      renderSavedPostsList();
+    }
+
+    async function pullPostsFromCloud(isAuto = false) {
+      if (!sb || !me) {
+        if (!isAuto) setPostsCloudSyncStatus("先 🔐 登入", true);
+        return;
+      }
+      if (!isAuto) setPostsCloudSyncStatus("☁ 正在從雲端拿回來...", false);
+      const { data: rows, error } = await sb.from("posts").select("id, data, updated_at");
+      if (error) {
+        if (!isAuto) setPostsCloudSyncStatus(`拿回來失敗：${translatePostSaveError(error)}`, true);
+        return;
+      }
+      const localPosts = getSavedPosts();
+      const localMap = new Map(localPosts.map(p => [String(p.id), p]));
+      const nextCloudIds = new Set();
+      let added = 0;
+      let updated = 0;
+
+      for (const row of (rows || [])) {
+        const cloudPost = row && row.data ? { ...row.data } : null;
+        if (!cloudPost) continue;
+        const pid = String(cloudPost.id || row.id || "");
+        if (!pid) continue;
+        cloudPost.id = pid;
+        nextCloudIds.add(pid);
+
+        const existing = localMap.get(pid);
+        if (!existing) {
+          localMap.set(pid, cloudPost);
+          added++;
+        } else {
+          if (getPostSortTime(cloudPost) > getPostSortTime(existing)) {
+            localMap.set(pid, cloudPost);
+            updated++;
+          }
+        }
+      }
+
+      cloudPostIds = nextCloudIds;
+      const mergedPosts = sortPostsNewestFirst(Array.from(localMap.values()));
+      try {
+        localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(mergedPosts));
+      } catch (e) {}
+      await updateStorageUsageInfo();
+      setPostsCloudSyncStatus(`拿回來了：新增 ${added} 篇、更新 ${updated} 篇`, false);
+      renderSavedPostsList();
+    }
+
     async function saveCurrentPost() {
       const topic = document.getElementById("field_topic").value.trim();
       const date = document.getElementById("field_date").value.trim();
@@ -7286,12 +7509,14 @@ ${angleText}。
       const formattedDate = formatDateWithWeekday(rawDate);
       const sc = SCENARIOS.find(s => s.id === currentScenarioId) || SCENARIOS[0];
       const title = `${formattedDate} [${sc.name}] ${topic || '未命名日常'}`;
+      const publishDate = document.getElementById("field_publishDate")?.value || "";
 
       const postData = {
         id: currentPostId || "post_" + Date.now(),
         title: title,
         scenarioId: currentScenarioId,
-        savedAt: new Date().toLocaleString("zh-TW", { hour12: false }),
+        publishDate: publishDate,
+        savedAt: Date.now(),
         fields: {
           date: document.getElementById("field_date").value,
           topic: document.getElementById("field_topic").value,
@@ -7329,8 +7554,21 @@ ${angleText}。
         await updateStorageUsageInfo(false);
 
         const hint = document.getElementById("autoSavedHint");
-        hint.textContent = `💾 已成功存入「我的貼文」！(${postData.savedAt})`;
+        hint.textContent = `💾 已成功存入「我的貼文」！(${formatSavedAt(postData.savedAt)})`;
         setTimeout(() => { hint.textContent = ""; }, 3000);
+
+        if (sb && me) {
+          setSaveCloudStatus("☁ 正在存到雲端...", false);
+          const error = await upsertPostToCloud(postData);
+          if (error) {
+            setSaveCloudStatus(`${translatePostSaveError(error)}｜這台電腦有存到，不會不見`, true);
+          } else {
+            setSaveCloudStatus(`☁ 雲端也存了：${postData.title}`, false);
+          }
+        } else {
+          setSaveCloudStatus("只存在這台電腦。🔐 登入以後，會同時存到雲端", false);
+        }
+
         alert(`「${title}」已成功儲存！`);
       } catch (e) {
         await updateStorageUsageInfo(true);
@@ -7357,11 +7595,18 @@ ${angleText}。
 
       container.innerHTML = posts.map(p => {
         const imgCount = Array.isArray(p.imageIds) ? p.imageIds.length : (Array.isArray(p.images) ? p.images.length : 0);
+        const pubPart = p.publishDate ? `｜📅 ${escapeHtml(p.publishDate)}` : "";
+        let cloudTag = "";
+        if (me) {
+          cloudTag = cloudPostIds.has(String(p.id))
+            ? `<span style="display:inline-block; margin-left:6px; font-size:11px; padding:1px 6px; border-radius:999px; background:#e6f4ea; color:#1e7e34; font-weight:600;">☁ 雲端有</span>`
+            : `<span style="display:inline-block; margin-left:6px; font-size:11px; padding:1px 6px; border-radius:999px; background:#f3f4f6; color:#6b7280; font-weight:600;">只在這台</span>`;
+        }
         return `
           <div class="post-list-item">
             <div>
-              <div class="post-meta-title">${escapeHtml(p.title)}</div>
-              <div class="post-meta-time">最後儲存：${p.savedAt} ｜ 圖片：${imgCount} 張</div>
+              <div class="post-meta-title">${escapeHtml(p.title)}${cloudTag}</div>
+              <div class="post-meta-time">最後儲存：${escapeHtml(formatSavedAt(p.savedAt))}${pubPart} ｜ 圖片：${imgCount} 張</div>
             </div>
             <div class="post-item-actions">
               <button class="btn-primary" style="padding:4px 10px; font-size:12.5px;" onclick="loadSavedPost('${p.id}')">📂 打開</button>
@@ -7384,6 +7629,8 @@ ${angleText}。
           const el = document.getElementById(`field_${k}`);
           if (el) el.value = p.fields[k] || "";
         });
+        const pubEl = document.getElementById("field_publishDate");
+        if (pubEl) pubEl.value = p.publishDate || p.fields?.publishDate || "";
         postContents = { ...p.posts };
         assistantChatHistory = p.assistantChatHistory ? { ...p.assistantChatHistory } : { FB: [], IG: [], LINE: [] };
         lastPostSnapshot = p.lastPostSnapshot || null;
@@ -7433,11 +7680,23 @@ ${angleText}。
     };
 
     window.deleteSavedPost = async function(id) {
-      if (confirm("確定要刪除這篇存檔嗎？此動作無法復原。")) {
+      const msg = (sb && me)
+        ? "確定要刪除這篇存檔嗎？雲端的也會一起刪，此動作無法復原。"
+        : "確定要刪除這篇存檔嗎？此動作無法復原。";
+      if (confirm(msg)) {
         let posts = getSavedPosts();
         const target = posts.find(p => p.id === id);
         posts = posts.filter(p => p.id !== id);
         localStorage.setItem(STORAGE_KEY_POSTS, JSON.stringify(posts));
+
+        if (sb && me) {
+          const { error } = await sb.from("posts").delete().eq("id", String(id));
+          if (error) {
+            setPostsCloudSyncStatus(`雲端刪除失敗：${translatePostSaveError(error)}`, true);
+          } else {
+            cloudPostIds.delete(String(id));
+          }
+        }
 
         // 清理這篇存檔不再被其他地方使用的圖片
         if (target && Array.isArray(target.imageIds)) {
@@ -7456,73 +7715,79 @@ ${angleText}。
       }
     };
 
+    async function resetWorkbenchToBlank() {
+      currentPostId = null;
+      FIELDS.forEach(f => {
+        const el = document.getElementById(`field_${f.id}`);
+        if (el) el.value = "";
+      });
+      const pubEl = document.getElementById("field_publishDate");
+      if (pubEl) pubEl.value = "";
+      selectScenario("daily");
+      switchLeftFormTab("material");
+      postContents = { FB: "", IG: "", LINE: "" };
+      assistantChatHistory = { FB: [], IG: [], LINE: [] };
+      lastPostSnapshot = null;
+      postImages = [];
+      mainImageId = null;
+      igCarouselActiveIdx = 0;
+
+      const promptEl = document.getElementById("imagePromptInput");
+      if (promptEl) promptEl.value = "";
+      overlayConfig = { text: "", pos: "bottom", size: "large", style: "white_box", fit: "contain_blur" };
+      syncOverlayInputsFromState();
+      syncActivePlatformPointers();
+
+      yarnColorImages = [];
+      yarnPatternImage = null;
+      selectedYarnRolePreset = "auto";
+      const customNoteEl = document.getElementById("yarnSimCustomNote");
+      if (customNoteEl) customNoteEl.value = "";
+      const simStatusEl = document.getElementById("yarnSimStatus");
+      if (simStatusEl) { simStatusEl.style.display = "none"; simStatusEl.innerHTML = ""; }
+      document.querySelectorAll("#yarnRolePills .preset-pill").forEach(p => {
+        p.classList.toggle("active", p.dataset.role === "auto");
+      });
+      renderYarnColorSlot();
+      renderYarnPatternSlot();
+
+      craftImage = null;
+      selectedCraftGoal = "lightstick_cover";
+      selectedCraftElements = ["ears", "puff_flowers"];
+      lastCraftAdviceText = "";
+      const craftNoteEl = document.getElementById("craftCustomNote");
+      if (craftNoteEl) craftNoteEl.value = "";
+      const craftStatusEl = document.getElementById("craftStatus");
+      if (craftStatusEl) { craftStatusEl.style.display = "none"; craftStatusEl.innerHTML = ""; }
+      const craftAdviceBox = document.getElementById("craftAdviceBox");
+      if (craftAdviceBox) craftAdviceBox.style.display = "none";
+      document.querySelectorAll("#craftGoalPills .preset-pill").forEach(p => {
+        p.classList.toggle("active", p.dataset.goal === "lightstick_cover");
+      });
+      document.querySelectorAll("#craftElemPills .preset-pill").forEach(p => {
+        p.classList.toggle("active", selectedCraftElements.includes(p.dataset.elem));
+      });
+      renderCraftPhotoSlot();
+
+      document.getElementById("postEditor").value = "";
+      updateCharCount();
+      renderPostThumbnails();
+      await updateRenderedMainImage();
+      renderPreview();
+      renderAssistantChat();
+      const statusEl = document.getElementById("aiWritingStatus");
+      if (statusEl) { statusEl.style.display = "none"; statusEl.innerHTML = ""; }
+      const askBox = document.getElementById("aiAskMeBox");
+      if (askBox) { askBox.style.display = "none"; }
+      const askBody = document.getElementById("aiAskMeBody");
+      if (askBody) { askBody.innerHTML = ""; }
+      localStorage.removeItem(STORAGE_KEY_DRAFT);
+      await updateStorageUsageInfo();
+    }
+
     async function startNewPost() {
       if (confirm("確定要開新的一篇嗎？畫面將清空（已儲存的貼文不會遺失）。")) {
-        currentPostId = null;
-        FIELDS.forEach(f => {
-          const el = document.getElementById(`field_${f.id}`);
-          if (el) el.value = "";
-        });
-        selectScenario("daily");
-        switchLeftFormTab("material");
-        postContents = { FB: "", IG: "", LINE: "" };
-        assistantChatHistory = { FB: [], IG: [], LINE: [] };
-        lastPostSnapshot = null;
-        postImages = [];
-        mainImageId = null;
-        igCarouselActiveIdx = 0;
-
-        const promptEl = document.getElementById("imagePromptInput");
-        if (promptEl) promptEl.value = "";
-        overlayConfig = { text: "", pos: "bottom", size: "large", style: "white_box", fit: "contain_blur" };
-        syncOverlayInputsFromState();
-        syncActivePlatformPointers();
-
-        yarnColorImages = [];
-        yarnPatternImage = null;
-        selectedYarnRolePreset = "auto";
-        const customNoteEl = document.getElementById("yarnSimCustomNote");
-        if (customNoteEl) customNoteEl.value = "";
-        const simStatusEl = document.getElementById("yarnSimStatus");
-        if (simStatusEl) { simStatusEl.style.display = "none"; simStatusEl.innerHTML = ""; }
-        document.querySelectorAll("#yarnRolePills .preset-pill").forEach(p => {
-          p.classList.toggle("active", p.dataset.role === "auto");
-        });
-        renderYarnColorSlot();
-        renderYarnPatternSlot();
-
-        craftImage = null;
-        selectedCraftGoal = "lightstick_cover";
-        selectedCraftElements = ["ears", "puff_flowers"];
-        lastCraftAdviceText = "";
-        const craftNoteEl = document.getElementById("craftCustomNote");
-        if (craftNoteEl) craftNoteEl.value = "";
-        const craftStatusEl = document.getElementById("craftStatus");
-        if (craftStatusEl) { craftStatusEl.style.display = "none"; craftStatusEl.innerHTML = ""; }
-        const craftAdviceBox = document.getElementById("craftAdviceBox");
-        if (craftAdviceBox) craftAdviceBox.style.display = "none";
-        document.querySelectorAll("#craftGoalPills .preset-pill").forEach(p => {
-          p.classList.toggle("active", p.dataset.goal === "lightstick_cover");
-        });
-        document.querySelectorAll("#craftElemPills .preset-pill").forEach(p => {
-          p.classList.toggle("active", selectedCraftElements.includes(p.dataset.elem));
-        });
-        renderCraftPhotoSlot();
-
-        document.getElementById("postEditor").value = "";
-        updateCharCount();
-        renderPostThumbnails();
-        await updateRenderedMainImage();
-        renderPreview();
-        renderAssistantChat();
-        const statusEl = document.getElementById("aiWritingStatus");
-        if (statusEl) { statusEl.style.display = "none"; statusEl.innerHTML = ""; }
-        const askBox = document.getElementById("aiAskMeBox");
-        if (askBox) { askBox.style.display = "none"; }
-        const askBody = document.getElementById("aiAskMeBody");
-        if (askBody) { askBody.innerHTML = ""; }
-        localStorage.removeItem(STORAGE_KEY_DRAFT);
-        await updateStorageUsageInfo();
+        await resetWorkbenchToBlank();
         alert("已開啟全新空白篇章！");
       }
     }
@@ -7546,6 +7811,7 @@ ${angleText}。
     function saveDraft() {
       const draft = {
         scenarioId: currentScenarioId,
+        publishDate: document.getElementById("field_publishDate")?.value || "",
         fields: {
           date: document.getElementById("field_date")?.value || "",
           topic: document.getElementById("field_topic")?.value || "",
@@ -7618,6 +7884,8 @@ ${angleText}。
             const el = document.getElementById(`field_${k}`);
             if (el) el.value = saved.fields[k];
           });
+          const pubEl = document.getElementById("field_publishDate");
+          if (pubEl) pubEl.value = saved.publishDate || saved.fields?.publishDate || "";
           if (saved.posts) postContents = { ...saved.posts };
           currentPostId = saved.currentPostId || null;
           if (saved.assistantChatHistory) {
@@ -7682,6 +7950,8 @@ ${angleText}。
       document.getElementById("field_price").value = "底寬 20cm × 高 18cm｜手作現貨 $890（可客製配色）";
       document.getElementById("field_secret").value = "下個月聖誕限定毛線花束禮盒先不要公開";
       document.getElementById("field_doubt").value = "新一批日本灰綠色棉線週五才會寄到工作室";
+      const pubElDefault = document.getElementById("field_publishDate");
+      if (pubElDefault) pubElDefault.value = "";
       syncOverlayInputsFromState();
       renderPostThumbnails();
       selectScenario("daily");
@@ -8325,6 +8595,27 @@ ${angleText}。
         });
       }
 
+      // 🔐 雲端登入彈窗事件綁定
+      const btnOpenAuth = document.getElementById("btnOpenAuth");
+      if (btnOpenAuth) {
+        btnOpenAuth.addEventListener("click", () => {
+          updateAuthUI();
+          openModal("authModal");
+        });
+      }
+      const btnAuthSignIn = document.getElementById("btnAuthSignIn");
+      if (btnAuthSignIn) btnAuthSignIn.addEventListener("click", handleAuthSignIn);
+      const btnAuthSignUp = document.getElementById("btnAuthSignUp");
+      if (btnAuthSignUp) btnAuthSignUp.addEventListener("click", handleAuthSignUp);
+      const btnAuthSignOut = document.getElementById("btnAuthSignOut");
+      if (btnAuthSignOut) btnAuthSignOut.addEventListener("click", handleAuthSignOut);
+      const btnTopSignOut = document.getElementById("btnTopSignOut");
+      if (btnTopSignOut) btnTopSignOut.addEventListener("click", handleAuthSignOut);
+      const btnUploadAll = document.getElementById("btnUploadAllPosts");
+      if (btnUploadAll) btnUploadAll.addEventListener("click", uploadAllPostsToCloud);
+      const btnPullAll = document.getElementById("btnPullAllPosts");
+      if (btnPullAll) btnPullAll.addEventListener("click", () => pullPostsFromCloud(false));
+
       // 通用 Modal 關閉
       document.querySelectorAll("[data-close]").forEach(btn => {
         btn.addEventListener("click", () => closeModal(btn.dataset.close));
@@ -8722,6 +9013,172 @@ ${angleText}。
 
     function openModal(id) { document.getElementById(id).classList.add("active"); }
     function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+
+    /* ==========================================================
+       ☁ Supabase 雲端連線與登入（Day 10 第 2 節）
+       ========================================================== */
+    let sb = null;
+    let me = null;
+    let sbInitErrorReason = "";
+    let autoPulledUserId = null;
+    let cloudPostIds = new Set();
+
+    async function maybeAutoPullForUser(user) {
+      if (!sb || !user || autoPulledUserId === user.id) return;
+      autoPulledUserId = user.id;
+      await pullPostsFromCloud(true);
+    }
+
+    function translateAuthError(err) {
+      const msg = (err && (err.message || err.error_description || String(err))) || "";
+      const lower = msg.toLowerCase();
+      if (lower.includes("invalid login credentials")) return "Email 或密碼不對";
+      if (lower.includes("user already registered") || lower.includes("already registered")) return "這個 Email 註冊過了，直接按「登入」";
+      if (lower.includes("email not confirmed")) return "到 Supabase 把 Confirm email 關掉";
+      if (lower.includes("at least 6") || lower.includes("password") && lower.includes("short")) return "至少 6 個字";
+      if (lower.includes("rate limit")) return "試太多次了，等 1 分鐘";
+      return msg || "發生未知錯誤";
+    }
+
+    function setAuthStatus(text, isError = false) {
+      const el = document.getElementById("authStatusText");
+      if (!el) return;
+      el.textContent = text;
+      el.style.color = isError ? "#b91c1c" : "var(--ink-muted)";
+    }
+
+    function updateAuthUI() {
+      const btnTop = document.getElementById("btnOpenAuth");
+      const btnTopOut = document.getElementById("btnTopSignOut");
+      const btnOut = document.getElementById("btnAuthSignOut");
+      const btnIn = document.getElementById("btnAuthSignIn");
+      const btnUp = document.getElementById("btnAuthSignUp");
+
+      if (btnTop) {
+        btnTop.textContent = me ? `☁ ${me.email}` : "🔐 登入";
+      }
+      if (!sb) {
+        if (btnTopOut) btnTopOut.style.display = "none";
+        if (btnOut) btnOut.disabled = true;
+        setAuthStatus(`還沒接雲端：${sbInitErrorReason || "尚未設定"}`, true);
+        return;
+      }
+      if (me) {
+        if (btnTopOut) btnTopOut.style.display = "inline-flex";
+        if (btnOut) { btnOut.style.display = "inline-flex"; btnOut.disabled = false; }
+        if (btnIn) btnIn.style.display = "inline-flex";
+        if (btnUp) btnUp.style.display = "inline-flex";
+        setAuthStatus(`已登入：${me.email}`);
+      } else {
+        if (btnTopOut) btnTopOut.style.display = "none";
+        if (btnOut) { btnOut.style.display = "inline-flex"; btnOut.disabled = true; }
+        if (btnIn) btnIn.style.display = "inline-flex";
+        if (btnUp) btnUp.style.display = "inline-flex";
+        setAuthStatus("尚未登入，請輸入 Email 與密碼（至少 6 個字）");
+      }
+    }
+
+    async function initSupabaseAuth() {
+      if (!SB_URL || !SB_KEY) {
+        sb = null;
+        sbInitErrorReason = "SB_URL、SB_KEY 還沒填";
+        updateAuthUI();
+        return;
+      }
+      if (!window.supabase || typeof window.supabase.createClient !== "function") {
+        sb = null;
+        sbInitErrorReason = "Supabase 的程式庫載不到";
+        updateAuthUI();
+        return;
+      }
+      try {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+        sbInitErrorReason = "";
+        sb.auth.onAuthStateChange((_event, session) => {
+          me = session?.user || null;
+          updateAuthUI();
+          if (me) {
+            maybeAutoPullForUser(me);
+          } else {
+            autoPulledUserId = null;
+            cloudPostIds = new Set();
+          }
+        });
+        const { data } = await sb.auth.getSession();
+        me = data?.session?.user || null;
+        if (me) {
+          await maybeAutoPullForUser(me);
+        }
+      } catch (e) {
+        sb = null;
+        sbInitErrorReason = e.message || "連線初始化失敗";
+      }
+      updateAuthUI();
+    }
+
+    async function handleAuthSignIn() {
+      if (!sb) {
+        setAuthStatus(`還沒接雲端：${sbInitErrorReason}`, true);
+        return;
+      }
+      const email = (document.getElementById("authEmailInput")?.value || "").trim();
+      const password = document.getElementById("authPasswordInput")?.value || "";
+      if (!email) { setAuthStatus("請輸入 Email", true); return; }
+      if (password.length < 6) { setAuthStatus("至少 6 個字", true); return; }
+
+      setAuthStatus("登入中...");
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        setAuthStatus(translateAuthError(error), true);
+        return;
+      }
+      me = data?.user || data?.session?.user || null;
+      updateAuthUI();
+      if (me) await maybeAutoPullForUser(me);
+    }
+
+    async function handleAuthSignUp() {
+      if (!sb) {
+        setAuthStatus(`還沒接雲端：${sbInitErrorReason}`, true);
+        return;
+      }
+      const email = (document.getElementById("authEmailInput")?.value || "").trim();
+      const password = document.getElementById("authPasswordInput")?.value || "";
+      if (!email) { setAuthStatus("請輸入 Email", true); return; }
+      if (password.length < 6) { setAuthStatus("至少 6 個字", true); return; }
+
+      setAuthStatus("註冊中...");
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) {
+        setAuthStatus(translateAuthError(error), true);
+        return;
+      }
+      if (!data?.session) {
+        setAuthStatus("Supabase 的 Confirm email 還開著，關掉再按登入", true);
+        return;
+      }
+      me = data.user || data.session.user || null;
+      updateAuthUI();
+      if (me) await maybeAutoPullForUser(me);
+    }
+
+    async function handleAuthSignOut() {
+      if (!sb) return;
+      const shouldClearLocal = confirm("要把這台電腦上的貼文也清掉嗎？借別人的電腦用，請按確定；自己的電腦按取消。");
+      setAuthStatus("登出中...");
+      await sb.auth.signOut();
+      me = null;
+      autoPulledUserId = null;
+      cloudPostIds = new Set();
+      if (shouldClearLocal) {
+        localStorage.removeItem(STORAGE_KEY_POSTS);
+        localStorage.removeItem(STORAGE_KEY_DRAFT);
+        await idbClearAllImages();
+        await resetWorkbenchToBlank();
+        setSaveCloudStatus("", false);
+      }
+      updateAuthUI();
+    }
   </script>
 </body>
 </html>

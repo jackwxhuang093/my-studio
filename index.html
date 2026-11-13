@@ -6736,14 +6736,28 @@
       }
     }
 
+    function uid(prefix = "craft") {
+      return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    }
+
+    function isSupportedImageFile(file) {
+      if (!file) return false;
+      if (file.type && file.type.startsWith("image/")) return true;
+      return /\.(jpe?g|png|webp|gif|bmp|avif)$/i.test(file.name || "");
+    }
+
     async function setCraftFile(file) {
-      if (!file || !file.type.startsWith("image/")) return;
-      const dataUrl = await new Promise((resolve) => {
+      if (!isSupportedImageFile(file)) return;
+      const rawDataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = (ev) => resolve(ev.target.result);
+        reader.onerror = () => reject(reader.error || new Error("讀取圖片失敗"));
         reader.readAsDataURL(file);
       });
-      craftImage = { id: uid(), dataUrl, name: file.name };
+      const dataUrl = typeof compressImageToJpegDataUrl === "function"
+        ? await compressImageToJpegDataUrl(rawDataUrl, 1350, 0.85)
+        : rawDataUrl;
+      craftImage = { id: uid("craft"), dataUrl, name: file.name || "craft.jpg" };
       renderCraftPhotoSlot();
     }
 
@@ -6753,7 +6767,7 @@
         alert("上方圖庫目前沒有主圖，請先上傳或選擇一張照片！");
         return;
       }
-      craftImage = { id: uid(), dataUrl: mainItem.dataUrl, name: "主圖引用" };
+      craftImage = { id: uid("craft"), dataUrl: mainItem.dataUrl, name: "主圖引用" };
       renderCraftPhotoSlot();
     }
 
@@ -6936,24 +6950,35 @@ ${angleText}。
         });
       }
 
-      if (dropZone) {
+      const craftSlot = document.getElementById("craftPhotoSlot") || dropZone;
+      if (craftSlot) {
         ["dragenter", "dragover"].forEach(evtName => {
-          dropZone.addEventListener(evtName, (e) => {
+          craftSlot.addEventListener(evtName, (e) => {
             e.preventDefault();
             e.stopPropagation();
-            dropZone.classList.add("dragover");
+            if (dropZone) dropZone.classList.add("dragover");
           });
         });
-        ["dragleave", "drop"].forEach(evtName => {
-          dropZone.addEventListener(evtName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove("dragover");
-          });
+        craftSlot.addEventListener("dragleave", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!e.relatedTarget || !craftSlot.contains(e.relatedTarget)) {
+            if (dropZone) dropZone.classList.remove("dragover");
+          }
         });
-        dropZone.addEventListener("drop", async (e) => {
-          const file = Array.from(e.dataTransfer?.files || []).find(f => f.type.startsWith("image/"));
-          if (file) await setCraftFile(file);
+        craftSlot.addEventListener("drop", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (dropZone) dropZone.classList.remove("dragover");
+          const file = Array.from(e.dataTransfer?.files || []).find(isSupportedImageFile);
+          if (file) {
+            try {
+              await setCraftFile(file);
+            } catch (err) {
+              console.error("手燈/娃娃照片載入失敗:", err);
+              alert("圖片讀取失敗，請改用 JPG / PNG 再試一次");
+            }
+          }
         });
       }
 

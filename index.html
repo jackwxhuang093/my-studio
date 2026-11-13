@@ -4,8 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Momobear_crochet｜鉤針毛線社群工作台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
+      --font-sans: "Plus Jakarta Sans", "Noto Sans TC", -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      --font-serif: "Cormorant Garamond", "Noto Serif TC", Georgia, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --text-display: 18px;
+      --text-title: 15.5px;
+      --text-body: 13.5px;
+      --text-ui: 12.5px;
+      --text-meta: 11.5px;
       --main: #181A17;
       --main-hover: #2E312C;
       --main-light: #EFF2EA;
@@ -30,15 +41,20 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      font-family: var(--font-sans);
+      font-size: var(--text-body);
       background-color: var(--bg);
       color: var(--ink);
-      line-height: 1.6;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
+    .tnum { font-variant-numeric: tabular-nums; }
 
     /* 頂部標題列：純白透氣極簡工作室欄 ✨ */
     header {
@@ -64,27 +80,31 @@
       flex-shrink: 0;
     }
     .brand-title h1 {
-      font-size: 17.5px;
+      font-size: var(--text-display);
       font-weight: 700;
-      letter-spacing: -0.2px;
+      letter-spacing: -0.025em;
+      line-height: 1.25;
       color: var(--ink);
       white-space: nowrap;
     }
     .brand-subtitle {
-      font-family: Georgia, "Noto Serif TC", serif;
+      font-family: var(--font-serif);
       font-style: italic;
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 15.5px;
+      letter-spacing: 0.015em;
       color: var(--ink-muted);
     }
     .brand-title .badge {
       background: #F2F5EC;
       color: #465239;
-      font-size: 11px;
+      font-size: var(--text-meta);
       font-weight: 600;
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid #DCE2D3;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.02em;
+      font-variant-numeric: tabular-nums;
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -120,7 +140,9 @@
     .top-actions button {
       border-radius: 999px;
       padding: 6px 12px;
-      font-size: 12.5px;
+      font-size: var(--text-ui);
+      font-weight: 600;
+      letter-spacing: 0.01em;
       white-space: nowrap;
     }
     header .btn-outline {
@@ -175,10 +197,11 @@
       vertical-align: middle;
     }
     #saveCloudStatus {
-      font-size: 11.5px;
+      font-size: var(--text-meta);
       color: #4D5447;
       text-align: right;
-      line-height: 1.3;
+      line-height: 1.35;
+      font-variant-numeric: tabular-nums;
     }
     #saveCloudStatus:empty {
       display: none;
@@ -362,10 +385,11 @@
       flex-shrink: 0;
     }
     .col-header h2 {
-      font-size: 14.5px;
+      font-size: var(--text-title);
       color: var(--ink);
       font-weight: 700;
-      letter-spacing: 0.2px;
+      letter-spacing: -0.015em;
+      line-height: 1.3;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -403,8 +427,8 @@
       gap: 6px;
     }
     .scenario-pill {
-      font-size: 11.5px;
-      padding: 7px 9px;
+      font-size: var(--text-ui);
+      padding: 8px 10px;
       border-radius: 10px;
       background: #FFFFFF;
       color: var(--ink);
@@ -412,8 +436,9 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       font-weight: 500;
+      line-height: 1.35;
       transition: all 0.15s ease;
       user-select: none;
     }
@@ -464,7 +489,8 @@
       box-shadow: 0 2px 6px rgba(20, 24, 18, 0.08);
     }
     .left-tab-badge {
-      font-size: 10.5px;
+      font-size: var(--text-meta);
+      font-variant-numeric: tabular-nums;
       padding: 1px 7px;
       border-radius: 999px;
       background: #E4E8DC;
@@ -487,7 +513,7 @@
       flex: 1;
       justify-content: center;
       padding: 6px 6px;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
       border-radius: 8px;
       background: transparent;
@@ -507,17 +533,20 @@
     .form-label {
       display: flex;
       justify-content: space-between;
-      font-size: 12.5px;
-      font-weight: 600;
-      margin-bottom: 5px;
+      align-items: baseline;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.005em;
+      margin-bottom: 6px;
       color: var(--ink);
     }
-    .req-tag { color: var(--danger); font-size: 11.5px; font-weight: 600; }
-    .opt-tag { color: var(--ink-muted); font-size: 11.5px; font-weight: normal; }
+    .req-tag { color: var(--danger); font-size: var(--text-meta); font-weight: 600; }
+    .opt-tag { color: var(--ink-muted); font-size: var(--text-meta); font-weight: 500; }
     input[type="text"], input[type="date"], input[type="email"], input[type="password"], textarea {
       width: 100%;
       font: inherit;
-      font-size: 13.5px;
+      font-size: var(--text-body);
+      line-height: 1.55;
       padding: 9px 11px;
       border: 1px solid #E2E5DC;
       border-radius: 10px;
@@ -532,7 +561,7 @@
       box-shadow: 0 0 0 3px rgba(221, 242, 161, 0.65);
     }
     textarea { resize: vertical; min-height: 68px; }
-    .form-hint { font-size: 11.5px; color: var(--ink-muted); margin-top: 4px; }
+    .form-hint { font-size: var(--text-meta); line-height: 1.45; color: var(--ink-muted); margin-top: 5px; }
     .auto-saved-hint {
       font-size: 12px;
       color: var(--success);
@@ -565,7 +594,8 @@
       transform: scale(1.01);
     }
     .preset-pill {
-      font-size: 11px;
+      font-size: 12px;
+      font-weight: 500;
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid #DCE0D4;
@@ -602,7 +632,7 @@
       flex: 1;
       text-align: center;
       padding: 6px 10px;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
       border-radius: 8px;
       background: transparent;
@@ -655,19 +685,20 @@
       box-shadow: 0 0 0 1px var(--ink);
     }
     .quick-style-card .qs-icon {
-      font-size: 19px;
-      margin-bottom: 3px;
+      font-size: 20px;
+      margin-bottom: 4px;
     }
     .quick-style-card .qs-title {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--ink);
       margin-bottom: 2px;
+      line-height: 1.3;
     }
     .quick-style-card .qs-tag {
-      font-size: 10.5px;
+      font-size: var(--text-meta);
       color: var(--ink-muted);
-      line-height: 1.35;
+      line-height: 1.4;
     }
 
     /* 🎨 自由客製工坊：提示詞積木 (Chips) */
@@ -680,7 +711,7 @@
       color: var(--ink);
       border: 1px solid #DCE0D4;
       border-radius: 999px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       user-select: none;
       cursor: pointer;
@@ -727,8 +758,9 @@
     }
     .per-image-tab-btn {
       padding: 4px 10px;
-      font-size: 10.5px;
+      font-size: var(--text-meta);
       font-weight: 600;
+      font-variant-numeric: tabular-nums;
       border-radius: 999px;
       border: 1px solid var(--line);
       background: #FFFFFF;
@@ -765,14 +797,14 @@
     .live-prompt-textarea {
       width: 100%;
       min-height: 76px;
-      font-size: 11.5px;
-      line-height: 1.5;
+      font-size: 12px;
+      line-height: 1.55;
       padding: 8px 10px;
       background: #FAFAF8;
       border: 1px solid #E2E5DC;
       border-radius: 8px;
       color: var(--ink);
-      font-family: inherit;
+      font-family: var(--font-sans);
       resize: vertical;
       box-sizing: border-box;
     }
@@ -795,7 +827,7 @@
     details.accordion-card summary {
       cursor: pointer;
       padding: 10px 12px;
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--ink);
       background: var(--surface);
@@ -901,11 +933,11 @@
     .color-swatch-dot {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      font-size: 10px;
+      gap: 4px;
+      font-size: var(--text-meta);
       background: var(--surface);
       border: 1px solid var(--line);
-      padding: 2px 7px;
+      padding: 2px 8px;
       border-radius: 999px;
       color: var(--ink);
       font-weight: 600;
@@ -933,7 +965,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 700;
       color: var(--ink);
     }
@@ -949,7 +981,7 @@
       align-items: center;
     }
     .thumb-empty {
-      font-size: 12px;
+      font-size: var(--text-ui);
       color: var(--ink-muted);
       width: 100%;
       text-align: center;
@@ -987,7 +1019,7 @@
       right: 0;
       background: rgba(24, 26, 23, 0.85);
       color: var(--sage);
-      font-size: 10px;
+      font-size: 11px;
       text-align: center;
       padding: 1px 0;
       font-weight: 700;
@@ -1040,7 +1072,7 @@
       gap: 8px;
     }
     .sub-section-title {
-      font-size: 12.5px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--ink);
       display: flex;
@@ -1055,7 +1087,7 @@
     .select-row-3 select, .download-row select, .ai-img-row select {
       width: 100%;
       font: inherit;
-      font-size: 12px;
+      font-size: var(--text-ui);
       padding: 6px 8px;
       border: 1px solid #E2E5DC;
       border-radius: 8px;
@@ -1120,7 +1152,7 @@
       justify-content: center !important;
       gap: 5px !important;
       padding: 7px 4px !important;
-      font-size: 12.5px !important;
+      font-size: 13px !important;
       font-weight: 600 !important;
       border-radius: 9px !important;
       background: transparent !important;
@@ -1172,7 +1204,8 @@
       gap: 10px;
     }
     .platform-info-box {
-      font-size: 12px;
+      font-size: var(--text-ui);
+      line-height: 1.5;
       background: var(--surface);
       border: 1px solid var(--line);
       padding: 9px 12px;
@@ -1191,9 +1224,10 @@
       min-height: 220px;
       border: 1px solid #E2E5DC;
       border-radius: 14px;
-      padding: 16px;
-      font-size: 14.5px;
-      line-height: 1.75;
+      padding: 16px 18px;
+      font-size: 15px;
+      line-height: 1.8;
+      letter-spacing: 0.01em;
       background: #FFFFFF;
       resize: none;
     }
@@ -1204,6 +1238,7 @@
       gap: 6px;
       flex-wrap: wrap;
       font-size: 13px;
+      font-variant-numeric: tabular-nums;
       color: var(--ink-muted);
     }
     .char-count.over {
@@ -1542,10 +1577,10 @@
       align-items: center;
     }
     .modal-header h3 {
-      font-size: 16px;
+      font-size: 16.5px;
       color: var(--ink);
       font-weight: 700;
-      letter-spacing: 0.2px;
+      letter-spacing: -0.015em;
     }
     .modal-close {
       width: 28px;
@@ -1583,11 +1618,11 @@
       border: 1px solid #473930;
       border-radius: 10px;
       font-size: 13px;
-      line-height: 1.6;
+      line-height: 1.65;
       white-space: pre-wrap;
       max-height: 380px;
       overflow-y: auto;
-      font-family: monospace;
+      font-family: var(--font-mono);
       user-select: all;
       box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
     }
@@ -1607,8 +1642,8 @@
       background: #fbfdfe;
       border-color: var(--main);
     }
-    .post-meta-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
-    .post-meta-time { font-size: 12px; color: var(--ink-muted); }
+    .post-meta-title { font-weight: 700; font-size: 14.5px; margin-bottom: 3px; }
+    .post-meta-time { font-size: var(--text-ui); font-variant-numeric: tabular-nums; color: var(--ink-muted); }
     .post-item-actions { display: flex; gap: 6px; }
 
     /* 行動端分頁切換列（桌機預設隱藏） */
@@ -1642,7 +1677,8 @@
         min-width: 0;
       }
       .brand-title h1 {
-        font-size: 14.5px;
+        font-size: 15.5px;
+        letter-spacing: -0.02em;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1664,7 +1700,7 @@
       }
       .top-auth-group button {
         padding: 4px 8px !important;
-        font-size: 11px !important;
+        font-size: 11.5px !important;
         border-radius: 16px !important;
       }
       .top-auth-email {
@@ -1687,7 +1723,7 @@
       .top-tools-group button {
         justify-content: center;
         padding: 5px 2px !important;
-        font-size: 11px !important;
+        font-size: 11.5px !important;
         border-radius: 8px !important;
         white-space: nowrap;
         min-width: 0;
@@ -1696,7 +1732,7 @@
       #saveCloudStatus {
         grid-column: 1 / -1;
         grid-row: 3;
-        font-size: 11px;
+        font-size: 11.5px;
         text-align: right;
       }
 
@@ -1715,7 +1751,7 @@
       .mobile-nav-btn {
         justify-content: center;
         padding: 7px 2px;
-        font-size: 12px;
+        font-size: 12.5px;
         font-weight: 600;
         border-radius: 10px;
         background: transparent;
@@ -1825,7 +1861,7 @@
         max-width: 95px;
       }
       .top-tools-group button {
-        font-size: 10.5px !important;
+        font-size: 11px !important;
         padding: 5px 1px !important;
       }
     }
@@ -1941,7 +1977,7 @@
             <div id="productPhotoDropZone" class="product-dropzone">
               <div style="font-size:22px; margin-bottom:2px;">📸</div>
               <div style="font-size:13px; font-weight:700; color:var(--main);">把手作產品照拖曳丟入這裡，或點此選取</div>
-              <div style="font-size:11px; color:var(--ink-muted); margin-top:2px;">支援手機拍照 JPG / PNG，可直接在下方一鍵美化背景與光影</div>
+              <div style="font-size:11.5px; color:var(--ink-muted); margin-top:2px;">支援手機拍照 JPG / PNG，可直接在下方一鍵美化背景與光影</div>
             </div>
 
             <!-- 縮圖列表（點一下選主圖、右上角 × 刪除） -->
@@ -1953,7 +1989,7 @@
             <div style="background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:9px 10px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; gap:4px;">
                 <span style="font-size:11.5px; font-weight:700; color:var(--ink); white-space:nowrap;">📐 三平台比例適配</span>
-                <span style="font-size:10.5px; color:var(--ink-muted); white-space:nowrap;">FB/LINE 1:1・IG 4:5・輪播同步</span>
+                <span style="font-size:11.5px; color:var(--ink-muted); white-space:nowrap;">FB/LINE 1:1・IG 4:5・輪播同步</span>
               </div>
               <select id="overlayFitSelect" style="width:100%; font-size:12px; padding:6px 8px; border:1px solid #E2E5DC; border-radius:8px; background:#FFFFFF; color:var(--ink); font-weight:600;">
                 <option value="contain_blur" selected>✨ 完整不裁切・柔焦光影延伸底（推薦預設・作品100%完整不卡邊）</option>
@@ -1979,7 +2015,7 @@
                     <input type="checkbox" id="chkUseMainImgRef" checked>
                     <span style="font-weight:600;">鎖定主圖作品外觀（保留毛線紋理、換背景光影）</span>
                   </label>
-                  <span id="beautifyRefBadge" style="font-size:10px; padding:2px 8px; border-radius:999px; background:#EFF2EA; color:var(--ink); font-weight:600; white-space:nowrap;">
+                  <span id="beautifyRefBadge" style="font-size:11.5px; padding:2px 8px; border-radius:999px; background:#EFF2EA; color:var(--ink); font-weight:600; white-space:nowrap;">
                     📸 待載入照片
                   </span>
                 </div>
@@ -1996,9 +2032,9 @@
                     <!-- JS 動態生成 4 大熱門精選卡片 -->
                   </div>
                   <!-- 快速模式可選擇更多風格的輕量下拉選單 -->
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11px; background:#fff; border:1px solid var(--line); border-radius:6px; padding:5px 8px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; background:#fff; border:1px solid var(--line); border-radius:6px; padding:5px 8px;">
                     <span style="color:var(--main); font-weight:600;">更多精選風格場景：</span>
-                    <select id="quickExtraStyleSelect" style="width:170px; font-size:11px; padding:3px 6px; border-color:#d8c4ae; background:#fdfbf7; border-radius:4px; color:var(--ink);">
+                    <select id="quickExtraStyleSelect" style="width:170px; font-size:12px; padding:3px 6px; border-color:#d8c4ae; background:#fdfbf7; border-radius:4px; color:var(--ink);">
                       <!-- JS 動態填入其餘風格選項 -->
                     </select>
                   </div>
@@ -2011,11 +2047,11 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:4px;">
                       <div style="font-size:11.5px; font-weight:700; color:var(--main); display:flex; align-items:center; gap:4px;">
                         <span>🎨 選擇佈景風格</span>
-                        <span id="beautifyStyleCountHint" style="font-size:10.5px; font-weight:normal; color:var(--ink-muted);">（可複選 1~5 種依序出圖）</span>
+                        <span id="beautifyStyleCountHint" style="font-size:11.5px; font-weight:normal; color:var(--ink-muted);">（可複選 1~5 種依序出圖）</span>
                       </div>
                       <div style="display:flex; gap:4px;">
-                        <button type="button" class="btn-light" id="btnRandomBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="依出圖張數隨機挑選不同的風格組合">🎲 智慧挑選</button>
-                        <button type="button" class="btn-light" id="btnResetBeautifyStyles" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px;" title="重設為預設第 1 種風格">↺ 重設</button>
+                        <button type="button" class="btn-light" id="btnRandomBeautifyStyles" style="padding:2px 6px; font-size:11.5px; border:1px solid var(--line); border-radius:4px;" title="依出圖張數隨機挑選不同的風格組合">🎲 智慧挑選</button>
+                        <button type="button" class="btn-light" id="btnResetBeautifyStyles" style="padding:2px 6px; font-size:11.5px; border:1px solid var(--line); border-radius:4px;" title="重設為預設第 1 種風格">↺ 重設</button>
                       </div>
                     </div>
                     <div class="beautify-preset-pills" id="beautifyStylePills" style="display:flex; flex-wrap:wrap; gap:5px;">
@@ -2026,7 +2062,7 @@
                   <!-- 2. 光線角度 ＆ 拍攝鏡頭視角（雙欄控制） -->
                   <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
                     <div style="background:#FFFFFF; border:1px solid var(--line); border-radius:10px; padding:7px;">
-                      <div style="font-size:11px; font-weight:700; color:var(--ink); margin-bottom:4px;">☀️ 光線角度與氛圍</div>
+                      <div style="font-size:12px; font-weight:700; color:var(--ink); margin-bottom:4px;">☀️ 光線角度與氛圍</div>
                       <select id="beautifyLightSelect" style="width:100%; font-size:11.5px; padding:5px 6px; border:1px solid #E2E5DC; border-radius:6px; background:#FAFAF8; color:var(--ink); font-weight:500;">
                         <option value="auto" selected>✨ 依風格智慧配置（推薦）</option>
                         <option value="side_45">🌤️ 45° 側向自然窗光（立體針目）</option>
@@ -2036,7 +2072,7 @@
                       </select>
                     </div>
                     <div style="background:#FFFFFF; border:1px solid var(--line); border-radius:10px; padding:7px;">
-                      <div style="font-size:11px; font-weight:700; color:var(--ink); margin-bottom:4px;">🎥 鏡頭拍攝視角</div>
+                      <div style="font-size:12px; font-weight:700; color:var(--ink); margin-bottom:4px;">🎥 鏡頭拍攝視角</div>
                       <select id="beautifyAngleSelect" style="width:100%; font-size:11.5px; padding:5px 6px; border:1px solid #E2E5DC; border-radius:6px; background:#FAFAF8; color:var(--ink); font-weight:500;">
                         <option value="multi_auto" selected>🔄 5 種視角自動輪播（正面+俯拍+微距）</option>
                         <option value="front_hero">🎯 正面平視主角特寫</option>
@@ -2050,7 +2086,7 @@
                   <!-- 3. 點綴道具積木 Chips ＋ 自訂標籤 -->
                   <div style="background:#FFFFFF; border:1px solid var(--line); border-radius:10px; padding:8px; margin-bottom:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                      <span style="font-size:11px; font-weight:700; color:var(--ink);">🌿 桌面道具點綴（點選加入／刪除）：</span>
+                      <span style="font-size:12px; font-weight:700; color:var(--ink);">🌿 桌面道具點綴（點選加入／刪除）：</span>
                     </div>
                     <div id="beautifyPropsList" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
                       <!-- JS 動態生成道具 Chips，支援 × 刪除 -->
@@ -2058,7 +2094,7 @@
                     <!-- 自由自訂標籤輸入列 -->
                     <div style="display:flex; gap:4px; margin-bottom:6px;">
                       <input type="text" id="beautifyCustomPropInput" placeholder="＋ 輸入自訂道具或場景標籤（按 Enter 新增）..." style="flex:1; font-size:11.5px; padding:5px 8px; border:1px solid #E2E5DC; border-radius:8px; background:#FAFAF8;">
-                      <button type="button" class="btn-light" id="btnAddCustomProp" style="padding:4px 10px; font-size:11px; font-weight:600; white-space:nowrap; border:1px solid var(--line); border-radius:8px;">＋ 加入標籤</button>
+                      <button type="button" class="btn-light" id="btnAddCustomProp" style="padding:4px 10px; font-size:12px; font-weight:600; white-space:nowrap; border:1px solid var(--line); border-radius:8px;">＋ 加入標籤</button>
                     </div>
                     <div>
                       <input type="text" id="beautifyCustomNote" placeholder="選填補充指示（例：木桌偏淺白橡木色、右上方多留白）..." style="width:100%; font-size:11.5px; padding:5px 8px; border:1px solid #E2E5DC; border-radius:8px; background:#FAFAF8;">
@@ -2068,8 +2104,8 @@
                   <!-- 4. 多張輪播分張微調頁籤 (Per-Image Tab) -->
                   <div id="beautifyPerImageSection" style="margin-bottom:8px; display:none;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                      <span style="font-size:11px; font-weight:700; color:#7c5a43;">📋 各張出圖排程微調：</span>
-                      <button type="button" class="btn-light" id="btnSyncPromptToAll" style="font-size:10px; padding:1px 6px; border:1px solid #d8c4ae; border-radius:3px;" title="將目前張數的提示詞同步至所有張數">⚡ 同步至全部張數</button>
+                      <span style="font-size:12px; font-weight:700; color:#7c5a43;">📋 各張出圖排程微調：</span>
+                      <button type="button" class="btn-light" id="btnSyncPromptToAll" style="font-size:11.5px; padding:1px 6px; border:1px solid #d8c4ae; border-radius:3px;" title="將目前張數的提示詞同步至所有張數">⚡ 同步至全部張數</button>
                     </div>
                     <div class="per-image-tabs-bar" id="perImageTabsBar">
                       <!-- JS 動態生成 [第 1 張] [第 2 張]... -->
@@ -2081,15 +2117,15 @@
                     <div class="live-prompt-header">
                       <div style="display:flex; align-items:center; gap:5px;">
                         <span style="font-size:11.5px; font-weight:700; color:var(--main);">💡 AI 提示詞工作區</span>
-                        <span id="promptEditStatusBadge" style="font-size:9.5px; padding:1px 5px; border-radius:3px; background:#f4ede4; color:#7c5a43; font-weight:600;">🔄 標籤連動中</span>
+                        <span id="promptEditStatusBadge" style="font-size:11.5px; padding:1px 5px; border-radius:3px; background:#f4ede4; color:#7c5a43; font-weight:600;">🔄 標籤連動中</span>
                       </div>
                       <div style="display:flex; gap:3px;">
-                        <button type="button" class="btn-light" id="btnRebuildPromptFromTags" style="font-size:10px; padding:2px 5px; border:1px solid #d8c4ae; border-radius:3px;" title="依上方標籤重新組裝提示詞">↺ 重整標籤詞</button>
-                        <button type="button" class="btn-light" id="btnSaveCustomStylePreset" style="font-size:10px; padding:2px 5px; border:1px solid #d8c4ae; border-radius:3px;" title="儲存為個人常用風格">⭐ 存為我的風格</button>
+                        <button type="button" class="btn-light" id="btnRebuildPromptFromTags" style="font-size:11.5px; padding:2px 5px; border:1px solid #d8c4ae; border-radius:3px;" title="依上方標籤重新組裝提示詞">↺ 重整標籤詞</button>
+                        <button type="button" class="btn-light" id="btnSaveCustomStylePreset" style="font-size:11.5px; padding:2px 5px; border:1px solid #d8c4ae; border-radius:3px;" title="儲存為個人常用風格">⭐ 存為我的風格</button>
                       </div>
                     </div>
                     <textarea id="imagePromptInput" class="live-prompt-textarea" placeholder="點選標籤自動生成提示詞，您亦可在此隨意增減、修改任何字句..."></textarea>
-                    <div style="font-size:10px; color:var(--ink-muted); margin-top:3px; display:flex; justify-content:space-between;">
+                    <div style="font-size:11.5px; color:var(--ink-muted); margin-top:3px; display:flex; justify-content:space-between;">
                       <span>已自動嵌入針織保護與安全區規範</span>
                       <span id="promptCharCount">0 字</span>
                     </div>
@@ -2097,7 +2133,7 @@
                 </div>
 
                 <!-- 4. 即時排程預覽列（清楚交代 1~5 張分別拍什麼風格與角度） -->
-                <div id="beautifyScheduleBar" style="font-size:11px; color:var(--ink-muted); background:#FFFFFF; border:1px solid var(--line); border-radius:10px; padding:7px 10px; margin-bottom:8px; line-height:1.5;">
+                <div id="beautifyScheduleBar" style="font-size:11.5px; color:var(--ink-muted); background:#FFFFFF; border:1px solid var(--line); border-radius:10px; padding:7px 10px; margin-bottom:8px; line-height:1.5;">
                   <!-- JS 動態即時呈現：第 1 張：🌿 日系窗光・正面 ➔ 第 2 張：☕ 職人桌・45°俯拍... -->
                 </div>
 
@@ -2124,18 +2160,18 @@
                   <div class="yarn-slot-card" id="yarnColorSlot">
                     <div class="yarn-slot-header" style="gap:4px;">
                       <span style="font-weight:700; color:var(--main); font-size:11.5px; white-space:nowrap;">🧶 1. 毛線色 (1~3張)</span>
-                      <button type="button" class="btn-light" id="btnUploadYarnColor" style="padding:2px 6px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; flex-shrink:0; gap:2px;">＋ 選照</button>
+                      <button type="button" class="btn-light" id="btnUploadYarnColor" style="padding:2px 6px; font-size:11.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; flex-shrink:0; gap:2px;">＋ 選照</button>
                       <input type="file" id="yarnColorFileInput" accept="image/*" multiple style="display:none;">
                     </div>
                     <div class="yarn-drop-area" id="yarnColorDropZone" title="點擊或拖曳毛線球照丟入這裡">
-                      <div id="yarnColorEmptyPrompt" style="font-size:11px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
-                        📸 點此或拖曳毛線照<br><span style="font-size:10px; color:#8c5e3c;">（自動辨識色號與纖維）</span>
+                      <div id="yarnColorEmptyPrompt" style="font-size:11.5px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
+                        📸 點此或拖曳毛線照<br><span style="font-size:11.5px; color:#8c5e3c;">（自動辨識色號與纖維）</span>
                       </div>
                       <div id="yarnColorThumbList" class="yarn-thumb-list"></div>
                     </div>
                     <!-- 自動取色色票條 -->
                     <div id="yarnColorSwatches" class="yarn-swatches-bar">
-                      <span style="font-size:10.5px; color:var(--ink-muted);">尚未上傳毛線照</span>
+                      <span style="font-size:11.5px; color:var(--ink-muted);">尚未上傳毛線照</span>
                     </div>
                   </div>
 
@@ -2144,21 +2180,21 @@
                     <div class="yarn-slot-header" style="gap:4px;">
                       <span style="font-weight:700; color:var(--main); font-size:11.5px; white-space:nowrap;">👜 2. 款式圖 (1張)</span>
                       <div style="display:flex; gap:3px; flex-shrink:0;">
-                        <button type="button" class="btn-light" id="btnUseCurrentMainForPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;" title="直接引用上方圖庫的主圖作品">📥 主圖</button>
-                        <button type="button" class="btn-light" id="btnUploadYarnPattern" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;">＋ 選照</button>
+                        <button type="button" class="btn-light" id="btnUseCurrentMainForPattern" style="padding:2px 5px; font-size:11.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;" title="直接引用上方圖庫的主圖作品">📥 主圖</button>
+                        <button type="button" class="btn-light" id="btnUploadYarnPattern" style="padding:2px 5px; font-size:11.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;">＋ 選照</button>
                         <input type="file" id="yarnPatternFileInput" accept="image/*" style="display:none;">
                       </div>
                     </div>
                     <div class="yarn-drop-area" id="yarnPatternDropZone" title="點擊或拖曳目標作品款式照丟入這裡">
-                      <div id="yarnPatternEmptyPrompt" style="font-size:11px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
-                        📸 點此或拖曳款式照<br><span style="font-size:10px; color:#8c5e3c;">（鎖定外型針目換顏色）</span>
+                      <div id="yarnPatternEmptyPrompt" style="font-size:11.5px; color:var(--ink-muted); text-align:center; padding:10px 4px;">
+                        📸 點此或拖曳款式照<br><span style="font-size:11.5px; color:#8c5e3c;">（鎖定外型針目換顏色）</span>
                       </div>
                       <div id="yarnPatternThumbBox" style="display:none; position:relative; width:100%; height:80px; border-radius:6px; overflow:hidden;">
                         <img id="yarnPatternThumbImg" src="" style="width:100%; height:100%; object-fit:contain; background:#f4ede4;">
                         <button type="button" id="btnRemoveYarnPattern" class="thumb-del-btn" title="移除這張款式圖">×</button>
                       </div>
                     </div>
-                    <div id="yarnPatternNotice" style="font-size:10px; color:var(--ink-muted); margin-top:3px; text-align:right;">
+                    <div id="yarnPatternNotice" style="font-size:11.5px; color:var(--ink-muted); margin-top:3px; text-align:right;">
                       鎖定針目結構與造型比例
                     </div>
                   </div>
@@ -2167,7 +2203,7 @@
                 <!-- 配色部位指示與選填微調 -->
                 <div style="margin-top:8px; background:#FFFFFF; border:1px solid var(--line); border-radius:12px; padding:8px;">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                    <span style="font-size:11px; font-weight:700; color:var(--ink);">🎯 配色部位配置：</span>
+                    <span style="font-size:12px; font-weight:700; color:var(--ink);">🎯 配色部位配置：</span>
                   </div>
                   <div class="yarn-role-pills" id="yarnRolePills" style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:6px;">
                     <button type="button" class="preset-pill active" data-role="auto">✨ 智慧主副配色</button>
@@ -2200,35 +2236,35 @@
                   <div class="yarn-slot-header" style="gap:4px;">
                     <span style="font-weight:700; color:var(--main); font-size:11.5px; white-space:nowrap;">🧸 1. 手燈／娃娃／原物照 (1張)</span>
                     <div style="display:flex; gap:3px; flex-shrink:0;">
-                      <button type="button" class="btn-light" id="btnUseCurrentMainForCraft" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;" title="直接引用上方圖庫的主圖照片">📥 引用主圖</button>
-                      <button type="button" class="btn-light" id="btnUploadCraftImage" style="padding:2px 5px; font-size:10.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;">＋ 選照</button>
+                      <button type="button" class="btn-light" id="btnUseCurrentMainForCraft" style="padding:2px 5px; font-size:11.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;" title="直接引用上方圖庫的主圖照片">📥 引用主圖</button>
+                      <button type="button" class="btn-light" id="btnUploadCraftImage" style="padding:2px 5px; font-size:11.5px; border:1px solid var(--line); border-radius:4px; white-space:nowrap; gap:2px;">＋ 選照</button>
                       <input type="file" id="craftFileInput" accept="image/*" style="display:none;">
                     </div>
                   </div>
                   <div class="yarn-drop-area" id="craftDropZone" style="min-height:85px;" title="點擊或拖曳手燈/娃娃/公仔照丟入這裡">
-                    <div id="craftEmptyPrompt" style="font-size:11px; color:var(--ink-muted); text-align:center; padding:12px 4px;">
-                      📸 點此或拖曳「手燈」或「娃娃/公仔」照片丟入<br><span style="font-size:10px; color:#8c5e3c;">（AI 將辨識其外觀輪廓、發光球體/身體比例與代表色）</span>
+                    <div id="craftEmptyPrompt" style="font-size:11.5px; color:var(--ink-muted); text-align:center; padding:12px 4px;">
+                      📸 點此或拖曳「手燈」或「娃娃/公仔」照片丟入<br><span style="font-size:11.5px; color:#8c5e3c;">（AI 將辨識其外觀輪廓、發光球體/身體比例與代表色）</span>
                     </div>
                     <div id="craftThumbBox" style="display:none; position:relative; width:100%; height:90px; border-radius:6px; overflow:hidden;">
                       <img id="craftThumbImg" src="" style="width:100%; height:100%; object-fit:contain; background:#f4ede4;">
                       <button type="button" id="btnRemoveCraftImage" class="thumb-del-btn" title="移除這張照片">×</button>
                     </div>
                   </div>
-                  <div style="font-size:10px; color:var(--ink-muted); margin-top:3px; text-align:right;">
+                  <div style="font-size:11.5px; color:var(--ink-muted); margin-top:3px; text-align:right;">
                     支援各偶像團體應援手燈、動漫公仔、毛絨娃娃或寵物照
                   </div>
                 </div>
 
                 <!-- 2. 改造目標模式選鈕 -->
                 <div style="background:#FFFFFF; border:1px solid var(--line); border-radius:12px; padding:8px; margin-bottom:8px;">
-                  <div style="font-size:11px; font-weight:700; color:var(--ink); margin-bottom:4px;">🎯 改造與設計目標：</div>
+                  <div style="font-size:12px; font-weight:700; color:var(--ink); margin-bottom:4px;">🎯 改造與設計目標：</div>
                   <div class="craft-goal-pills" id="craftGoalPills" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
                     <button type="button" class="preset-pill active" data-goal="lightstick_cover">🔦 手燈毛線頭套／裝飾</button>
                     <button type="button" class="preset-pill" data-goal="doll_amigurumi">🧶 立體鉤針娃娃化 (Amigurumi)</button>
                     <button type="button" class="preset-pill" data-goal="doll_outfit">👗 娃娃穿搭／毛線配件</button>
                     <button type="button" class="preset-pill" data-goal="lightstick_bag">👜 手燈專屬針織保護提袋</button>
                   </div>
-                  <div style="font-size:11px; font-weight:700; color:var(--ink); margin-bottom:4px;">✨ 造型元素（可複選）：</div>
+                  <div style="font-size:12px; font-weight:700; color:var(--ink); margin-bottom:4px;">✨ 造型元素（可複選）：</div>
                   <div class="craft-elem-pills" id="craftElemPills" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px;">
                     <button type="button" class="preset-pill active" data-elem="ears">🐻 熊耳／兔耳動物造型</button>
                     <button type="button" class="preset-pill active" data-elem="puff_flowers">🌸 經典立體泡芙花</button>
@@ -2261,7 +2297,7 @@
                     <div style="font-size:12px; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:4px;">
                       <span>📋 職人鉤針製作建議書</span>
                     </div>
-                    <button type="button" class="btn-light" id="btnCopyCraftAdvice" style="padding:2px 8px; font-size:11px; border:1px solid var(--line); border-radius:999px;" title="複製建議文字至剪貼簿">📋 複製建議</button>
+                    <button type="button" class="btn-light" id="btnCopyCraftAdvice" style="padding:2px 8px; font-size:12px; border:1px solid var(--line); border-radius:999px;" title="複製建議文字至剪貼簿">📋 複製建議</button>
                   </div>
                   <div id="craftAdviceContent" style="font-size:11.5px; color:var(--ink); line-height:1.6; white-space:pre-wrap; max-height:220px; overflow-y:auto;">
                     <!-- JS 動態填入 AI 製作建議 -->
@@ -2274,7 +2310,7 @@
             <details class="accordion-card" id="overlayAccordion">
               <summary>
                 <span>✏️ 圖上加字（Canvas 即時疊字）</span>
-                <span style="font-size:10.5px; font-weight:normal; color:var(--ink-muted); margin-right:6px;">右方手機同步預覽</span>
+                <span style="font-size:11.5px; font-weight:normal; color:var(--ink-muted); margin-right:6px;">右方手機同步預覽</span>
               </summary>
               <div class="accordion-content">
                 <div>
@@ -2282,7 +2318,7 @@
                 </div>
                 <div class="select-row-3" style="margin-top:6px;">
                   <div>
-                    <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">位置</div>
+                    <div style="font-size:11.5px; color:var(--ink-muted); margin-bottom:2px;">位置</div>
                     <select id="overlayPosSelect">
                       <option value="top">上</option>
                       <option value="middle">中</option>
@@ -2290,7 +2326,7 @@
                     </select>
                   </div>
                   <div>
-                    <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">大小</div>
+                    <div style="font-size:11.5px; color:var(--ink-muted); margin-bottom:2px;">大小</div>
                     <select id="overlaySizeSelect">
                       <option value="small">小</option>
                       <option value="medium">中</option>
@@ -2298,7 +2334,7 @@
                     </select>
                   </div>
                   <div>
-                    <div style="font-size:11px; color:var(--ink-muted); margin-bottom:2px;">樣式</div>
+                    <div style="font-size:11.5px; color:var(--ink-muted); margin-bottom:2px;">樣式</div>
                     <select id="overlayStyleSelect">
                       <option value="white_box" selected>白底主色字</option>
                       <option value="black_box">黑底白字</option>
@@ -2322,20 +2358,20 @@
                       ✏️ 尚未加字
                     </span>
                     <div style="display:flex; gap:5px; align-items:center;">
-                      <span id="formPreviewBadge" style="font-size:10.5px; padding:2px 8px; border-radius:999px; background:var(--sage); color:var(--sage-ink); font-weight:700;">
+                      <span id="formPreviewBadge" style="font-size:11.5px; padding:2px 8px; border-radius:999px; background:var(--sage); color:var(--sage-ink); font-weight:700;">
                         FB (1:1)
                       </span>
-                      <button type="button" id="btnZoomFormPreview" class="btn-light" style="padding:2px 8px; font-size:11px; border:1px solid var(--line); border-radius:999px;" title="放大查看大圖">
+                      <button type="button" id="btnZoomFormPreview" class="btn-light" style="padding:2px 8px; font-size:12px; border:1px solid var(--line); border-radius:999px;" title="放大查看大圖">
                         🔍 放大
                       </button>
-                      <button type="button" id="btnDownloadFromFormPreview" class="btn-light" style="padding:2px 8px; font-size:11px; border:1px solid var(--line); border-radius:999px; font-weight:600; display:none;">
+                      <button type="button" id="btnDownloadFromFormPreview" class="btn-light" style="padding:2px 8px; font-size:12px; border:1px solid var(--line); border-radius:999px; font-weight:600; display:none;">
                         ⬇
                       </button>
                     </div>
                   </div>
                   <div id="formPreviewContainer" style="position:relative; width:100%; border-radius:10px; overflow:hidden; background:#FFFFFF; display:flex; align-items:center; justify-content:center; min-height:80px; border:1px solid var(--line); cursor:pointer;" title="點擊放大查看">
                     <img id="formPreviewImg" src="" alt="預覽圖" style="display:none; width:100%; height:auto; max-height:160px; object-fit:contain;">
-                    <div id="formPreviewEmpty" style="padding:10px; text-align:center; color:var(--ink-muted); font-size:11px; line-height:1.4;">
+                    <div id="formPreviewEmpty" style="padding:10px; text-align:center; color:var(--ink-muted); font-size:11.5px; line-height:1.4;">
                       🖼️ 選擇照片或輸入壓字後，可點此放大檢視（右方手機預覽亦同步顯示）
                     </div>
                   </div>
@@ -2365,10 +2401,10 @@
           <div style="display:flex; justify-content:space-between; align-items:center;" id="aiAskMeHeader">
             <div style="display:flex; align-items:center; gap:6px; font-weight:700; color:#c2410c; cursor:pointer;" id="aiAskMeTitleGroup">
               <span>❓ AI 想向你確認</span>
-              <span id="aiAskMeBadge" style="font-size:10.5px; background:#ffedd5; color:#c2410c; padding:1px 6px; border-radius:10px; font-weight:600;">待確認細節</span>
+              <span id="aiAskMeBadge" style="font-size:11.5px; background:#ffedd5; color:#c2410c; padding:1px 6px; border-radius:10px; font-weight:600;">待確認細節</span>
             </div>
             <div style="display:flex; gap:6px; align-items:center;">
-              <button type="button" id="btnToggleAskMe" style="background:#ffedd5; border:1px solid #fed7aa; color:#c2410c; font-size:11px; cursor:pointer; font-weight:600; padding:2px 7px; border-radius:4px;" title="收折此區塊">▲ 收折</button>
+              <button type="button" id="btnToggleAskMe" style="background:#ffedd5; border:1px solid #fed7aa; color:#c2410c; font-size:12px; cursor:pointer; font-weight:600; padding:2px 7px; border-radius:4px;" title="收折此區塊">▲ 收折</button>
               <button type="button" id="btnCloseAskMe" style="background:transparent; border:none; color:#9ca3af; font-size:16px; cursor:pointer; font-weight:bold; line-height:1; padding:0 3px;" title="已閱讀，關閉此提示">×</button>
             </div>
           </div>
@@ -2376,8 +2412,8 @@
             <!-- JS 動態填入問題清單 -->
           </div>
           <div id="aiAskMeFooter" style="margin-top:8px; display:flex; justify-content:flex-end; gap:8px;">
-            <button type="button" id="btnCloseAskMeText" class="btn-light" style="padding:3px 8px; font-size:11px; border:1px solid #fed7aa; color:#9a3412; border-radius:4px;" title="確認完畢，關閉提示">✓ 知道了</button>
-            <button type="button" id="btnReplyInAssistant" style="background:#ea580c; color:#ffffff; border:none; border-radius:4px; padding:3px 9px; font-size:11px; font-weight:600; cursor:pointer;" title="跳到中間欄 AI 小幫手進行修改">💬 去 AI 小幫手修改</button>
+            <button type="button" id="btnCloseAskMeText" class="btn-light" style="padding:3px 8px; font-size:12px; border:1px solid #fed7aa; color:#9a3412; border-radius:4px;" title="確認完畢，關閉提示">✓ 知道了</button>
+            <button type="button" id="btnReplyInAssistant" style="background:#ea580c; color:#ffffff; border:none; border-radius:4px; padding:3px 9px; font-size:12px; font-weight:600; cursor:pointer;" title="跳到中間欄 AI 小幫手進行修改">💬 去 AI 小幫手修改</button>
           </div>
         </div>
 
@@ -2396,10 +2432,10 @@
             ③ ✍️ 三平台文案
           </span>
           <div style="display:flex; align-items:center; gap:6px;">
-            <button type="button" id="btnResetColWidths" class="btn-light" style="display:none; padding:2px 8px; font-size:10.5px; border:1px solid var(--line); border-radius:999px; color:var(--ink);" title="將三欄版面寬度恢復為 1/3 均等比例">
+            <button type="button" id="btnResetColWidths" class="btn-light" style="display:none; padding:2px 8px; font-size:11.5px; border:1px solid var(--line); border-radius:999px; color:var(--ink);" title="將三欄版面寬度恢復為 1/3 均等比例">
               ⚖️ 恢復三等分
             </button>
-            <span style="font-size:11px; color:var(--ink-muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600;">
+            <span style="font-size:11.5px; color:var(--ink-muted); background:var(--surface); border:1px solid var(--line); padding:2px 9px; border-radius:999px; font-weight:600;">
               三平台獨立排版
             </span>
           </div>
@@ -2441,10 +2477,10 @@
               <span style="font-size:11.5px; font-weight:normal; color:var(--ink-muted);">（對話微調當前貼文）</span>
             </div>
             <div style="display:flex; gap:6px; align-items:center;">
-              <button id="btnClearAssistantChat" class="btn-light" style="padding:2px 6px; font-size:11px; border:1px solid var(--line); display:none;" title="清除此平台對話紀錄">
+              <button id="btnClearAssistantChat" class="btn-light" style="padding:2px 6px; font-size:12px; border:1px solid var(--line); display:none;" title="清除此平台對話紀錄">
                 🗑 清除對話
               </button>
-              <button type="button" id="btnToggleAssistantBody" class="btn-light" style="padding:2px 7px; font-size:11px; border:1px solid var(--line); border-radius:6px;">
+              <button type="button" id="btnToggleAssistantBody" class="btn-light" style="padding:2px 7px; font-size:12px; border:1px solid var(--line); border-radius:6px;">
                 ▲ 收合
               </button>
             </div>
@@ -2493,17 +2529,17 @@
       <div class="col-header" style="padding:12px 16px; gap:6px;">
         <h2 style="font-size:14px; white-space:nowrap;">④ 📱 手機預覽</h2>
         <div style="display:flex; gap:5px; align-items:center; flex-wrap:nowrap;">
-          <button class="btn-light" id="btnDownloadCurrentImg" style="padding:4px 9px; font-size:11px; border:1px solid var(--line); border-radius:999px; white-space:nowrap;" title="下載當前輪播照片發布到社群">
+          <button class="btn-light" id="btnDownloadCurrentImg" style="padding:4px 9px; font-size:12px; border:1px solid var(--line); border-radius:999px; white-space:nowrap;" title="下載當前輪播照片發布到社群">
             📥 存圖
           </button>
-          <button class="btn-light" id="btnToggleAutoSlide" style="padding:4px 9px; font-size:11px; border:1px solid var(--line); border-radius:999px; white-space:nowrap;" title="切換自動輪播">
+          <button class="btn-light" id="btnToggleAutoSlide" style="padding:4px 9px; font-size:12px; border:1px solid var(--line); border-radius:999px; white-space:nowrap;" title="切換自動輪播">
             ▶ 輪播: 關
           </button>
-          <button class="btn-light" id="btnUploadImageTrigger" style="padding:4px 9px; font-size:11px; border:1px solid var(--line); border-radius:999px; white-space:nowrap;" title="上傳自己的手作毛線作品照片">
+          <button class="btn-light" id="btnUploadImageTrigger" style="padding:4px 9px; font-size:12px; border:1px solid var(--line); border-radius:999px; white-space:nowrap;" title="上傳自己的手作毛線作品照片">
             📷 換圖
           </button>
           <input type="file" id="customImageInput" accept="image/*" multiple style="display:none;">
-          <span id="previewPlatformLabel" style="font-size:11px; color:var(--sage-ink); font-weight:700; background:var(--sage); padding:3px 9px; border-radius:999px; white-space:nowrap;">FB</span>
+          <span id="previewPlatformLabel" style="font-size:12px; color:var(--sage-ink); font-weight:700; background:var(--sage); padding:3px 9px; border-radius:999px; white-space:nowrap;">FB</span>
         </div>
       </div>
       <div class="col-body" style="display:flex; align-items:center; justify-content:center; background:#F2F4EE; padding:14px;">
@@ -2573,7 +2609,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">OpenRouter 金鑰：</label>
-            <input type="password" id="settingApiKey" placeholder="sk-or-v1-..." style="font-size:13px; font-family:monospace;">
+            <input type="password" id="settingApiKey" placeholder="sk-or-v1-..." style="font-size:13px; font-family:var(--font-mono);">
             <div class="form-hint">金鑰僅存於瀏覽器 localStorage，絕對不會寫進 index.html。</div>
           </div>
           <div class="form-group">
@@ -2618,7 +2654,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Gemini 金鑰：</label>
-            <input type="password" id="settingGeminiApiKey" placeholder="AIzaSy..." style="font-size:13px; font-family:monospace;">
+            <input type="password" id="settingGeminiApiKey" placeholder="AIzaSy..." style="font-size:13px; font-family:var(--font-mono);">
             <div class="form-hint">金鑰僅存於瀏覽器 localStorage，絕對不會寫進 index.html。</div>
           </div>
           <div class="form-group">
@@ -3777,11 +3813,11 @@
           contain_blur: "柔焦不裁切",
           contain_frame: "燕麥框不裁切"
         };
-        const fitTag = `<span style="background:#f3eae0; color:#6b4423; padding:1px 6px; border-radius:4px; font-size:10.5px; font-weight:700; margin-right:4px;">📐 ${fitLabels[overlayConfig.fit] || "滿版置中"}</span>`;
+        const fitTag = `<span style="background:#f3eae0; color:#6b4423; padding:1px 6px; border-radius:4px; font-size:11.5px; font-weight:700; margin-right:4px;">📐 ${fitLabels[overlayConfig.fit] || "滿版置中"}</span>`;
         if (txt) {
           const posMap = { top: "上方", middle: "置中", bottom: "下方" };
           const sizeMap = { small: "小字", medium: "中字", large: "大字" };
-          statusEl.innerHTML = `${fitTag}<span style="color:var(--success); font-weight:600;">✏️ 已加字：</span><b>「${escapeHtml(txt)}」</b> <span style="font-size:10.5px; color:var(--ink-muted);">(${posMap[overlayConfig.pos] || "下"} / ${sizeMap[overlayConfig.size] || "大"})</span>`;
+          statusEl.innerHTML = `${fitTag}<span style="color:var(--success); font-weight:600;">✏️ 已加字：</span><b>「${escapeHtml(txt)}」</b> <span style="font-size:11.5px; color:var(--ink-muted);">(${posMap[overlayConfig.pos] || "下"} / ${sizeMap[overlayConfig.size] || "大"})</span>`;
         } else {
           statusEl.innerHTML = `${fitTag}<span style="color:var(--ink-muted);">✏️ 尚未加字（可選比例適配或輸入文字即時壓字）</span>`;
         }
@@ -6086,7 +6122,7 @@
         if (emptyPrompt) emptyPrompt.style.display = "block";
         if (thumbList) thumbList.innerHTML = "";
         if (swatchesBar) {
-          swatchesBar.innerHTML = `<span style="font-size:10.5px; color:var(--ink-muted);">尚未上傳毛線照</span>`;
+          swatchesBar.innerHTML = `<span style="font-size:11.5px; color:var(--ink-muted);">尚未上傳毛線照</span>`;
         }
         return;
       }
@@ -6124,9 +6160,9 @@
           });
         });
         if (dots.length > 0) {
-          swatchesBar.innerHTML = `<span style="font-size:10px; color:var(--ink-muted); margin-right:2px;">🎨 判讀顏色：</span>` + dots.join("");
+          swatchesBar.innerHTML = `<span style="font-size:11.5px; color:var(--ink-muted); margin-right:2px;">🎨 判讀顏色：</span>` + dots.join("");
         } else {
-          swatchesBar.innerHTML = `<span style="font-size:10.5px; color:var(--ink-muted);">毛線分析中…</span>`;
+          swatchesBar.innerHTML = `<span style="font-size:11.5px; color:var(--ink-muted);">毛線分析中…</span>`;
         }
       }
     }
@@ -7256,14 +7292,14 @@ ${angleText}。
         if (item.role === "user") {
           return `
             <div style="align-self:flex-end; max-width:85%; background:#faf3eb; color:#4a3222; padding:5px 9px; border-radius:8px 8px 2px 8px; border:1px solid #e3d2c2; word-break:break-word;">
-              <span style="font-weight:700; font-size:11px; color:var(--main);">我：</span>${escapeHtml(item.content)}
+              <span style="font-weight:700; font-size:12px; color:var(--main);">我：</span>${escapeHtml(item.content)}
             </div>
           `;
         } else {
           return `
             <div style="align-self:flex-start; max-width:92%; background:#fdfaf5; color:#2e2621; padding:6px 9px; border-radius:8px 8px 8px 2px; border:1px solid var(--line); word-break:break-word;">
-              <div style="font-weight:700; font-size:11px; color:var(--main); margin-bottom:3px;">💬 小幫手已改好：</div>
-              <div style="font-size:11.5px; color:#444; white-space:pre-wrap; max-height:85px; overflow-y:auto; background:#fff; padding:5px 7px; border-radius:4px; border:1px solid var(--line); line-height:1.4;">${escapeHtml(item.content)}</div>
+              <div style="font-weight:700; font-size:12px; color:var(--main); margin-bottom:3px;">💬 小幫手已改好：</div>
+              <div style="font-size:12.5px; color:#444; white-space:pre-wrap; max-height:85px; overflow-y:auto; background:#fff; padding:5px 7px; border-radius:4px; border:1px solid var(--line); line-height:1.55;">${escapeHtml(item.content)}</div>
             </div>
           `;
         }
@@ -7960,8 +7996,8 @@ ${angleText}。
         let cloudTag = "";
         if (me) {
           cloudTag = cloudPostIds.has(String(p.id))
-            ? `<span style="display:inline-block; margin-left:6px; font-size:11px; padding:1px 6px; border-radius:999px; background:#e6f4ea; color:#1e7e34; font-weight:600;">☁ 雲端有</span>`
-            : `<span style="display:inline-block; margin-left:6px; font-size:11px; padding:1px 6px; border-radius:999px; background:#f3f4f6; color:#6b7280; font-weight:600;">只在這台</span>`;
+            ? `<span style="display:inline-block; margin-left:6px; font-size:11.5px; padding:1px 6px; border-radius:999px; background:#e6f4ea; color:#1e7e34; font-weight:600;">☁ 雲端有</span>`
+            : `<span style="display:inline-block; margin-left:6px; font-size:11.5px; padding:1px 6px; border-radius:999px; background:#f3f4f6; color:#6b7280; font-weight:600;">只在這台</span>`;
         }
         return `
           <div class="post-list-item">
